@@ -1,0 +1,10 @@
+{
+    "dotnet-test-explorer.testProjectPath": "src\\dscom.test\\dscom.test.csproj",
+    "editor.quickSuggestions": true,
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableEditorConfigSupport": true,
+}

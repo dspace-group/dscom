@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.102
+
+      - name: Get .net version
+        run: dotnet --version
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Check code format (editorconfig)
+        run: dotnet format --verify-no-changes
+
+      - name: Test (Release)
+        run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Publish executable (Release)
+        run: dotnet publish -c Release --framework net6.0 --self-contained false --runtime win-x64 -p:PublishTrimmed=false -p:PublishSingleFile=true -p:PublishReadyToRun=true src/dscom.client/dscom.client.csproj
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: src/dscom.client/bin/Release/net6.0/win-x64/publish/dscom
+
+      - name: Nuget pack library
+        run: dotnet pack -c Release src/dscom/dscom.csproj
+
+      - name: Nuget push library
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET }} --source https://api.nuget.org/v3/index.json
+        working-directory: src/dscom/bin/Release/
+
+      - name: Nuget pack tool
+        run: dotnet pack -c Release src/dscom.client/dscom.client.csproj
+
+      - name: Nuget push tool
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET }} --source https://api.nuget.org/v3/index.json
+        working-directory: src/dscom.client/bin/Release

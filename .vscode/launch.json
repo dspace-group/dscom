@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "tlbexport",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0/dscom.dll",
+            "args": ["tlbexport", "/verbose", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.dll", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "tlbdump",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0/dscom.dll",
+            "args": ["tlbdump", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.yaml", "/filterregex=\\.file\\="],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}

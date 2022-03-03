@@ -1,0 +1,12 @@
+﻿*.tlb
+*.dll
+*.user
+launchSettings.json
+.vs/
+bin/
+obj/
+Debug/
+Release/
+test.results/
+.tmp/
+_temporary.cs
