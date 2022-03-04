@@ -37,6 +37,13 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "demo",
+            "command": "scripts\\demo.bat",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": "$msCompile"
         }
     ]
 }

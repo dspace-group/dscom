@@ -15,15 +15,6 @@ del %workspace%src\dscom.demo\assembly1\bin\Release\net48\*.yaml
 dotnet build -c Release "%workspace%dscom.sln"
 IF ERRORLEVEL 1 goto error
 
-@REM tlbexp
-echo ############## tlbexp.exe
-tlbexp /win64 /verbose "%net48dll%" "/out:%net48dll%.tlb"
-IF ERRORLEVEL 1 goto error
-
-echo ############## dscom.exe tlbdump
-%workspace%src\dscom.client\bin\Release\net6.0\dscom.exe tlbdump %filterregex% "/tlbrefpath:%net48dll%.tlb/.." "%net48dll%".tlb "/out:%net48dll%.yaml"
-IF ERRORLEVEL 1 goto error
-
 @REM dscom
 echo ############## dscom.exe tlbexport
 %workspace%src\dscom.client\bin\Release\net6.0\dscom.exe tlbexport /verbose "%net60dll%" "/out:%net60dll%.tlb"
@@ -31,6 +22,28 @@ IF ERRORLEVEL 1 goto error
 
 echo ############## dscom.exe tlbdump
 %workspace%src\dscom.client\bin\Release\net6.0\dscom.exe tlbdump %filterregex% "/tlbrefpath:%net60dll%.tlb/.." "%net60dll%.tlb" "/out:%net60dll%.yaml"
+IF ERRORLEVEL 1 goto error
+
+WHERE tlbexp
+IF %ERRORLEVEL% NEQ 0 (
+    ECHO.
+    ECHO ######################################################
+    ECHO.
+    ECHO tlbexp.exe not found
+    ECHO Please add the path to tlbexp.exe to your PATH variable.
+    ECHO.
+    ECHO ######################################################
+    ECHO.
+    goto error
+)
+
+@REM tlbexp
+echo ############## tlbexp.exe
+tlbexp /win64 /verbose "%net48dll%" "/out:%net48dll%.tlb"
+IF ERRORLEVEL 1 goto error
+
+echo ############## dscom.exe tlbdump
+%workspace%src\dscom.client\bin\Release\net6.0\dscom.exe tlbdump %filterregex% "/tlbrefpath:%net48dll%.tlb/.." "%net48dll%.tlb" "/out:%net48dll%.yaml"
 IF ERRORLEVEL 1 goto error
 
 WHERE code
