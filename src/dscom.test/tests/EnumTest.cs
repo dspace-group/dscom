@@ -65,29 +65,29 @@ public class EnumTest : BaseTest
     public void TwoEnumsWithTheSameNameInDifferentNamespaces_EnumFieldsShouldUseNamespaceAsPrefix()
     {
         var result = CreateAssembly()
-            .WithEnum<int>("TestEnum").WithNamespace("dspace.test.namspace1")
+            .WithEnum<int>("TestEnum").WithNamespace("dspace.test.namespace1")
                 .WithLiteral("A", 1)
                 .WithLiteral("B", 2)
                 .Build()
-            .WithEnum<int>("TestEnum").WithNamespace("dspace.test.namspace2")
+            .WithEnum<int>("TestEnum").WithNamespace("dspace.test.namespace2")
                 .WithLiteral("A", 1)
                 .WithLiteral("B", 2)
                 .Build()
             .Build();
 
-        var typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namspace1_TestEnum");
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namespace1_TestEnum");
         typeLibInfo.Should().NotBeNull();
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namspace1_TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namspace1_TestEnum_B");
+        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace1_TestEnum_A");
+        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace1_TestEnum_B");
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_A");
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_B");
 
-        typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namspace2_TestEnum");
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namespace2_TestEnum");
         typeLibInfo.Should().NotBeNull();
         kv = typeLibInfo!.GetAllEnumValues();
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namspace2_TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namspace2_TestEnum_B");
+        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace2_TestEnum_A");
+        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace2_TestEnum_B");
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_A");
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_B");
     }

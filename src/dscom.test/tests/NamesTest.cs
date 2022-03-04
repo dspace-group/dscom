@@ -58,7 +58,7 @@ public class NamesTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeInfo.Should().BeNull("toupper case found");
+        typeInfo.Should().BeNull("touppercase found");
         typeInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
         typeInfo.Should().NotBeNull("TOUPPERCASE not found");
 
@@ -69,7 +69,7 @@ public class NamesTest : BaseTest
     }
 
     [Fact]
-    public void InterfaceWithAComUnvisibleMethodAndComVisibleMethodSameName_NameIsGeneratedWithoutSuffix()
+    public void InterfaceWithAComInvisibleMethodAndComVisibleMethodSameName_NameIsGeneratedWithoutSuffix()
     {
         var result = CreateAssembly()
                         .WithInterface("TestInterface")
