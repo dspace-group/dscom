@@ -51,6 +51,9 @@ internal class StructWriter : TypeWriter
             {
                 var elemDescWriter = new ElemDescBasedWriter(item.FieldType, item, SourceType, TypeInfo, Context);
                 elemDescWriter.Create();
+
+                elemDescWriter.ReportEvent();
+
                 var varDesc = new VARDESC()
                 {
                     elemdescVar = elemDescWriter.ElementDescription,

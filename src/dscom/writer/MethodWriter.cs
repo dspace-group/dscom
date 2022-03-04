@@ -129,6 +129,7 @@ internal class MethodWriter : BaseWriter
                 writer.ReportEvent();
             }
         }
+
         if (!IsValid)
         {
             return;
@@ -143,13 +144,6 @@ internal class MethodWriter : BaseWriter
         string[] names;
         try
         {
-            // ReturnParamWriter!.Create();
-
-            // foreach (var paramWriter in ParameterWriters)
-            // {
-            //     paramWriter.Create();
-            // }
-
             FUNCDESC? funcDesc = new FUNCDESC
             {
                 callconv = CALLCONV.CC_STDCALL,
