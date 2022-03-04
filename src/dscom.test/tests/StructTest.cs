@@ -81,7 +81,7 @@ public class StructTest : BaseTest
     [InlineData(typeof(Guid), VarEnum.VT_USERDEFINED, null)]
     [InlineData(typeof(System.Drawing.Color), VarEnum.VT_USERDEFINED, null)]
     [InlineData(typeof(decimal), VarEnum.VT_DECIMAL, null)]
-    public void StructWithFields_CorrectVarEnumTypeExpected(Type type, VarEnum expecteType, VarEnum? expecteSubType)
+    public void StructWithFields_CorrectVarEnumTypeExpected(Type type, VarEnum expectedType, VarEnum? expectedSubType)
     {
         var fieldName = ValidChars.Replace($"Field_{type}", "_");
         var testStruct = AssemblyBuilderResult.TypeLib.GetTypeInfoByName(StructName);
@@ -92,13 +92,13 @@ public class StructTest : BaseTest
         vardesc.Should().NotBeNull($"Field {fieldName} should exist in struct {StructName}");
 
         // Check field type
-        vardesc!.Value.elemdescVar.tdesc.GetVarEnum().Should().Be(expecteType, $"Field {fieldName} should be {expecteType}");
+        vardesc!.Value.elemdescVar.tdesc.GetVarEnum().Should().Be(expectedType, $"Field {fieldName} should be {expectedType}");
 
         // Check field sub type
-        if (expecteSubType != null)
+        if (expectedSubType != null)
         {
             var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(vardesc!.Value.elemdescVar.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(expecteSubType, $"Field {fieldName} inner type should be {expecteSubType}");
+            subtypeDesc.GetVarEnum().Should().Be(expectedSubType, $"Field {fieldName} inner type should be {expectedSubType}");
         }
     }
 

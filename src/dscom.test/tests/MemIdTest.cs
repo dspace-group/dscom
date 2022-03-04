@@ -22,7 +22,7 @@ public class MemIdTest : BaseTest
     [InlineData(ComInterfaceType.InterfaceIsIDispatch, 0x60020000)]
     [InlineData(ComInterfaceType.InterfaceIsDual, 0x60020000)]
     [InlineData(ComInterfaceType.InterfaceIsIUnknown, 0x60010000)]
-    public void PropertiesWithoutDispIdAttrubute_DispIdsShouldGeneratedAndShouldStartWithExplicitValue(ComInterfaceType interfaceType, int dispIdStart)
+    public void PropertiesWithoutDispIdAttribute_DispIdsShouldGeneratedAndShouldStartWithExplicitValue(ComInterfaceType interfaceType, int dispIdStart)
     {
         var result = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: $"{interfaceType}{dispIdStart}"))
                         .WithInterface("TestInterface")
@@ -50,7 +50,7 @@ public class MemIdTest : BaseTest
     [InlineData(ComInterfaceType.InterfaceIsIDispatch, 0x60020000)]
     [InlineData(ComInterfaceType.InterfaceIsDual, 0x60020000)]
     [InlineData(ComInterfaceType.InterfaceIsIUnknown, 0x60010000)]
-    public void MethodsWithoutDispIdAttrubute_DispIdsShouldGeneratedAndShouldStartWithExplicitValue(ComInterfaceType interfaceType, int dispIdStart)
+    public void MethodsWithoutDispIdAttribute_DispIdsShouldGeneratedAndShouldStartWithExplicitValue(ComInterfaceType interfaceType, int dispIdStart)
     {
         var result = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: $"{interfaceType}{dispIdStart}"))
                         .WithInterface("TestInterface")
@@ -627,7 +627,7 @@ public class MemIdTest : BaseTest
             testMethod.Should().NotBeNull();
 
             // tlbexp.exe will ignore the MemId for the method with a wrong MarshalAsAttribute in case of a IUnkownInterface.
-            // This behavior is a little bit stange. 
+            // This behavior is a little bit strange. 
             // This should be the compatible behavior for tlbexp.exe.
             // 
             //  if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)

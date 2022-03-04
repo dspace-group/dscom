@@ -78,7 +78,7 @@ public class TypeLibTest : BaseTest
     }
 
     [Fact]
-    public void TypeLibAttribute_SyskindisSYS_WIN64()
+    public void TypeLibAttribute_SyskindIsSYS_WIN64()
     {
         var builder = CreateAssembly();
         var result = builder.Build();
@@ -102,7 +102,7 @@ public class TypeLibTest : BaseTest
     }
 
     [Fact]
-    public void TypeLibCustomAttributeValueWithGuidExportedFromComPlus_isEqaulToAssemblyToString()
+    public void TypeLibCustomAttributeValueWithGuidExportedFromComPlus_isEqualToAssemblyToString()
     {
         var builder = CreateAssembly();
         var result = builder.Build();
