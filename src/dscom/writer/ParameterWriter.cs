@@ -81,13 +81,10 @@ internal class ParameterWriter : ElemDescBasedWriter
         }
     }
 
-    public void ReportEvent()
+    public override void ReportEvent()
     {
-        if (Type.GetUnderlayingType().IsGenericType)
-        {
-            Context.LogWarning("Warning: Type library exporter encountered a generic type instance in a signature. Generic code may not be exported to COM.", unchecked(HRESULT.TLBX_E_GENERICINST_SIGNATURE));
-        }
-        else if (!ParameterIsResolvable && Type.GetUnderlayingType().IsInterface)
+        base.ReportEvent();
+        if (!ParameterIsResolvable && Type.GetUnderlayingType().IsInterface)
         {
             Context.LogWarning($"Warning: Type library exporter could not find the type library for {Type.GetUnderlayingType().Name}.  IUnknown was substituted for the interface.", HRESULT.TLBX_I_USEIUNKNOWN);
         }

@@ -14,7 +14,6 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.ComTypes;
 
 namespace dSPACE.Runtime.InteropServices;
 
@@ -41,34 +40,13 @@ internal class TypeProvider
 
     public bool IsMethod { get; } = true;
 
-    private void ReportMarshalAsAttributeError(Type type, MarshalAsAttribute? marshalAsAttribute)
-    {
-        var marshasinfo = string.Empty;
-        if (marshalAsAttribute != null)
-        {
-            marshasinfo = $" with MarshalAsAttribute: { marshalAsAttribute.Value}";
-
-            if (marshalAsAttribute.SafeArraySubType == VarEnum.VT_EMPTY)
-            {
-                marshasinfo += $" SafeArraySubType: { marshalAsAttribute.SafeArraySubType}";
-            }
-        }
-
-        Context.LogWarning($"Type library exporter warning processing '{type.Name}'{marshasinfo}. Warning: The method or field has an invalid managed/unmanaged type combination, check the MarshalAs directive.", unchecked(HRESULT.TLBX_E_BAD_NATIVETYPE));
-    }
-
     public VarEnum GetVariantType(Type type, out VarEnum? parentLevel, bool isSafeArraySubType = false)
     {
-        return GetVariantType(type, MarshalAsAttribute, out parentLevel, isSafeArraySubType);
-    }
-
-    public VarEnum GetVariantType(Type type, MarshalAsAttribute? marshalAsAttribute, out VarEnum? parentLevel, bool isSafeArraySubType = false)
-    {
+        var marshalAsAttribute = MarshalAsAttribute;
         UnmanagedType? marshalTo = null;
         parentLevel = null;
         if (isSafeArraySubType && type.IsArray)
         {
-            ReportMarshalAsAttributeError(type, marshalAsAttribute);
             return VarEnum.VT_EMPTY;
         }
 
@@ -94,7 +72,6 @@ internal class TypeProvider
                     case VarEnum.VT_CARRAY:
                     case VarEnum.VT_RECORD:
                     case VarEnum.VT_SAFEARRAY:
-                        ReportMarshalAsAttributeError(type, marshalAsAttribute);
                         return VarEnum.VT_EMPTY;
                 }
 
@@ -136,7 +113,6 @@ internal class TypeProvider
                         case UnmanagedType.I1:
                             return VarEnum.VT_UI1;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -151,7 +127,6 @@ internal class TypeProvider
                         case UnmanagedType.Currency:
                             return VarEnum.VT_CY;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -176,7 +151,6 @@ internal class TypeProvider
                         case UnmanagedType.Interface:
                             return VarEnum.VT_UNKNOWN;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -194,7 +168,6 @@ internal class TypeProvider
                         case UnmanagedType.LPWStr:
                             return VarEnum.VT_LPWSTR;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -215,7 +188,6 @@ internal class TypeProvider
                         case UnmanagedType.I1:
                             return VarEnum.VT_UI1;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -242,7 +214,6 @@ internal class TypeProvider
                         case UnmanagedType.Error:
                             return VarEnum.VT_HRESULT;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -259,7 +230,6 @@ internal class TypeProvider
                         case UnmanagedType.Error:
                             return VarEnum.VT_HRESULT;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -277,7 +247,6 @@ internal class TypeProvider
                         case UnmanagedType.LPArray:
                             return VarEnum.VT_PTR;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
@@ -305,7 +274,6 @@ internal class TypeProvider
                             parentLevel = VarEnum.VT_PTR;
                             return VarEnum.VT_USERDEFINED;
                         default:
-                            ReportMarshalAsAttributeError(type, marshalAsAttribute);
                             return VarEnum.VT_EMPTY;
                     }
                 }
