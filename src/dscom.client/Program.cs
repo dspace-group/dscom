@@ -15,6 +15,7 @@
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
 
@@ -179,8 +180,10 @@ public static class ConsoleApp
                 }
 
                 using var assemblyResolver = new AssemblyResolver(options);
+
+                var assembly = Assembly.LoadFrom(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
-                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(options, new TypeLibExporterNotifySink(options));
+                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options));
 
                 if (typeLib is ICreateTypeLib2 createTypeLib2)
                 {

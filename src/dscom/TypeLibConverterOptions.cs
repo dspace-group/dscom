@@ -47,17 +47,6 @@ public class TypeLibConverterOptions
     public string[] ASMPath { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    /// Only for compatibility to tlbexp.exe
-    /// </summary>
-    /// <value></value>
-    public bool Win64 { get; set; } = true;
-
-    /// <summary>
-    /// Only for compatibility to tlbexp.exe
-    /// </summary>
-    public bool NoLogo { get; set; }
-
-    /// <summary>
     /// Gets or sets a value indicating whether the output is silent.
     /// </summary>
     public bool Silent { get; set; }
@@ -96,8 +85,6 @@ Out:           {Out}
 TLBReference:  {string.Join(", ", TLBReference ?? Array.Empty<string>())}  
 TLBRefpath:    {string.Join(", ", TLBRefpath ?? Array.Empty<string>())}
 ASMPath:       {string.Join(", ", ASMPath ?? Array.Empty<string>())}
-Win64:         {Win64}
-NoLogo:        {NoLogo}
 Silent:        {Silent}
 Silence:       {string.Join(", ", Silence ?? Array.Empty<string>())}
 Verbose:       {Verbose}

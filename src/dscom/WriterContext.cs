@@ -18,7 +18,7 @@ namespace dSPACE.Runtime.InteropServices;
 
 internal sealed class WriterContext
 {
-    public WriterContext(TypeLibConverterOptions options, ICreateTypeLib2 targetTypeLib, ITypeLibExporterNotifySink notifySink)
+    public WriterContext(TypeLibConverterOptions options, ICreateTypeLib2 targetTypeLib, ITypeLibExporterNotifySink? notifySink)
     {
         Options = options;
         TargetTypeLib = targetTypeLib;
@@ -37,7 +37,6 @@ internal sealed class WriterContext
         {
             TypeInfoResolver = new TypeInfoResolver(this);
         }
-
     }
 
     public ITypeLibExporterNotifySink? NotifySink { get; private set; }
