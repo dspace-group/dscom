@@ -84,27 +84,6 @@ public class InterfaceTest : BaseTest
     }
 
     [Fact]
-    public void InterfaceWith_NameToChange_Ischanged()
-    {
-        var result = CreateAssembly()
-                        .WithInterface("touppercase")
-                            .Build()
-                        .WithInterface("TOLOWERCASE")
-                            .Build()
-                        .Build();
-
-        var typeInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeInfo.Should().BeNull("toupper case found");
-        typeInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
-        typeInfo.Should().NotBeNull("TOUPPERCASE not found");
-
-        typeInfo = result.TypeLib.GetTypeInfoByName("TOLOWERCASE");
-        typeInfo.Should().BeNull("TOLOWERCASE case found");
-        typeInfo = result.TypeLib.GetTypeInfoByName("tolowercase");
-        typeInfo.Should().NotBeNull("tolowercase not found");
-    }
-
-    [Fact]
     public void InterfaceIsIDispatch_TYPEFLAGS_IsFDISPATCHABLE()
     {
         var result = CreateAssembly()
