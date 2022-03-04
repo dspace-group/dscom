@@ -35,10 +35,10 @@ internal class AssemblyResolver : IDisposable
 
         foreach (var path in Options.ASMPath)
         {
-            var dlltoLoad = Path.Combine(path, $"{fileNameWithoutExtension}.dll");
-            if (File.Exists(dlltoLoad))
+            var dllToLoad = Path.Combine(path, $"{fileNameWithoutExtension}.dll");
+            if (File.Exists(dllToLoad))
             {
-                return Assembly.LoadFrom(dlltoLoad);
+                return Assembly.LoadFrom(dllToLoad);
             }
 
             var exeToLoad = Path.Combine(path, $"{fileNameWithoutExtension}.exe");

@@ -57,8 +57,8 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
         // Try load from cache
         if (TypeLibCache != null)
         {
-            var indentifier = assembly.GetLibIdentifier();
-            var typelib = TypeLibCache.GetTypeLibFromIdentifier(indentifier);
+            var identifier = assembly.GetLibIdentifier();
+            var typelib = TypeLibCache.GetTypeLibFromIdentifier(identifier);
             if (typelib != null)
             {
                 return typelib;
