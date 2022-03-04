@@ -14,11 +14,11 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-public class DisposabelStruct<T> : IDisposable where T : struct
+public class DisposableStruct<T> : IDisposable where T : struct
 {
     private bool _disposedValue;
 
-    public DisposabelStruct(T value, Action disposeFunc)
+    public DisposableStruct(T value, Action disposeFunc)
     {
         DisposeDelegate = disposeFunc;
 

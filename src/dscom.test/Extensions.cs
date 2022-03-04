@@ -16,12 +16,12 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public static class Extensions
 {
-    public static DisposabelStruct<TYPELIBATTR>? GetTypeLibAttributes(this ITypeLib2 typelib)
+    public static DisposableStruct<TYPELIBATTR>? GetTypeLibAttributes(this ITypeLib2 typelib)
     {
         typelib.GetLibAttr(out var ppTLIBAttr);
         if (ppTLIBAttr != IntPtr.Zero)
         {
-            return new DisposabelStruct<TYPELIBATTR>(Marshal.PtrToStructure<TYPELIBATTR>(ppTLIBAttr), () =>
+            return new DisposableStruct<TYPELIBATTR>(Marshal.PtrToStructure<TYPELIBATTR>(ppTLIBAttr), () =>
             {
                 typelib.ReleaseTLibAttr(ppTLIBAttr);
             });
@@ -29,12 +29,12 @@ public static class Extensions
         return null;
     }
 
-    public static DisposabelStruct<TYPEATTR>? GetTypeInfoAttributes(this ITypeInfo2 typeInfo)
+    public static DisposableStruct<TYPEATTR>? GetTypeInfoAttributes(this ITypeInfo2 typeInfo)
     {
         typeInfo.GetTypeAttr(out var ppTypAttr);
         if (ppTypAttr != IntPtr.Zero)
         {
-            return new DisposabelStruct<TYPEATTR>(Marshal.PtrToStructure<TYPEATTR>(ppTypAttr), () =>
+            return new DisposableStruct<TYPEATTR>(Marshal.PtrToStructure<TYPEATTR>(ppTypAttr), () =>
             {
                 typeInfo.ReleaseTypeAttr(ppTypAttr);
             });
@@ -71,7 +71,7 @@ public static class Extensions
     /// <param name="typeInfo">A <paramref name="typeInfo"/></param>
     /// <param name="name">The method name</param>
     /// <returns></returns>
-    public static DisposabelStruct<VARDESC>? GetVarDescByName(this ITypeInfo2 typeInfo, string name)
+    public static DisposableStruct<VARDESC>? GetVarDescByName(this ITypeInfo2 typeInfo, string name)
     {
         using var attributes = typeInfo.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
@@ -87,7 +87,7 @@ public static class Extensions
 
             if (string.Equals(varName, name, StringComparison.Ordinal))
             {
-                return new DisposabelStruct<VARDESC>(varDesc, () =>
+                return new DisposableStruct<VARDESC>(varDesc, () =>
                 {
                     typeInfo.ReleaseVarDesc(ppVarDesc);
                 });
@@ -107,7 +107,7 @@ public static class Extensions
     /// <param name="typeInfo">A <paramref name="typeInfo"/></param>
     /// <param name="name">The method name</param>
     /// <returns></returns>
-    public static DisposabelStruct<FUNCDESC>? GetFuncDescByName(this ITypeInfo2 typeInfo, string name, INVOKEKIND? invokeKind = null)
+    public static DisposableStruct<FUNCDESC>? GetFuncDescByName(this ITypeInfo2 typeInfo, string name, INVOKEKIND? invokeKind = null)
     {
         typeInfo.GetTypeAttr(out var ppTypAttr);
 
@@ -129,7 +129,7 @@ public static class Extensions
                     continue;
                 }
 
-                return new DisposabelStruct<FUNCDESC>(funcDesc, () =>
+                return new DisposableStruct<FUNCDESC>(funcDesc, () =>
                 {
                     typeInfo.ReleaseFuncDesc(ppFuncDesc);
                 });
