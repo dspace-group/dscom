@@ -16,9 +16,9 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 internal static class MarshalHelper
 {
-    internal record struct UnmagedTypeMap(Type Type, UnmanagedType UnmanagedType);
+    internal record struct UnmanagedTypeMap(Type Type, UnmanagedType UnmanagedType);
 
-    internal static Dictionary<UnmagedTypeMap, VarEnum?> UnmanagedTypeMapDict { get; } = new();
+    internal static Dictionary<UnmanagedTypeMap, VarEnum?> UnmanagedTypeMapDict { get; } = new();
 
     internal static VarEnum TypeToVarEnum(Type type, bool IsMethod = true)
     {
