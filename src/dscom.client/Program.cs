@@ -15,6 +15,7 @@
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
 
@@ -30,21 +31,18 @@ public static class ConsoleApp
                 new Option(new string [] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", typeof(string[]), null, ArgumentArity.ZeroOrMore),
-                new Option<bool>(new string [] {"--win64", "/win64"}, description: "Create a 64-bit type library"),
-                new Option<bool>(new string [] {"--nologo", "/nologo"}, description: "Prevents TlbExp from displaying logo"),
                 new Option<bool>(new string [] {"--silent", "/silent"}, description: "Suppresses all output except for errors"),
                 new Option(new string [] {"--silence", "/silence"}, description: "Suppresses output for the given warning (Can not be used with /silent)", typeof(string[]), null, ArgumentArity.ZeroOrMore),
-                new Option<bool>(new string [] {"--verbose", "/verbose"}, description: "File name of type library to be produced"),
+                new Option<bool>(new string [] {"--verbose", "/verbose"}, description: "Detailed log output"),
                 new Option(new string [] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", typeof(string[]), null, ArgumentArity.ZeroOrMore),
-                new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "."),
-                new Option<string>(new string [] {"--json", "/json"}, description: "json export")
+                new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
             {
                 new Argument("TypeLibrary", "File name of type library"),
                 new Option<string>(new string [] {"--out", "/out"}, description: "File name of the output"),
-                new Option<string>(new string [] {"--type", "/type"}, description: "Output type [only \"yaml\" is supported]"),
+                new Option<string>(new string [] {"--type", "/type"}, description: "Output type (only \"yaml\" is supported)"),
                 new Option(new string [] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--filterregex", "/filterregex"}, description: "Regex to filter the output", typeof(string[]), null, ArgumentArity.ZeroOrMore),
@@ -179,8 +177,10 @@ public static class ConsoleApp
                 }
 
                 using var assemblyResolver = new AssemblyResolver(options);
+
+                var assembly = Assembly.LoadFrom(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
-                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(options, new TypeLibExporterNotifySink(options));
+                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options));
 
                 if (typeLib is ICreateTypeLib2 createTypeLib2)
                 {
