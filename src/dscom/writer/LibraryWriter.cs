@@ -136,7 +136,7 @@ internal class LibraryWriter : BaseWriter
             {
                 continue;
             }
-            // Add this typoe to the unique names collection.
+            // Add this type to the unique names collection.
             UpdateUniqueNames(type);
 
             TypeWriter? typeWriter = null;

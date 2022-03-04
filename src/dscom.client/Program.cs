@@ -165,7 +165,7 @@ public static class ConsoleApp
         {
             try
             {
-                // Use ; for path separation for compatiblity to tlbexp.exe
+                // Use ; for path separation for compatibility to tlbexp.exe
                 options.ASMPath = options.ASMPath.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
                 options.TLBReference = options.TLBReference.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
                 options.TLBRefpath = options.TLBRefpath.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();

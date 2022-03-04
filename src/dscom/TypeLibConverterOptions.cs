@@ -73,7 +73,7 @@ public class TypeLibConverterOptions
     public Guid OverrideTlbId { get; set; } = Guid.Empty;
 
     /// <summary>
-    /// Returns a string that reprence this object.
+    /// Returns a string that represents this object.
     /// </summary>
     /// <returns>A string.</returns>
     public override string ToString()

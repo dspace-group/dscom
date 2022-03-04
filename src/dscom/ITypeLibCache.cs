@@ -22,6 +22,6 @@ public interface ITypeLibCache
     /// <summary>
     /// Returns a ITypeLib.
     /// </summary>
-    /// <param name="identifier">An assembly identidier.</param>
+    /// <param name="identifier">An assembly identifier.</param>
     ITypeLib? GetTypeLibFromIdentifier(TypeLibIdentifier identifier);
 }

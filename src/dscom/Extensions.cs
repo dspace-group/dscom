@@ -21,7 +21,7 @@ namespace dSPACE.Runtime.InteropServices;
 public static class Extensions
 {
     /// <summary>
-    /// Returns a assembly indentifier.
+    /// Returns a assembly identifier.
     /// </summary>
     /// <param name="assembly">An assembly that is used to create an identifer.</param>
     /// <param name="overrideGuid">A guid that should be used</param>
@@ -41,7 +41,7 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Returns a assembly indentifier.
+    /// Returns a assembly identifier.
     /// </summary>
     /// <param name="assembly">An assembly that is used to create an identifer.</param>
     public static TypeLibIdentifier GetLibIdentifier(this Assembly assembly)

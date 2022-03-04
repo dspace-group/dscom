@@ -15,7 +15,7 @@
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
-/// Provides a type libarary cache.
+/// Provides a type library cache.
 /// </summary>
 public interface ITypeLibCacheProvider
 {

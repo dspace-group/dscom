@@ -67,14 +67,14 @@ internal abstract class InterfaceWriter : TypeWriter
         CreateMethodWriters();
 
         // Check all DispIDs
-        // Handle special IDs like 0 or -4, and try to fix dublicate DispIds if possible.
+        // Handle special IDs like 0 or -4, and try to fix duplicate DispIds if possible.
         DispatchIdCreator.NormalizeIds();
 
         // This index is necessary to generate the correct offset of the VTable.
         // Every method must be considered, even those that cannot be generated.
         // var index = 0;
 
-        // // The index of the function inside the type libarary
+        // // The index of the function inside the type library
         // var functionIndex = 0;
         foreach (var item in MethodWriter)
         {

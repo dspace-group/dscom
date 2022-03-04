@@ -26,7 +26,7 @@ namespace dSPACE.Runtime.InteropServices;
 public static class TypeLibExporter
 {
     /// <summary>
-    /// Export a type library to a text fileas yaml.
+    /// Export a type library to a text file as yaml.
     /// Creates a new file, writes the specified string to the file, and then closes the file. If the target file already exists, it is overwritten.
     /// </summary>
     /// <param name="options">The options.</param>

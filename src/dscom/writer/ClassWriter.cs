@@ -124,7 +124,7 @@ internal class ClassWriter : TypeWriter
 
         base.CreateTypeInheritance();
 
-        // The default interface is the class interface or the frist implemted interface.
+        // The default interface is the class interface or the first implemented interface.
         if ((ClassInterfaceWriter != null || interfaces.Length > 0) && !defaultInterfaceSet)
         {
             TypeInfo.SetImplTypeFlags(0, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
