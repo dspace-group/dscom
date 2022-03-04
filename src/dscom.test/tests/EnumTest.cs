@@ -46,38 +46,6 @@ public class EnumTest : BaseTest
     }
 
     [Fact]
-    public void EnumWithNameToChange_EnumNamechanged()
-    {
-        var result = CreateAssembly()
-            .WithEnum("touppercase", typeof(int))
-                .WithLiteral("A", 1)
-                .WithLiteral("B", 20)
-                .WithLiteral("C", 50)
-                .Build()
-            .WithEnum("TOLOWERCASE", typeof(int))
-                .WithLiteral("A", 1)
-                .WithLiteral("B", 20)
-                .WithLiteral("C", 50)
-                .Build()
-            .Build();
-
-        var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeLibInfo.Should().BeNull();
-        typeLibInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
-        typeLibInfo.Should().NotBeNull();
-        var kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key.StartsWith("TOUPPERCASE"));
-
-        typeLibInfo = result.TypeLib.GetTypeInfoByName("TOLOWERCASE");
-        typeLibInfo.Should().BeNull();
-        typeLibInfo = result.TypeLib.GetTypeInfoByName("tolowercase");
-        typeLibInfo.Should().NotBeNull();
-        kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key.StartsWith("tolowercase"));
-
-    }
-
-    [Fact]
     public void EnumComVisibleFalse_EnumIsNotGenerated()
     {
         var result = CreateAssembly()
