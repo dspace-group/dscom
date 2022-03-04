@@ -33,7 +33,7 @@ echo ############## dscom.exe tlbdump
 %workspace%src\dscom.client\bin\Release\net6.0\dscom.exe tlbdump %filterregex% "/tlbrefpath:%net60dll%.tlb/.." "%net60dll%.tlb" "/out:%net60dll%.yaml"
 IF ERRORLEVEL 1 goto error
 
-WHERE code2
+WHERE code
 IF %ERRORLEVEL% NEQ 0 (
     ECHO.
     ECHO ######################################################
