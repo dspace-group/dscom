@@ -29,13 +29,17 @@ internal abstract class TypeWriter : BaseWriter
         LibraryWriter = libraryWriter;
     }
 
-    protected Type SourceType { get; set; }
-
     public TYPEFLAGS TypeFlags { get; set; }
 
     public TYPEKIND TypeKind { get; set; }
 
+    protected Type SourceType { get; set; }
+
     protected virtual string Name => _name;
+
+    protected virtual ushort MajorVersion => 1;
+
+    protected virtual ushort MinorVersion => 0;
 
     public ICreateTypeInfo2 TypeInfo
     {
@@ -64,6 +68,8 @@ internal abstract class TypeWriter : BaseWriter
     /// </summary>
     public virtual void CreateTypeInfo()
     {
+        // We need a unique library name. 
+        // As soon as an interface appears twice in different namespaces, the namespace should be used as prefix.
         _name = LibraryWriter.GetUniqueTypeName(SourceType);
 
         var typeLib = Context.TargetTypeLib;
@@ -97,12 +103,9 @@ internal abstract class TypeWriter : BaseWriter
             }
         }
 
+        // Store each type in a cache
         Context.TypeInfoResolver.AddTypeToCache(TypeInfo as ITypeInfo);
     }
-
-    protected virtual ushort MajorVersion => 1;
-
-    protected virtual ushort MinorVersion => 0;
 
     protected virtual Guid GetTypeGuid()
     {

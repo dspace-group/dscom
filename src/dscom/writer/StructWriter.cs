@@ -45,6 +45,8 @@ internal class StructWriter : TypeWriter
             {
                 comVisible = item.GetCustomAttribute<ComVisibleAttribute>()!.Value;
             }
+
+            // Create members only if the struct is visible to COM and the field public and not static.
             if (comVisible && item.IsPublic && !item.IsStatic)
             {
                 var elemDescWriter = new ElemDescBasedWriter(item.FieldType, item, SourceType, TypeInfo, Context);

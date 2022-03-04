@@ -30,6 +30,8 @@ internal class ParameterWriter : ElemDescBasedWriter
 
     private readonly bool _isTransformedOutParameter;
 
+    private bool ParameterTypeIsComVisible => ParameterInfo.ParameterType.IsComVisible();
+
     private PARAMFLAG _pARAMFlags = PARAMFLAG.PARAMFLAG_NONE;
 
     public MethodWriter MethodWriter { get; }
@@ -46,7 +48,8 @@ internal class ParameterWriter : ElemDescBasedWriter
         get
         {
             var unrefedType = ParameterInfo.ParameterType.IsByRef ? ParameterInfo.ParameterType.GetElementType()! : ParameterInfo.ParameterType;
-            //Marshal errors
+
+            // Marshal errors
             if ((GetVariantType(unrefedType) == VarEnum.VT_EMPTY)
                 || (unrefedType.IsArray && GetVariantType(unrefedType.GetElementType()!, true) == VarEnum.VT_EMPTY))
             {
@@ -73,6 +76,7 @@ internal class ParameterWriter : ElemDescBasedWriter
             {
                 return true;
             }
+
             return false;
         }
     }
@@ -171,12 +175,10 @@ internal class ParameterWriter : ElemDescBasedWriter
 
         if (ParameterInfo.DefaultValue == null)
         {
-            defValue.varValue.vt = VarEnum.VT_UNKNOWN; // TypeProvider.GetVariantType(_Type.IsByRef ? _Type.GetElementType()! : _Type, out _, false);
+            defValue.varValue.vt = VarEnum.VT_UNKNOWN;
         }
         return StructureToPtr(defValue);
     }
-
-    private bool ParameterTypeIsComVisible => ParameterInfo.ParameterType.IsComVisible();
 
     private bool ParameterIsResolvable
     {
@@ -185,19 +187,22 @@ internal class ParameterWriter : ElemDescBasedWriter
             try
             {
                 var type = ParameterInfo.ParameterType.GetUnderlayingType();
-                if (type.IsInterface || type.IsEnum || (type.IsClass && !type.IsSpecialHandledClass()))
+                var notSpecialHandledValueType = !type.IsSpecialHandledValueType();
+
+                // If type is interface, enum, class, or struct...
+                if (type.IsInterface ||
+                    type.IsEnum ||
+                    (type.IsClass && notSpecialHandledValueType) ||
+                    (type.IsValueType && !type.IsPrimitive && TypeProvider.MarshalAsAttribute == null && notSpecialHandledValueType))
                 {
                     return Context.TypeInfoResolver.ResolveTypeInfo(type) != null;
                 }
-                if (type.IsValueType && !type.IsPrimitive && TypeProvider.MarshalAsAttribute == null && !type.IsSpecialHandledValueType())
-                {
-                    //struct
-                    return Context.TypeInfoResolver.ResolveTypeInfo(type) != null; //false;
-                }
+
                 return true;
             }
             catch (FileNotFoundException)
             {
+                // Assembly not found, or TypeLib not found...
                 return false;
             }
         }
