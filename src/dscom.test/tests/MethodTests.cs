@@ -615,7 +615,7 @@ public class MethodTest : BaseTest
     [InlineData(ComInterfaceType.InterfaceIsDual)]
     [InlineData(ComInterfaceType.InterfaceIsIDispatch)]
     [InlineData(ComInterfaceType.InterfaceIsIUnknown)]
-    public void IUnkownMethodWithMarshalAsUnmangedTypeErorAndPreserveSigWithRefParameter_ParameterFlagsIsFINAndFOUT(ComInterfaceType interfaceType)
+    public void IUnkownMethodWithMarshalAsUnmangedTypeErrorAndPreserveSigWithRefParameter_ParameterFlagsIsFINAndFOUT(ComInterfaceType interfaceType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{interfaceType}"))
                         .WithInterface("TestInterface")
@@ -868,7 +868,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsIUnknownWithMethodWithOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsIUnknownWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -924,7 +924,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsIDispatchWithMethodWithOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsIDispatchWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -980,7 +980,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsDualWithMethodWithOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsDualWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -1035,7 +1035,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsIUnknownWithMethodWithArrayOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsIUnknownWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -1083,7 +1083,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsIDispatchWithMethodWithArrayOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsIDispatchWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -1131,7 +1131,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsDualWithMethodWithArrayOutParameter_OutParamterIsCorrect(Type parameterType)
+    public void InterfaceIsDualWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")
@@ -1163,7 +1163,7 @@ public class MethodTest : BaseTest
     [InlineData(ComInterfaceType.InterfaceIsDual)]
     [InlineData(ComInterfaceType.InterfaceIsIDispatch)]
     [InlineData(ComInterfaceType.InterfaceIsIUnknown)]
-    public void InterfaceWithMethodWithArrayOutParameteMakeByRefTypeOfUserDefine_OutParamterIsCorrect(ComInterfaceType comInterfaceType)
+    public void InterfaceWithMethodWithArrayOutParameteMakeByRefTypeOfUserDefine_OutParameterIsCorrect(ComInterfaceType comInterfaceType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{comInterfaceType}"))
                         .WithInterface("CustomInterface")
@@ -1214,7 +1214,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    public void InterfaceIsDualWithMethodWithRefParameter_RefParamterIsCorrect(Type parameterType)
+    public void InterfaceIsDualWithMethodWithRefParameter_RefParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
                         .WithInterface("TestInterface")

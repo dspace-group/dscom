@@ -26,7 +26,7 @@ namespace dSPACE.Runtime.InteropServices;
 public static class TypeLibExporter
 {
     /// <summary>
-    /// Export a type library to a text fileas yaml.
+    /// Export a type library to a text file as yaml.
     /// Creates a new file, writes the specified string to the file, and then closes the file. If the target file already exists, it is overwritten.
     /// </summary>
     /// <param name="options">The options.</param>
@@ -42,14 +42,14 @@ public static class TypeLibExporter
             OleAut32.LoadTypeLibEx(tlbFile, REGKIND.NONE, out _).ThrowIfFailed();
         }
 
-        foreach (var tlbdirectory in options.TLBRefpath)
+        foreach (var tlbDirectory in options.TLBRefpath)
         {
-            if (!Directory.Exists(tlbdirectory))
+            if (!Directory.Exists(tlbDirectory))
             {
-                throw new ArgumentException($"Directory {tlbdirectory} not exist.");
+                throw new ArgumentException($"Directory {tlbDirectory} not exist.");
             }
 
-            foreach (var tlbFile in Directory.GetFiles(tlbdirectory, "*.tlb"))
+            foreach (var tlbFile in Directory.GetFiles(tlbDirectory, "*.tlb"))
             {
                 // Try to load any tlb found in the folder and ignore any fails.
                 OleAut32.LoadTypeLibEx(tlbFile, REGKIND.NONE, out _);

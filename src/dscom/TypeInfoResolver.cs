@@ -199,7 +199,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         OleAut32.LoadRegTypeLib(registeredTypeLib, majorVersion, minorVersion, Constants.LCID_NEUTRAL, out var typeLib)
             .ThrowIfFailed($"Failed to load type library {registeredTypeLib}.");
 
-        var indentifier = new TypeLibIdentifier
+        var identifier = new TypeLibIdentifier
         {
             Name = name,
             LanguageIdentifier = lcid,
@@ -208,7 +208,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
             MinorVersion = minorVersion
         };
 
-        _typeLibs.Add(indentifier, typeLib);
+        _typeLibs.Add(identifier, typeLib);
         UpdateTypeLibCache(typeLib);
     }
 
@@ -220,7 +220,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         {
             var libattr = Marshal.PtrToStructure<TYPELIBATTR>(libattrPtr);
             typeLib.GetDocumentation(-1, out var name, out var strDocString, out var dwHelpContext, out var strHelpFile);
-            var indentifier = new TypeLibIdentifier
+            var identifier = new TypeLibIdentifier
             {
                 Name = name,
                 LanguageIdentifier = libattr.lcid,
@@ -229,9 +229,9 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 MinorVersion = (ushort)libattr.wMinorVerNum
             };
 
-            if (!_typeLibs.ContainsKey(indentifier))
+            if (!_typeLibs.ContainsKey(identifier))
             {
-                _typeLibs.Add(indentifier, typeLib);
+                _typeLibs.Add(identifier, typeLib);
                 UpdateTypeLibCache(typeLib);
                 retValue = true;
             }

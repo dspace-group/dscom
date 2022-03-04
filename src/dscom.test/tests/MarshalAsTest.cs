@@ -448,7 +448,7 @@ public class MarshalAsTest : BaseTest
     }
 
     [Fact]
-    public void MethodWithParameterWithComUnsibleEnumAndValidMarshalAsAttribute_MethodIsAvailable()
+    public void MethodWithParameterWithComInvisibleEnumAndValidMarshalAsAttribute_MethodIsAvailable()
     {
         var result = CreateAssembly()
                         .WithEnum<int>("TestEnum")

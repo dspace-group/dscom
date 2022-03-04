@@ -26,7 +26,7 @@ public class TlbRegisterOptions
     public string TypeLibrary { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a value indicatin whether the type library should registered for use only by the calling user identity.
+    /// Gets or sets a value indication whether the type library should registered for use only by the calling user identity.
     /// </summary>
     /// <value></value>
     public bool ForUser { get; set; }

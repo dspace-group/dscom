@@ -26,7 +26,7 @@ public class TlbUnRegisterOptions
     public string TypeLibrary { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a value indicatin whether the type library should unregistered for use only by the calling user identity.
+    /// Gets or sets a value indication whether the type library should unregistered for use only by the calling user identity.
     /// </summary>
     /// <value></value>
     public bool ForUser { get; set; }
