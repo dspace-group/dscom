@@ -81,6 +81,18 @@ public class NamesTest : BaseTest
                                 .WithParameter<int>()
                                 .WithParameter<int>()
                             .Build()
+                            .WithMethod("TestMethod")
+                                .WithCustomAttribute<ComVisibleAttribute>(false)
+                                .WithParameter<int>()
+                                .WithParameter<int>()
+                                .WithParameter<int>()
+                            .Build()
+                            .WithMethod("TestMethod")
+                                .WithParameter<int>()
+                                .WithParameter<int>()
+                                .WithParameter<int>()
+                                .WithParameter<int>()
+                            .Build()
                         .Build()
                     .Build();
 
@@ -88,6 +100,10 @@ public class NamesTest : BaseTest
         typeInfo.Should().NotBeNull();
 
         typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod_2").Should().BeNull("TestMethod_2 should not be available");
+        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(2);
+        typeInfo!.GetFuncDescByName("TestMethod_2").Should().NotBeNull("TestMethod_2 should be available");
+        typeInfo!.GetFuncDescByName("TestMethod_2")!.Value.cParams.Should().Be(4);
+        typeInfo!.GetFuncDescByName("TestMethod_3").Should().BeNull("TestMethod_3 should not be available");
+        typeInfo!.GetFuncDescByName("TestMethod_4").Should().BeNull("TestMethod_4 should not be available");
     }
 }
