@@ -2,22 +2,16 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
+/// <summary>
+/// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct CUSTDATA
 {
-    /// <summary>
-    /// The number of custom data items in the prgCustData array.
-    /// </summary>
     public uint cCustData;
 
-    /// <summary>
-    /// The array of custom data items.
-    /// </summary>
     public IntPtr prgCustData;
 
-    /// <summary>
-    /// Gets the array of <see cref="CUSTDATAITEM"/> structures.
-    /// </summary>
     public CUSTDATAITEM[] Items
     {
         get

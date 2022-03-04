@@ -5,7 +5,9 @@ using System.Security;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
-
+/// <summary>
+/// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
+/// </summary>
 [StructLayout(LayoutKind.Explicit)]
 public struct HRESULT
 {

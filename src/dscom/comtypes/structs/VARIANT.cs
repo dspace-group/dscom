@@ -3,11 +3,7 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
 /// <summary>
-/// VARIANTARG describes arguments passed within DISPPARAMS, and VARIANT to specify variant data that cannot be passed by reference.
-/// <para>
-/// When a variant refers to another variant by using the VT_VARIANT | VT_BYREF vartype, the variant being referred to cannot also
-/// be of type VT_VARIANT | VT_BYREF.VARIANTs can be passed by value, even if VARIANTARGs cannot.
-/// </para>
+/// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
 [System.Security.SecurityCritical]

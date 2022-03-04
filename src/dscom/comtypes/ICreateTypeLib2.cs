@@ -2,6 +2,9 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
+/// <summary>
+/// For more information: https://docs.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-icreatetypelib2
+/// </summary>
 [ComImport, Guid("0002040F-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 public interface ICreateTypeLib2 : ICreateTypeLib
 {

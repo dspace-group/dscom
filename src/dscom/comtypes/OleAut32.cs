@@ -2,6 +2,9 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
+/// <summary>
+/// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_com/
+/// </summary>
 public class OleAut32
 {
     [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]

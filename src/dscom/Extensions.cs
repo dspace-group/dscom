@@ -96,6 +96,11 @@ public static class Extensions
         };
     }
 
+    /// <summary>
+    /// Check if the type is System.Void, System.Drawing, System.DateTime, System.Decimal or System.GUID.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns>Return true if the type is a special type; otherwise false.</returns>
     internal static bool IsSpecialHandledValueType(this Type type)
     {
         var typeAsString = type.ToString();
@@ -109,6 +114,7 @@ public static class Extensions
             _ => false
         };
     }
+
     internal static Type GetCLRType(this VarEnum varenum)
     {
         return varenum switch
