@@ -99,7 +99,7 @@ public static class TypeLibExporter
                 var isMatch = false;
                 foreach (var filter in filters)
                 {
-                    var path = $"{data.GetPath(false)}.{name}={value}";
+                    var path = $"{data.GetPath()}.{name}={value}";
 
                     if (filter.IsMatch(path))
                     {

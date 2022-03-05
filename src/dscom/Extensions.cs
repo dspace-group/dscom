@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices;
 
+[ExcludeFromCodeCoverage]
 public static class Extensions
 {
     /// <summary>
