@@ -31,26 +31,17 @@ internal class BaseInfo
     [Ignore]
     public BaseInfo? Parent { get; }
 
-    public string GetPath(bool considerIndex = false)
+    public string GetPath()
     {
         var name = !string.IsNullOrEmpty(ItemName) ? char.ToLowerInvariant(ItemName[0]) + ItemName.Substring(1) : string.Empty;
         if (Parent != null)
         {
             if (OwningCollection != null)
             {
-                if (considerIndex)
-                {
-                    var index = OwningCollection.ToList().IndexOf(this);
-                    if (index != -1)
-                    {
-                        return $"{Parent.GetPath(considerIndex)}.{name}[{index}]";
-                    }
-                }
-
-                return $"{Parent.GetPath(considerIndex)}.{name}[]";
+                return $"{Parent.GetPath()}.{name}[]";
             }
 
-            return $"{Parent.GetPath(considerIndex)}.{name}";
+            return $"{Parent.GetPath()}.{name}";
         }
 
         return name;
