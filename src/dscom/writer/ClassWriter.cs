@@ -36,7 +36,7 @@ internal class ClassWriter : TypeWriter
 
         base.CreateTypeInfo();
 
-        Context.LogVerbose($"Creating coclass {Name}");
+        Context.LogTypeExported(SourceType);
     }
 
     public override void Create()

@@ -49,11 +49,14 @@ internal sealed class WriterContext
 
     public NameResolver NameResolver { get; private set; }
 
-    public void LogVerbose(string message)
+    public void LogTypeExported(Type type)
     {
         if (Options.Verbose)
         {
-            Console.WriteLine($"Verbose: {message}");
+            if (NotifySink != null)
+            {
+                NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, $"Type '{type}' exported.");
+            }
         }
     }
 

@@ -35,20 +35,30 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
 
     public ITypeLibCache? TypeLibCache { get; set; }
 
-    public virtual void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
+    public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
     {
-        if (eventKind == ExporterEventKind.ERROR_REFTOINVALIDASSEMBLY)
+        switch (eventKind)
         {
-            Console.WriteLine($"TlbExp : error TX{eventCode:X8} : {eventMsg}");
-        }
-        if (eventKind == ExporterEventKind.NOTIF_CONVERTWARNING)
-        {
-            if (Options.Silence.Contains($"{eventCode}") || Options.Silence.Contains($"TX{eventCode:X8}"))
-            {
-                return;
-            }
+            case ExporterEventKind.NOTIF_TYPECONVERTED:
+                if (Options.Verbose && !Options.Silent)
+                {
+                    Console.WriteLine(eventMsg);
+                }
+                break;
+            case ExporterEventKind.NOTIF_CONVERTWARNING:
+                if (Options.Silent || Options.Silence.Contains($"{eventCode}") || Options.Silence.Contains($"TX{eventCode:X8}"))
+                {
+                    return;
+                }
 
-            Console.WriteLine($"TlbExp : warning TX{eventCode:X8} : {eventMsg}");
+                Console.Error.WriteLine($"dscom : warning TX{eventCode:X8} : {eventMsg}");
+                break;
+            default:
+                if (!Options.Silent)
+                {
+                    Console.WriteLine(eventMsg);
+                }
+                break;
         }
     }
 
