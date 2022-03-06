@@ -34,7 +34,7 @@ internal class StructWriter : TypeWriter
     }
     public override void Create()
     {
-        Context.LogVerbose($"Creating struct {Name}");
+        Context.LogTypeExported(SourceType);
 
         uint index = 0;
 

@@ -57,10 +57,9 @@ internal class LibraryWriter : BaseWriter
             {
                 typeLib.SetDocString(description);
             }
+
             Context.TypeInfoResolver.AddTypeLib((ITypeLib)typeLib);
             Context.TypeInfoResolver.AddAdditionalTypeLibs();
-
-            Context.LogVerbose($"Creating typelib {name} {guid}");
 
             if (!string.IsNullOrEmpty(Context.Options.Out))
             {

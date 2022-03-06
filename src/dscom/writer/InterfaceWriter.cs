@@ -57,7 +57,7 @@ internal abstract class InterfaceWriter : TypeWriter
     public override void Create()
     {
         DispatchIdCreator = new DispatchIdCreator(this, ComInterfaceType == ComInterfaceType.InterfaceIsIUnknown);
-        Context.LogVerbose($"Creating {TypeKind} {TypeFlags} {FuncKind} {Name}");
+        Context.LogTypeExported(SourceType);
 
         if (IsDisposed)
         {

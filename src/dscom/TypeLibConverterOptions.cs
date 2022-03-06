@@ -71,25 +71,4 @@ public class TypeLibConverterOptions
     /// Gets or sets the type library GUID.
     /// </summary>
     public Guid OverrideTlbId { get; set; } = Guid.Empty;
-
-    /// <summary>
-    /// Returns a string that represents this object.
-    /// </summary>
-    /// <returns>A string.</returns>
-    public override string ToString()
-    {
-        return
-$@"
-AssemblyName:  {Assembly}
-Out:           {Out}
-TLBReference:  {string.Join(", ", TLBReference ?? Array.Empty<string>())}  
-TLBRefpath:    {string.Join(", ", TLBRefpath ?? Array.Empty<string>())}
-ASMPath:       {string.Join(", ", ASMPath ?? Array.Empty<string>())}
-Silent:        {Silent}
-Silence:       {string.Join(", ", Silence ?? Array.Empty<string>())}
-Verbose:       {Verbose}
-Names:         {string.Join(", ", Names ?? Array.Empty<string>())}
-OverrideTlbId: {OverrideTlbId}
-";
-    }
 }
