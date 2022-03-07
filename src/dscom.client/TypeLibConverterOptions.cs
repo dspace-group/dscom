@@ -15,36 +15,10 @@
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
-///  Represents the options for a type library converter.
+///  Represents the options used by dscom tlbexport.
 /// </summary>
-public class TypeLibConverterOptions
+public class TypeLibConverterOptions : TypeLibConverterSettings
 {
-    /// <summary>
-    /// Gets or sets output TLB file name.
-    /// </summary>
-    public string Out { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the assembly.
-    /// </summary>
-    public string Assembly { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets a type libaray reference.
-    /// </summary>
-    public string[] TLBReference { get; set; } = Array.Empty<string>();
-
-    /// <summary>
-    /// Gets or sets a path to directory of type libraries.
-    /// </summary>
-    /// <typeparam name="string"></typeparam>
-    /// <returns></returns>
-    public string[] TLBRefpath { get; set; } = Array.Empty<string>();
-
-    /// <summary>
-    /// Gets or sets a path to a directory with assemblies.
-    /// </summary>
-    public string[] ASMPath { get; set; } = Array.Empty<string>();
 
     /// <summary>
     /// Gets or sets a value indicating whether the output is silent.
@@ -66,9 +40,4 @@ public class TypeLibConverterOptions
     /// Gets or sets a value indicating whether the output should be verbose.
     /// </summary>
     public bool Verbose { get; set; }
-
-    /// <summary>
-    /// Gets or sets the type library GUID.
-    /// </summary>
-    public Guid OverrideTlbId { get; set; } = Guid.Empty;
 }
