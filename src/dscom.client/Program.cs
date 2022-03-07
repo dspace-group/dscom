@@ -223,12 +223,12 @@ public static class ConsoleApp
         }
 
         var hresult = OleAut32.LoadTypeLibEx(typeLibFilePath, REGKIND.NONE, out var typeLib);
-        hresult.ThrowIfFailed($"Failed to load typelib {typeLibFilePath} {hresult}");
+        hresult.ThrowIfFailed($"Failed to load typelib {typeLibFilePath}");
 
         hresult = forUser
             ? OleAut32.RegisterTypeLibForUser(typeLib, typeLibFilePath, Path.GetDirectoryName(typeLibFilePath)!)
             : OleAut32.RegisterTypeLib(typeLib, typeLibFilePath, Path.GetDirectoryName(typeLibFilePath)!);
-        hresult.ThrowIfFailed($"Failed registered type library {typeLibFilePath} {hresult}");
+        hresult.ThrowIfFailed($"Failed registered type library {typeLibFilePath}");
 
         Console.WriteLine("Type library was registered successfully");
     }
@@ -246,7 +246,7 @@ public static class ConsoleApp
         try
         {
             var hresult = OleAut32.LoadTypeLibEx(typeLibFilePath, REGKIND.NONE, out typeLib);
-            hresult.ThrowIfFailed($"Failed to load typelib {typeLibFilePath} {hresult}");
+            hresult.ThrowIfFailed($"Failed to load typelib {typeLibFilePath}");
 
             typeLib.GetLibAttr(out ppTLibAttr);
             var typeLibAttr = Marshal.PtrToStructure<TYPELIBATTR>(ppTLibAttr);
@@ -254,7 +254,7 @@ public static class ConsoleApp
                 ? OleAut32.UnRegisterTypeLibForUser(typeLibAttr.guid, (ushort)typeLibAttr.wMajorVerNum, (ushort)typeLibAttr.wMinorVerNum, typeLibAttr.lcid, typeLibAttr.syskind)
                 : OleAut32.UnRegisterTypeLib(typeLibAttr.guid, (ushort)typeLibAttr.wMajorVerNum, (ushort)typeLibAttr.wMinorVerNum, typeLibAttr.lcid, typeLibAttr.syskind);
 
-            hresult.ThrowIfFailed($"Failed unregister type library {typeLibFilePath} {hresult}");
+            hresult.ThrowIfFailed($"Failed unregister type library {typeLibFilePath}");
         }
         finally
         {

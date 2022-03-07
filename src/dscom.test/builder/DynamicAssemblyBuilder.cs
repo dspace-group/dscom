@@ -82,7 +82,8 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
             var options = new TypeLibExporterOptions()
             {
                 Out = $"{TypeLibPath}.yaml",
-                TypeLibrary = TypeLibPath
+                TypeLibrary = TypeLibPath,
+                FilterRegex = new string[] { "file" }
             };
 
             TypeLibExporter.ExportToYaml(options);

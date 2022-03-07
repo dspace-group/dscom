@@ -42,25 +42,23 @@ public class TypeLibConverter
     /// <returns>An object that implements the <see langword="ITypeLib" /> interface.</returns>
     public object? ConvertAssemblyToTypeLib(Assembly assembly, TypeLibConverterSettings options, ITypeLibExporterNotifySink? notifySink)
     {
+        CheckPlatform();
+
+        OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, options.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
+
+        using var writer = new LibraryWriter(assembly, new WriterContext(options, typelib, notifySink));
+        writer.Create();
+
+        return typelib;
+    }
+
+    [ExcludeFromCodeCoverage] // UnitTest on different platforms is not supported
+    private static void CheckPlatform()
+    {
         // Only windows is supported
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             throw new PlatformNotSupportedException();
         }
-
-        OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, options.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
-
-        try
-        {
-            using var writer = new LibraryWriter(assembly, new WriterContext(options, typelib, notifySink));
-            writer.Create();
-        }
-        catch (FileNotFoundException e)
-        {
-            notifySink?.ReportEvent(ExporterEventKind.ERROR_REFTOINVALIDASSEMBLY, HRESULT.E_FAIL, e.Message);
-            throw;
-        }
-
-        return typelib;
     }
 }

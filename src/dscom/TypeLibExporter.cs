@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,12 +34,16 @@ public static class TypeLibExporter
     /// <param name="options">The options.</param>
     public static void ExportToYaml(TypeLibExporterOptions options)
     {
-        // Only windows is supported
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            throw new PlatformNotSupportedException();
-        }
+        CheckPlatform();
 
+        LoadTypeLibrariesFromOptions(options);
+
+        File.WriteAllText(options.Out, GetYamlTextFromTlb(options.TypeLibrary, options.FilterRegex));
+    }
+
+    [ExcludeFromCodeCoverage] // UnitTest with dependent type libraries is not supported
+    private static void LoadTypeLibrariesFromOptions(TypeLibExporterOptions options)
+    {
         foreach (var tlbFile in options.TLBReference)
         {
             if (!File.Exists(tlbFile))
@@ -62,8 +67,17 @@ public static class TypeLibExporter
                 OleAut32.LoadTypeLibEx(tlbFile, REGKIND.NONE, out _);
             }
         }
+    }
 
-        File.WriteAllText(options.Out, GetYamlTextFromTlb(options.TypeLibrary, options.FilterRegex));
+    // UnitTest on different platforms is not supported
+    [ExcludeFromCodeCoverage]
+    private static void CheckPlatform()
+    {
+        // Only windows is supported
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException();
+        }
     }
 
     private static string GetYamlTextFromTlb(string inputTlb, string[]? filters)
