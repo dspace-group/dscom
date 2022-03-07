@@ -66,7 +66,7 @@ internal class ClassWriter : TypeWriter
         var interfaces = SourceType.GetInterfaces();
         foreach (var currentInterface in interfaces)
         {
-            if (!currentInterface.IsComVisible() || Context.TypeInfoResolver.ResolveTypeInfo(currentInterface) == null)
+            if (!currentInterface.IsComVisible())
             {
                 continue;
             }
