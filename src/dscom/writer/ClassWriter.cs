@@ -72,30 +72,37 @@ internal class ClassWriter : TypeWriter
             }
 
             var referencedTypeInfo = Context.TypeInfoResolver.ResolveTypeInfo(currentInterface);
-
-            TypeInfo.AddRefTypeInfo(referencedTypeInfo, out var phRefType)
-                .ThrowIfFailed($"Failed to add reference type {SourceType}.");
-            TypeInfo.AddImplType(index, phRefType)
-                .ThrowIfFailed($"Failed to add interface {currentInterface.Name} to {SourceType}.");
-
-            //check for attributation
-            if (SourceType.GetCustomAttributes<ComDefaultInterfaceAttribute>().Any(y => y.Value == currentInterface))
+            if (referencedTypeInfo != null)
             {
-                TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
-                    .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT for {currentInterface.Name}.");
-                defaultInterfaceSet = true;
-            }
+                TypeInfo.AddRefTypeInfo(referencedTypeInfo, out var phRefType)
+                    .ThrowIfFailed($"Failed to add reference type {SourceType}.");
+                TypeInfo.AddImplType(index, phRefType)
+                    .ThrowIfFailed($"Failed to add interface {currentInterface.Name} to {SourceType}.");
 
-            if (currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().Any())
-            {
-                if (SourceType.GetCustomAttributes<ComSourceInterfacesAttribute>().Any(y => y.Value == currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().First().SourceInterface.FullName))
+                //check for attributation
+                if (SourceType.GetCustomAttributes<ComDefaultInterfaceAttribute>().Any(y => y.Value == currentInterface))
                 {
-                    TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE)
-                        .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE for {currentInterface.Name}.");
+                    TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
+                        .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT for {currentInterface.Name}.");
                     defaultInterfaceSet = true;
                 }
+
+                if (currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().Any())
+                {
+                    if (SourceType.GetCustomAttributes<ComSourceInterfacesAttribute>().Any(y => y.Value == currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().First().SourceInterface.FullName))
+                    {
+                        TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE)
+                            .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE for {currentInterface.Name}.");
+                        defaultInterfaceSet = true;
+                    }
+                }
+                index++;
             }
-            index++;
+            else
+            {
+                Context.NotifySink!.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, 0, $"ComVisible interface {currentInterface} could not be added to source type {SourceType}.");
+            }
+
         }
 
         //check for ComSourceInterfaces
