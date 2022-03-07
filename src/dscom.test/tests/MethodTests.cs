@@ -1340,4 +1340,54 @@ public class MethodTest : BaseTest
 
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FHASDEFAULT);
     }
+
+    [Theory]
+    [InlineData(typeof(byte))]
+    [InlineData(typeof(sbyte))]
+    [InlineData(typeof(short))]
+    [InlineData(typeof(ushort))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(int))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(long))]
+    [InlineData(typeof(float))]
+    [InlineData(typeof(double))]
+    [InlineData(typeof(string))]
+    [InlineData(typeof(bool))]
+    [InlineData(typeof(char))]
+    [InlineData(typeof(object))]
+    [InlineData(typeof(IEnumerator))]
+    [InlineData(typeof(DateTime))]
+    [InlineData(typeof(Guid))]
+    [InlineData(typeof(System.Drawing.Color))]
+    [InlineData(typeof(decimal))]
+    public void MethodWithRefInParameter_ParameterIsIDLFLAGFIN(Type parameterType)
+    {
+        var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
+                        .WithInterface("TestInterface")
+                            .WithMethod("TestMethod")
+                                .WithParameter(parameterType.MakeByRefType())
+                                .WithParameterCustomAttribute<InAttribute>(0)
+                            .Build()
+                        .Build()
+                    .Build();
+
+        //check for interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface not found");
+
+        //check for method
+        using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
+        funcDescByName.Should().NotBeNull();
+        var funcDesc = funcDescByName!.Value;
+
+        // Check number of parameters
+        funcDesc.cParams.Should().Be(1);
+
+        // Get first parameter
+        var parameter = funcDesc.GetParameter(0);
+        parameter.Should().NotBeNull();
+
+        parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FIN);
+    }
 }
