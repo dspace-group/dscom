@@ -92,13 +92,14 @@ internal class ParameterWriter : ElemDescBasedWriter
 
     private void CalculateFlags()
     {
-        if (ParameterInfo.IsOut || ParameterInfo.ParameterType.IsByRef || _isTransformedOutParameter)
+        var hasInAttribute = ParameterInfo.Member != null && ParameterInfo.GetCustomAttribute<InAttribute>() != null;
+        if (ParameterInfo.IsOut || (ParameterInfo.ParameterType.IsByRef && !hasInAttribute) || _isTransformedOutParameter)
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FOUT;
             _pARAMFlags |= PARAMFLAG.PARAMFLAG_FOUT;
         }
 
-        if (ParameterInfo.IsIn || (!ParameterInfo.IsRetval && !ParameterInfo.IsOut && !_isTransformedOutParameter))
+        if (ParameterInfo.IsIn || hasInAttribute || (!ParameterInfo.IsRetval && !ParameterInfo.IsOut && !_isTransformedOutParameter))
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FIN;
             _pARAMFlags |= PARAMFLAG.PARAMFLAG_FIN;
