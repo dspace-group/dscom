@@ -73,7 +73,11 @@ internal class MethodWriter : BaseWriter
     /// Gets a value indicating whether this instance of MethodWriter is valid to generate a FuncDesc.
     /// </summary>
     /// <value>true if valid; otherwise false</value>
-    public bool IsValid => !MethodInfo.IsGenericMethod && IsComVisible && ParameterWriters.All(z => z.IsValid) && ReturnParamWriter != null && ReturnParamWriter.IsValid;
+    public bool IsValid => IsVisibleMethod && HasValidParameters;
+
+    public bool HasValidParameters => ParameterWriters.All(z => z.IsValid) && ReturnParamWriter != null && ReturnParamWriter.IsValid;
+
+    public bool IsVisibleMethod => !MethodInfo.IsGenericMethod && IsComVisible;
 
     public int FunctionIndex { get; set; } = -1;
 

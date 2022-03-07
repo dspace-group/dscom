@@ -95,7 +95,7 @@ internal abstract class InterfaceWriter : TypeWriter
 
         foreach (var method in methods)
         {
-            var numIdenticalNames = MethodWriter.Count(z => z.IsValid && (z.MemberInfo.Name == method.Name || z.MethodName.StartsWith(method.Name + "_", StringComparison.Ordinal)));
+            var numIdenticalNames = MethodWriter.Count(z => z.IsVisibleMethod && (z.MemberInfo.Name == method.Name || z.MethodName.StartsWith(method.Name + "_", StringComparison.Ordinal)));
 
             numIdenticalNames += GetMethodNamesOfBaseTypeInfo(BaseTypeInfo).Count(z => z == method.Name || z.StartsWith(method.Name + "_", StringComparison.Ordinal));
 
