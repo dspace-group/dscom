@@ -14,6 +14,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
 using dSPACE.Runtime.InteropServices.Writer;
 
@@ -41,6 +42,12 @@ public class TypeLibConverter
     /// <returns>An object that implements the <see langword="ITypeLib" /> interface.</returns>
     public object? ConvertAssemblyToTypeLib(Assembly assembly, TypeLibConverterSettings options, ITypeLibExporterNotifySink? notifySink)
     {
+        // Only windows is supported
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, options.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
 
         try

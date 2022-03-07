@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using dSPACE.Runtime.InteropServices.ComTypes;
@@ -32,6 +33,12 @@ public static class TypeLibExporter
     /// <param name="options">The options.</param>
     public static void ExportToYaml(TypeLibExporterOptions options)
     {
+        // Only windows is supported
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         foreach (var tlbFile in options.TLBReference)
         {
             if (!File.Exists(tlbFile))
