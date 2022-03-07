@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -39,6 +40,7 @@ internal class HResultParamInfo : ParameterInfo
         return returnAttributes.ToArray();
     }
 
+    [ExcludeFromCodeCoverage] // Not currently used, but will be implemented to fully support overloading of GetCustomAttributes
     public override object[] GetCustomAttributes(bool inherit)
     {
         List<object> returnAttributes = new();
@@ -50,6 +52,8 @@ internal class HResultParamInfo : ParameterInfo
         return returnAttributes.ToArray();
     }
 
+
+    [ExcludeFromCodeCoverage] // Not currently used, but will be implemented to fully support overloading of GetCustomAttribute
     public override bool IsDefined(Type attributeType, bool inherit)
     {
         if (attributeType == typeof(MarshalAsAttribute))
