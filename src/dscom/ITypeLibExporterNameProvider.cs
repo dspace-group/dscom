@@ -15,12 +15,12 @@
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
-/// Provides an array of names.
+/// Provides a list of names that can be used to specify the casing of type library elements.
 /// </summary>
 public interface ITypeLibExporterNameProvider
 {
     /// <summary>
-    /// Return an array of names.
+    /// Returns a list of names that can be used to specify the casing of type library elements.
     /// </summary>
     string[] GetNames();
 }

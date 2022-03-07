@@ -19,7 +19,6 @@ namespace dSPACE.Runtime.InteropServices;
 /// </summary>
 public class TypeLibConverterOptions : TypeLibConverterSettings
 {
-
     /// <summary>
     /// Gets or sets a value indicating whether the output is silent.
     /// </summary>

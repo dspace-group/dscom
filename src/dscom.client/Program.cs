@@ -176,6 +176,7 @@ public static class ConsoleApp
                     options.Out = Path.Combine(Directory.GetCurrentDirectory(), tlbfilename);
                 }
 
+                // Is disposed at the end of the method
                 using var assemblyResolver = new AssemblyResolver(options);
 
                 var assembly = Assembly.LoadFrom(options.Assembly);
