@@ -95,7 +95,7 @@ public static class ConsoleApp
 #else
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to register type library. {e.Message}");
+                Console.Error.WriteLine($"Failed to register type library. {e.Message}");
                 return 1;
             }
 #endif
@@ -119,7 +119,7 @@ public static class ConsoleApp
 #else
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to register type library. {e.Message}");
+                Console.Error.WriteLine($"Failed to register type library. {e.Message}");
                 return 1;
             }
 #endif
@@ -150,7 +150,7 @@ public static class ConsoleApp
 #else
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to dump type library. {e.Message} {e.InnerException?.Message}");
+                Console.Error.WriteLine($"Failed to dump type library. {e.Message} {e.InnerException?.Message}");
                 return 1;
             }
 #endif
@@ -191,11 +191,10 @@ public static class ConsoleApp
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine($"Error: {e.Message}");
+                Console.Error.WriteLine(e.Message);
                 if (e.InnerException != null)
                 {
-                    Console.WriteLine($"Error: Exception caught: {e.InnerException.Message}");
+                    Console.Error.WriteLine($"Exception caught: {e.InnerException.Message}");
                 }
 
                 return 1;
@@ -211,6 +210,12 @@ public static class ConsoleApp
 
     private static void RegisterTypeLib(string typeLibFilePath, bool forUser = false)
     {
+        // Only windows is supported
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         if (!File.Exists(typeLibFilePath))
         {
             throw new ArgumentException($"File {typeLibFilePath} not found");
@@ -229,6 +234,12 @@ public static class ConsoleApp
 
     private static void UnRegisterTypeLib(string typeLibFilePath, bool forUser)
     {
+        // Only windows is supported
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         ITypeLib? typeLib = null;
         var ppTLibAttr = IntPtr.Zero;
         try
