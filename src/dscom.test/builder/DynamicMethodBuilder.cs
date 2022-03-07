@@ -39,7 +39,7 @@ internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
 
     public List<ParameterItem> ParamterItems { get; } = new();
 
-    public Tuple<Type, object>[]? ParamAttributes { get; set; }
+    public Tuple<Type, object?>[]? ParamAttributes { get; set; }
 
     public Dictionary<int, Tuple<FieldInfo[], object?[]>> ParamAttributesFieldValues { get; set; } = new();
 
@@ -80,9 +80,17 @@ internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
         return this;
     }
 
+    public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex)
+    {
+        var attributes = ParamAttributes ?? new Tuple<Type, object?>[ParamterItems == null ? 0 : ParamterItems.Count];
+        attributes[parameterIndex] = new(typeof(T), null);
+        ParamAttributes = attributes;
+        return this;
+    }
+
     public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex, object value)
     {
-        var attributes = ParamAttributes ?? new Tuple<Type, object>[ParamterItems == null ? 0 : ParamterItems.Count];
+        var attributes = ParamAttributes ?? new Tuple<Type, object?>[ParamterItems == null ? 0 : ParamterItems.Count];
         attributes[parameterIndex] = new(typeof(T), value);
         ParamAttributes = attributes;
         return this;
@@ -90,7 +98,7 @@ internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
 
     public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex, object value, FieldInfo[] namedFields, object?[] fieldValues)
     {
-        var attributes = ParamAttributes ?? new Tuple<Type, object>[ParamterItems == null ? 0 : ParamterItems.Count];
+        var attributes = ParamAttributes ?? new Tuple<Type, object?>[ParamterItems == null ? 0 : ParamterItems.Count];
         attributes[parameterIndex] = new(typeof(T), value);
         ParamAttributes = attributes;
         ParamAttributesFieldValues[parameterIndex] = new(namedFields, fieldValues);
@@ -134,15 +142,18 @@ internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
                 if ((ParamAttributes.Length > index - 1) && ParamAttributes.GetValue(index - 1) != null)
                 {
                     var attributeParam = ParamAttributes[index - 1].Item2;
-                    var typeAttributeParam = ParamAttributes[index - 1].Item2 == null ? typeof(object) : ParamAttributes[index - 1].Item2.GetType();
+                    var typeAttributeParam = ParamAttributes[index - 1].Item2 == null ? typeof(object) : ParamAttributes[index - 1].Item2?.GetType();
                     var typeAttribute = ParamAttributes[index - 1].Item1;
-                    var attributeConstructor = typeAttribute.GetConstructor(new Type[] { typeAttributeParam });
+
+                    var attributeConstructor = attributeParam != null && typeAttributeParam != null ? typeAttribute.GetConstructor(new Type[] { typeAttributeParam }) : typeAttribute.GetConstructor(Array.Empty<Type>());
 
                     ParamAttributesFieldValues.TryGetValue(index - 1, out var fields);
 
-                    var attributeBuilder = fields != null
-                        ? new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam }, fields.Item1, fields.Item2)
-                        : new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam });
+                    var attributeBuilder = attributeParam == null
+                        ? new CustomAttributeBuilder(attributeConstructor!, Array.Empty<object>())
+                        : fields != null
+                            ? new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam }, fields.Item1, fields.Item2)
+                            : new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam });
                     paramBuilder.SetCustomAttribute(attributeBuilder);
                 }
             }
