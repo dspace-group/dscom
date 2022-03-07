@@ -100,7 +100,7 @@ internal class ClassWriter : TypeWriter
             }
             else
             {
-                this.Context.NotifySink.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, 0, $"ComVisible interface {currentInterface} could not be added to source type {SourceType}.");
+                Context.NotifySink!.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, 0, $"ComVisible interface {currentInterface} could not be added to source type {SourceType}.");
             }
 
         }
