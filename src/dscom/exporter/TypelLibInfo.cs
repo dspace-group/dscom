@@ -29,10 +29,7 @@ internal class TypelLibInfo : BaseInfo
         File = file;
 
         var hresult = OleAut32.LoadTypeLibEx(file, REGKIND.NONE, out var typelib);
-        if (hresult != HRESULT.S_OK)
-        {
-            throw new COMException(hresult.ToString());
-        }
+        hresult.ThrowIfFailed();
 
         if (typelib is not ITypeLib2 typelib2)
         {
