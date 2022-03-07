@@ -317,6 +317,14 @@ internal class TypeProvider
                 }
                 else if (type.IsArray)
                 {
+                    if (marshalTo != null)
+                    {
+                        return marshalTo.Value switch
+                        {
+                            UnmanagedType.LPArray => VarEnum.VT_PTR,
+                            _ => VarEnum.VT_SAFEARRAY,
+                        };
+                    }
                     return VarEnum.VT_SAFEARRAY;
                 }
                 else if (!type.IsGenericType && type.BaseType == typeof(MulticastDelegate))
