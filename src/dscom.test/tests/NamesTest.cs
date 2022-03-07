@@ -106,4 +106,66 @@ public class NamesTest : BaseTest
         typeInfo!.GetFuncDescByName("TestMethod_3").Should().BeNull("TestMethod_3 should not be available");
         typeInfo!.GetFuncDescByName("TestMethod_4").Should().BeNull("TestMethod_4 should not be available");
     }
+
+    [Fact]
+    public void InterfaceWithInvalidMarshalAsParameter_NameSuffixCounts()
+    {
+        var result = CreateAssembly()
+                        .WithInterface("TestInterface")
+                            .WithMethod("TestMethod")
+                                .WithParameter<bool>()
+                            .Build()
+                            .WithMethod("TestMethod")
+                                .WithParameter<bool>()
+                                .WithParameter<bool>()
+                                .WithParameterCustomAttribute<MarshalAsAttribute>(0, UnmanagedType.Interface)
+                            .Build()
+                            .WithMethod("TestMethod")
+                                .WithParameter<bool>()
+                                .WithParameter<bool>()
+                                .WithParameter<bool>()
+                            .Build()
+                        .Build()
+                    .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull();
+
+        typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
+        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(1);
+        typeInfo!.GetFuncDescByName("TestMethod_3").Should().NotBeNull("TestMethod should be available");
+        typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams.Should().Be(3);
+
+        typeInfo!.GetFuncDescByName("TestMethod_2").Should().BeNull("TestMethod should not be available");
+    }
+
+    [Fact]
+    public void InterfaceWithInvalidGenericParameter_NameSuffixCounts()
+    {
+        var result = CreateAssembly()
+                        .WithInterface("TestInterface")
+                            .WithMethod("TestMethod")
+                                .WithParameter<bool>()
+                            .Build()
+                            .WithMethod("TestMethod")
+                                .WithParameter<Func<bool>>()
+                            .Build()
+                            .WithMethod("TestMethod")
+                                .WithParameter<bool>()
+                                .WithParameter<bool>()
+                                .WithParameter<bool>()
+                            .Build()
+                        .Build()
+                    .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull();
+
+        typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
+        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(1);
+        typeInfo!.GetFuncDescByName("TestMethod_3").Should().NotBeNull("TestMethod should be available");
+        typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams.Should().Be(3);
+
+        typeInfo!.GetFuncDescByName("TestMethod_2").Should().BeNull("TestMethod should not be available");
+    }
 }
