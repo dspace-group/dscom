@@ -18,7 +18,7 @@ namespace dSPACE.Runtime.InteropServices;
 
 internal sealed class WriterContext
 {
-    public WriterContext(TypeLibConverterOptions options, ICreateTypeLib2 targetTypeLib, ITypeLibExporterNotifySink? notifySink)
+    public WriterContext(TypeLibConverterSettings options, ICreateTypeLib2 targetTypeLib, ITypeLibExporterNotifySink? notifySink)
     {
         Options = options;
         TargetTypeLib = targetTypeLib;
@@ -45,18 +45,15 @@ internal sealed class WriterContext
 
     public TypeInfoResolver TypeInfoResolver { get; private set; }
 
-    public TypeLibConverterOptions Options { get; private set; }
+    public TypeLibConverterSettings Options { get; private set; }
 
     public NameResolver NameResolver { get; private set; }
 
     public void LogTypeExported(Type type)
     {
-        if (Options.Verbose)
+        if (NotifySink != null)
         {
-            if (NotifySink != null)
-            {
-                NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, $"Type '{type}' exported.");
-            }
+            NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, $"Type '{type}' exported.");
         }
     }
 
