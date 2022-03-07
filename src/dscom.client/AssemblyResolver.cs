@@ -16,6 +16,9 @@ using System.Reflection;
 
 namespace dSPACE.Runtime.InteropServices;
 
+/// <summary>
+/// Uses the "ASMPath" option to handle the AppDomain.CurrentDomain.AssemblyResolve event and try to load the specified assemblies.
+/// </summary>
 internal class AssemblyResolver : IDisposable
 {
     private bool _disposedValue;
