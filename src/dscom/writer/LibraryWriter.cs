@@ -126,7 +126,7 @@ internal class LibraryWriter : BaseWriter
                 continue;
             }
 
-            if (!type.IsPublic)
+            if (!type.IsPublic && !type.IsNestedPublic)
             {
                 continue;
             }
