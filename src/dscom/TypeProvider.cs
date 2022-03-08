@@ -327,10 +327,6 @@ internal class TypeProvider
                     }
                     return VarEnum.VT_SAFEARRAY;
                 }
-                else if (!type.IsGenericType && type.BaseType == typeof(MulticastDelegate))
-                {
-                    return VarEnum.VT_UNKNOWN;
-                }
                 else if (type.IsValueType && !type.IsPrimitive && !type.IsEnum)
                 {
                     //struct
