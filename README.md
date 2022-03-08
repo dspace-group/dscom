@@ -39,3 +39,5 @@ Commands:
   tlbregister <TypeLibrary>    Register a type library
   tlbunregister <TypeLibrary>  Unregister a type library
 ```
+
+> The documentation is under construction.
