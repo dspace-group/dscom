@@ -252,6 +252,8 @@ public static class Extensions
                 return VarEnum.VT_VARIANT;
             case "System.Void":
                 return VarEnum.VT_VOID;
+            case "System.IntPtr":
+                return VarEnum.VT_I8;
             case "System.Drawing.Color":
             case "System.Guid":
             case "System.Enum":
