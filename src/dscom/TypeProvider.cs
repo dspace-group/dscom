@@ -22,7 +22,6 @@ internal class TypeProvider
     public TypeProvider(WriterContext context, ICustomAttributeProvider customAttributeProvider, bool isMethod = true)
     {
         Context = context;
-        CustomAttributeProvider = customAttributeProvider;
         IsMethod = isMethod;
         if (customAttributeProvider != null)
         {
@@ -36,8 +35,9 @@ internal class TypeProvider
 
     public WriterContext Context { get; }
 
-    public ICustomAttributeProvider? CustomAttributeProvider { get; }
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the type should be used for a property or method or, in the if the value is false, for a field in a struct.
+    /// </summary>
     public bool IsMethod { get; } = true;
 
     public VarEnum GetVariantType(Type type, out VarEnum? parentLevel, bool isSafeArraySubType = false)
