@@ -468,4 +468,102 @@ public class MarshalAsTest : BaseTest
 
         type!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
     }
+
+    [Theory]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.I4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.I4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.I4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.U4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.U4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.U4, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.Interface, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.Interface, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.Interface, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.AsAny, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.AsAny, VarEnum.VT_I4)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.AsAny, VarEnum.VT_I4)]
+    public void PropertyWithEnumAndValidMarshalAsAttribute_ParameterTypeIsCorrect(ComInterfaceType interfaceType, UnmanagedType marshalTo, VarEnum resultType)
+    {
+        var result = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: $"{interfaceType}{marshalTo}{resultType}"))
+                .WithEnum<int>("TestEnum")
+                    .WithLiteral("A", 1)
+                .Build(out var testEnum)
+                .WithInterface("TestInterface")
+                    .WithCustomAttribute<InterfaceTypeAttribute>(interfaceType)
+                    .WithProperty("TestProperty", testEnum!)
+                        .WithReturnTypeCustomAttribute<MarshalAsAttribute>(marshalTo)
+                        .WithParameterCustomAttribute<MarshalAsAttribute>(marshalTo)
+                    .Build()
+                .Build()
+            .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface should be generated");
+
+        // Check setter
+        using var funcDescSet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF);
+
+        // check first parameter
+        var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
+        firstParam.tdesc.GetVarEnum().Should().Be(resultType);
+
+        // Check getter
+        using var funcDescGet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYGET);
+        funcDescGet.Should().NotBeNull();
+
+        if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)
+        {
+            // Return type should be VT_HRESULT
+            funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT);
+
+            // check first parameter
+            firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
+            firstParam.tdesc.GetVarEnum().Should().Be(resultType);
+        }
+        else
+        {
+            // Check return value
+            funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(resultType);
+        }
+    }
+
+    [Theory]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.BStr)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.BStr)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.BStr)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.HString)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.HString)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.HString)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.LPArray)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.LPArray)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.LPArray)]
+    [InlineData(ComInterfaceType.InterfaceIsDual, UnmanagedType.SafeArray)]
+    [InlineData(ComInterfaceType.InterfaceIsIDispatch, UnmanagedType.SafeArray)]
+    [InlineData(ComInterfaceType.InterfaceIsIUnknown, UnmanagedType.SafeArray)]
+    public void PropertyWithEnumAndInvalidMarshalAsAttribute_ParameterTypeIsCorrect(ComInterfaceType interfaceType, UnmanagedType marshalTo)
+    {
+        var result = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: $"{interfaceType}{marshalTo}"))
+                .WithEnum<int>("TestEnum")
+                    .WithLiteral("A", 1)
+                .Build(out var testEnum)
+                .WithInterface("TestInterface")
+                    .WithCustomAttribute<InterfaceTypeAttribute>(interfaceType)
+                    .WithProperty("TestProperty", testEnum!)
+                        .WithReturnTypeCustomAttribute<MarshalAsAttribute>(marshalTo)
+                        .WithParameterCustomAttribute<MarshalAsAttribute>(marshalTo)
+                    .Build()
+                .Build()
+            .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull();
+
+        // Check setter
+        using var funcDescSet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF);
+        funcDescSet.Should().BeNull();
+
+        // Check getter
+        using var funcDescGet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYGET);
+        funcDescGet.Should().BeNull();
+    }
 }
