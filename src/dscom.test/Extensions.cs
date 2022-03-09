@@ -260,6 +260,19 @@ public static class Extensions
             default:
                 if (varEnum.IsInterface)
                 {
+                    var guidAttribute = varEnum.GetCustomAttribute<GuidAttribute>();
+                    if (guidAttribute != null)
+                    {
+                        if (guidAttribute.Value == "00020400-0000-0000-C000-000000000046")
+                        {
+                            return VarEnum.VT_DISPATCH;
+                        }
+                        else if (guidAttribute.Value == "00000000-0000-0000-C000-000000000046")
+                        {
+                            return VarEnum.VT_UNKNOWN;
+                        }
+                    }
+
                     return VarEnum.VT_PTR;
                 }
                 else if (varEnum.IsArray)

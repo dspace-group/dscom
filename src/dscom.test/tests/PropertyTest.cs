@@ -74,6 +74,10 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
+    [InlineData(typeof(ComTypes.IDispatch))]
+    [InlineData(typeof(ComTypes.IUnknown))]
     public void IDispatchPropertyWithGetter_IsAvailable(Type type)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{type}"))
@@ -122,6 +126,10 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
+    [InlineData(typeof(ComTypes.IDispatch))]
+    [InlineData(typeof(ComTypes.IUnknown))]
     public void IDispatchPropertyWithSetter_IsAvailable(Type type)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{type}"))
@@ -170,10 +178,65 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
+    [InlineData(typeof(ComTypes.IDispatch))]
+    [InlineData(typeof(ComTypes.IUnknown))]
     public void IDispatchPropertyWithSetterAndGetter_IsAvailable(Type type)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{type}"))
                        .WithInterface("TestInterface").WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
+                           .WithProperty("Property1", type, true, true)
+                           .Build()
+                        .Build()
+                    .Build();
+
+        //check for interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface not found");
+
+        //check for INVOKE_PROPERTYGET
+        using var propGetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYGET);
+        propGetDescByName.Should().NotBeNull();
+        var propget = propGetDescByName!.Value;
+        propget.elemdescFunc.tdesc.GetVarEnum().Should().Be(type.GetVarEnum());
+
+        //check for INVOKE_PROPERTYPUT
+        using var propSetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYPUTREF | INVOKEKIND.INVOKE_PROPERTYPUT);
+        propSetDescByName.Should().NotBeNull();
+        var propset = propGetDescByName!.Value;
+        propset.elemdescFunc.tdesc.GetVarEnum().Should().Be(type.GetVarEnum());
+    }
+
+    [Theory]
+    [InlineData(typeof(byte))]
+    [InlineData(typeof(sbyte))]
+    [InlineData(typeof(short))]
+    [InlineData(typeof(ushort))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(int))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(long))]
+    [InlineData(typeof(float))]
+    [InlineData(typeof(double))]
+    [InlineData(typeof(string))]
+    [InlineData(typeof(bool))]
+    [InlineData(typeof(char))]
+    [InlineData(typeof(object))]
+    [InlineData(typeof(object[]))]
+    [InlineData(typeof(System.Collections.IEnumerator))]
+    [InlineData(typeof(DateTime))]
+    [InlineData(typeof(Guid))]
+    [InlineData(typeof(System.Drawing.Color))]
+    [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
+    [InlineData(typeof(ComTypes.IDispatch))]
+    [InlineData(typeof(ComTypes.IUnknown))]
+    public void DualInterfacePropertyWithSetterAndGetter_IsAvailable(Type type)
+    {
+        var result = CreateAssembly(new AssemblyName($"Dynamic{type}"))
+                       .WithInterface("TestInterface").WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsDual)
                            .WithProperty("Property1", type, true, true)
                            .Build()
                         .Build()
@@ -217,6 +280,8 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(ComTypes.IDispatch))]
+    [InlineData(typeof(ComTypes.IUnknown))]
     public void IUnkownPropertyWithSetterAndGetter_IsAvailable(Type type)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{type}"))
