@@ -1,11 +1,13 @@
 # dSPACE COM tools
 
-[![Nuget](https://img.shields.io/nuget/v/dscom?label=NuGet:CLI&style=flat)](https://www.nuget.org/packages/dscom/)
-[![Nuget](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=NuGet:Lib&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/)
-[![GitHub Workflow](https://img.shields.io/github/workflow/status/dspace-group/dscom/Build?style=flat&label=Build)](https://github.com/dspace-group/dscom/actions/workflows/build.yaml)
-[![GitHub Release](https://img.shields.io/github/v/release/dspace-group/dscom?label=Latest-Release)](https://github.com/dspace-group/dscom/releases)
+[![Nuget:Cli](https://img.shields.io/nuget/v/dscom?label=dotnet%20tool&style=flat)](https://www.nuget.org/packages/dscom/)
+[![Nuget:Lib](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=nuget&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/)
+[![Build](https://img.shields.io/github/workflow/status/dspace-group/dscom/Build?style=flat)](https://github.com/dspace-group/dscom/actions/workflows/build.yaml)
+[![Release](https://img.shields.io/github/v/release/dspace-group/dscom?label=release)](https://github.com/dspace-group/dscom/releases)
+![License](https://img.shields.io/github/license/dspace-group/dscom)
+[![dSPACE](https://img.shields.io/badge/-OpenSource%20powered%20by%20dSPACE-blue)](https://www.dspace.com/)
 
-A replacement for `TypeLibConverter.ConvertTypeLibToAssembly`, `tlbexp.exe` and `OleView` that runs with .NET >= 6.0.
+A replacement for `TypeLibConverter.ConvertAssemblyToTypeLib`, `tlbexp.exe` and `OleView` that runs with .NET >= 6.0.
 
 # dscom (CLI)
 
@@ -37,3 +39,5 @@ Commands:
   tlbregister <TypeLibrary>    Register a type library
   tlbunregister <TypeLibrary>  Unregister a type library
 ```
+
+> The documentation is under construction.

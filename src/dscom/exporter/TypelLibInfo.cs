@@ -53,7 +53,6 @@ internal class TypelLibInfo : BaseInfo
 
     public TypeLibAttributesInfo? Attributes { get; set; }
 
-    [Ignore]
     public string File { get; set; }
 
     public List<CustomDataItemInfo> CustomData { get; } = new List<CustomDataItemInfo>();

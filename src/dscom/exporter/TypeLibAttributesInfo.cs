@@ -38,14 +38,12 @@ internal class TypeLibAttributesInfo : BaseInfo
         }
     }
 
-    [Ignore]
     public Guid Guid { get; set; }
 
     public int Lcid { get; set; }
 
     public SYSKIND SysKind { get; set; }
 
-    [Ignore]
     public LIBFLAGS LibFlags { get; set; }
 
     public short MajorVerNum { get; set; }
