@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/github/license/dspace-group/dscom)
 [![dSPACE](https://img.shields.io/badge/-OpenSource%20powered%20by%20dSPACE-blue)](https://www.dspace.com/)
 
-A replacement for `TypeLibConverter.ConvertTypeLibToAssembly`, `tlbexp.exe` and `OleView` that runs with .NET >= 6.0.
+A replacement for `TypeLibConverter.ConvertAssemblyToTypeLib`, `tlbexp.exe` and `OleView` that runs with .NET >= 6.0.
 
 # dscom (CLI)
 
