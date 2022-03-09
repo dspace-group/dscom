@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
 
@@ -133,11 +134,6 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         return retval;
     }
 
-    public ITypeInfo? ResolveTypeInfo(object obj)
-    {
-        return ResolveTypeInfo(obj.GetType());
-    }
-
     private static ITypeInfo? GetDefaultInterface(ITypeInfo? typeInfo)
     {
         if (typeInfo != null)
@@ -180,12 +176,6 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         }
 
         return null;
-    }
-
-    public ITypeInfo? ResolveTypeInfo(string typeName)
-    {
-        var type = Type.GetType(typeName);
-        return type != null ? ResolveTypeInfo(type) : null;
     }
 
     public ITypeLib? GetTypeLibFromIdentifier(TypeLibIdentifier identifier)
@@ -255,26 +245,25 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
     public void AddTypeToCache(ITypeInfo? typeInfo)
     {
-        if (typeInfo == null)
+        if (typeInfo != null)
         {
-            return;
-        }
-
-        typeInfo.GetTypeAttr(out var ppTypAttr);
-        try
-        {
-            var attr = Marshal.PtrToStructure<TYPEATTR>(ppTypAttr);
-            if (!_types.ContainsKey(attr.guid))
+            typeInfo.GetTypeAttr(out var ppTypAttr);
+            try
             {
-                _types[attr.guid] = typeInfo;
+                var attr = Marshal.PtrToStructure<TYPEATTR>(ppTypAttr);
+                if (!_types.ContainsKey(attr.guid))
+                {
+                    _types[attr.guid] = typeInfo;
+                }
             }
-        }
-        finally
-        {
-            typeInfo.ReleaseTypeAttr(ppTypAttr);
+            finally
+            {
+                typeInfo.ReleaseTypeAttr(ppTypAttr);
+            }
         }
     }
 
+    [ExcludeFromCodeCoverage] // UnitTest with dependent type libraries is not supported
     public bool AddTypeLib(string typeLibPath)
     {
         OleAut32.LoadTypeLibEx(typeLibPath, REGKIND.NONE, out var typeLib).ThrowIfFailed($"Failed to load type library {typeLibPath}.");
