@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace dSPACE.Runtime.InteropServices;
 
 public struct TypeLibIdentifier
@@ -44,11 +46,13 @@ public struct TypeLibIdentifier
         return MajorVersion.GetHashCode() ^ MinorVersion.GetHashCode() ^ LibID.GetHashCode() ^ LanguageIdentifier.GetHashCode();
     }
 
+    [ExcludeFromCodeCoverage] // Implement the equality operators and make their behavior identical to that of the Equals method
     public static bool operator ==(TypeLibIdentifier left, TypeLibIdentifier right)
     {
         return left.Equals(right);
     }
 
+    [ExcludeFromCodeCoverage] // Implement the equality operators and make their behavior identical to that of the Equals method
     public static bool operator !=(TypeLibIdentifier left, TypeLibIdentifier right)
     {
         return !(left == right);
