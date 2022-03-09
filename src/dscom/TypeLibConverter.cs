@@ -26,12 +26,12 @@ public class TypeLibConverter
 {
     /// <summary>Converts an assembly to a COM type library.</summary>
     /// <param name="assembly">The assembly to convert.</param>
-    /// <param name="strTypeLibName">The file name of the resulting type library.</param>
+    /// <param name="tlbFilePath">The file pathe of the resulting type library.</param>
     /// <param name="notifySink">The <see cref="T:dSPACE.Runtime.InteropServices.ITypeLibExporterNotifySink" /> interface implemented by the caller.</param>
     /// <returns>An object that implements the <see langword="ITypeLib" /> interface.</returns>
-    public object? ConvertAssemblyToTypeLib(Assembly assembly, string strTypeLibName, ITypeLibExporterNotifySink? notifySink)
+    public object? ConvertAssemblyToTypeLib(Assembly assembly, string tlbFilePath, ITypeLibExporterNotifySink? notifySink)
     {
-        var options = new TypeLibConverterSettings() { Out = strTypeLibName };
+        var options = new TypeLibConverterSettings() { Out = tlbFilePath };
         return ConvertAssemblyToTypeLib(assembly, options, notifySink);
     }
 

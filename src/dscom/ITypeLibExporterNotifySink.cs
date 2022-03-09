@@ -28,5 +28,5 @@ public interface ITypeLibExporterNotifySink
     /// <summary>Asks the user to resolve a reference to another assembly.</summary>
     /// <param name="assembly">The assembly to resolve.</param>
     /// <returns>The type library for <paramref name="assembly" />.</returns>
-    object ResolveRef(Assembly assembly);
+    object? ResolveRef(Assembly assembly);
 }
