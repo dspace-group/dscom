@@ -25,10 +25,10 @@ internal class DispatchIdCreator
 
     private uint _currentDispId = Constants.BASE_OLEAUT_DISPID;
 
-    public DispatchIdCreator(InterfaceWriter interfaceWriter, bool isIUnknown)
+    public DispatchIdCreator(InterfaceWriter interfaceWriter)
     {
         InterfaceWriter = interfaceWriter;
-        IsIUnknown = isIUnknown;
+
         // In case of IUnknown we start with Constants.BASE_OLEAUT_IUNKNOWN for the first DispId
         if (interfaceWriter.BaseInterfaceGuid == new Guid(Guids.IID_IUnknown))
         {
@@ -39,10 +39,6 @@ internal class DispatchIdCreator
     public WriterContext Context => InterfaceWriter.Context;
 
     public InterfaceWriter InterfaceWriter { get; }
-
-    public bool IsIUnknown { get; }
-
-
 
     public uint GetDispatchId(MethodWriter methodWriter)
     {

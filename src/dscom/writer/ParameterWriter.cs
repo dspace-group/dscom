@@ -20,10 +20,10 @@ namespace dSPACE.Runtime.InteropServices.Writer;
 
 internal class ParameterWriter : ElemDescBasedWriter
 {
-    public ParameterWriter(MethodWriter methodWriter, ParameterInfo parameterInfo, WriterContext context, bool isTransformedOutParameter) : base(parameterInfo.ParameterType, parameterInfo, methodWriter.MethodInfo.ReflectedType!, methodWriter.InterfaceWriter.TypeInfo, context)
+    public ParameterWriter(MethodWriter methodWriter, ParameterInfo parameterInfo, WriterContext context, bool isTransformedOutParameter)
+    : base(parameterInfo.ParameterType, parameterInfo, methodWriter.MethodInfo.ReflectedType!, methodWriter.InterfaceWriter.TypeInfo, context)
     {
         _isTransformedOutParameter = isTransformedOutParameter;
-        MethodWriter = methodWriter;
         ParameterInfo = parameterInfo;
         TypeProvider = new TypeProvider(context, parameterInfo, true);
     }
@@ -32,9 +32,7 @@ internal class ParameterWriter : ElemDescBasedWriter
 
     private bool ParameterTypeIsComVisible => ParameterInfo.ParameterType.IsComVisible();
 
-    private PARAMFLAG _pARAMFlags = PARAMFLAG.PARAMFLAG_NONE;
-
-    public MethodWriter MethodWriter { get; }
+    private PARAMFLAG _paramFlags = PARAMFLAG.PARAMFLAG_NONE;
 
     public ParameterInfo ParameterInfo { get; }
 
@@ -96,33 +94,33 @@ internal class ParameterWriter : ElemDescBasedWriter
         if (ParameterInfo.IsOut || (ParameterInfo.ParameterType.IsByRef && !hasInAttribute) || _isTransformedOutParameter)
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FOUT;
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FOUT;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FOUT;
         }
 
         if (ParameterInfo.IsIn || hasInAttribute || (!ParameterInfo.IsRetval && !ParameterInfo.IsOut && !_isTransformedOutParameter))
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FIN;
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FIN;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FIN;
         }
 
         if (ParameterInfo.IsRetval || _isTransformedOutParameter)
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FRETVAL;
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FRETVAL;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FRETVAL;
         }
 
         if (ParameterInfo.IsOptional)
         {
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FOPT;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FOPT;
             if (ParameterInfo.HasDefaultValue)
             {
-                _pARAMFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
+                _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
             }
         }
 
         if (ParameterInfo.HasDefaultValue && ParameterInfo.DefaultValue != null)
         {
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
         }
     }
 
@@ -149,11 +147,11 @@ internal class ParameterWriter : ElemDescBasedWriter
         {
             //add out parameter flag in this case, and only this case
             IDLFlags |= IDLFLAG.IDLFLAG_FOUT;
-            _pARAMFlags |= PARAMFLAG.PARAMFLAG_FOUT;
+            _paramFlags |= PARAMFLAG.PARAMFLAG_FOUT;
         }
 
         _elementDescription.desc.idldesc.wIDLFlags = IDLFlags;
-        _elementDescription.desc.paramdesc.wParamFlags = _pARAMFlags;
+        _elementDescription.desc.paramdesc.wParamFlags = _paramFlags;
         if ((ParameterInfo.IsOptional && ParameterInfo.HasDefaultValue) ||
             (ParameterInfo.HasDefaultValue && ParameterInfo.DefaultValue != null))
         {

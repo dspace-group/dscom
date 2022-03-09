@@ -27,8 +27,9 @@ internal class ClassWriter : TypeWriter
     public override void CreateTypeInfo()
     {
         var constructorsInfo = SourceType.GetConstructors();
+
         //only one default constructor allowed
-        var constructorInfo = constructorsInfo.Where(x => x.GetParameters().Length == 0 && !x.IsGenericMethod).FirstOrDefault();
+        var constructorInfo = constructorsInfo.Where(x => !x.IsGenericMethod && x.GetParameters().Length == 0).FirstOrDefault();
         if (constructorInfo != null)
         {
             TypeFlags = TYPEFLAGS.TYPEFLAG_FCANCREATE;
