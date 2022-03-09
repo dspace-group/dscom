@@ -95,7 +95,7 @@ public static class ConsoleApp
 #else
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to register type library. {e.Message}");
+                Console.Error.WriteLine($"Failed to unregister type library. {e.Message}");
                 return 1;
             }
 #endif
