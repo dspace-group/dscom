@@ -136,6 +136,11 @@ public static class ConsoleApp
                 switch (options.OutPutType)
                 {
                     case "yaml":
+                        if (string.IsNullOrEmpty(options.Out))
+                        {
+                            var yamlfilename = Path.GetFileNameWithoutExtension(options.TypeLibrary) + ".yaml";
+                            options.Out = Path.Combine(Directory.GetCurrentDirectory(), yamlfilename);
+                        }
                         TypeLibExporter.ExportToYaml(options);
                         break;
                     default:
