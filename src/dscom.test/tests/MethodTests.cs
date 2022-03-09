@@ -114,6 +114,8 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
     public void IUnknownMethodWithNoParameterAndGivenReturnType_ReturnTypeIsHResultAndFirstParameterIsOriginalReturnType(Type returnType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{returnType}"))
@@ -171,6 +173,8 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
     public void IDispatchMethodWithNoParameterAndGivenReturnType_ReturnTypeIsUsed(Type returnType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{returnType}"))
@@ -215,6 +219,8 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
 
     public void DualMethodWithNoParameterAndGivenReturnType_ReturnTypeIsUsed(Type returnType)
     {
@@ -864,10 +870,12 @@ public class MethodTest : BaseTest
     [InlineData(typeof(object))]
     [InlineData(typeof(object[]))]
     [InlineData(typeof(IEnumerator))]
-    [InlineData(typeof(DateTime))]
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(DateTime))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsIUnknownWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -924,6 +932,8 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsIDispatchWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -980,6 +990,8 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsDualWithMethodWithOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -1035,6 +1047,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsIUnknownWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -1083,6 +1096,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsIDispatchWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -1131,6 +1145,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsDualWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
@@ -1214,6 +1229,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(IntPtr))]
     public void InterfaceIsDualWithMethodWithRefParameter_RefParameterIsCorrect(Type parameterType)
     {
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
