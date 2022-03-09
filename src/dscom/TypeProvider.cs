@@ -304,15 +304,9 @@ internal class TypeProvider
                 {
                     if (marshalTo != null)
                     {
-                        return marshalTo.Value switch
-                        {
-                            UnmanagedType.I4 => VarEnum.VT_I4,
-                            UnmanagedType.I2 => VarEnum.VT_I2,
-                            UnmanagedType.U4 => VarEnum.VT_UI4,
-                            UnmanagedType.U2 => VarEnum.VT_UI2,
-                            _ => VarEnum.VT_USERDEFINED,
-                        };
+                        return GetVariantType(type.GetEnumUnderlyingType(), out parentLevel, isSafeArraySubType);
                     }
+
                     return VarEnum.VT_USERDEFINED;
                 }
                 else if (type.IsArray)
