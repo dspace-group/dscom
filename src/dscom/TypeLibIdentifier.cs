@@ -16,23 +16,51 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace dSPACE.Runtime.InteropServices;
 
+/// <summary>
+/// Identifies a typlibrary.
+/// </summary>
 public struct TypeLibIdentifier
 {
+    /// <summary>
+    /// Gets or sets the Name of the type library.
+    /// </summary>
     public string Name { get; set; }
 
+    /// <summary>
+    /// Gets or sets the major version.
+    /// </summary>
     public ushort MajorVersion { get; set; }
 
+    /// <summary>
+    /// Gets or sets the minor version.
+    /// </summary>
     public ushort MinorVersion { get; set; }
 
+    /// <summary>
+    /// Gets or sets the library id.
+    /// </summary>
     public Guid LibID { get; set; }
 
+    /// <summary>
+    /// Gets or set sets the language indentifier.
+    /// </summary>
     public int LanguageIdentifier { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
     public override bool Equals(object? obj)
     {
         return obj is TypeLibIdentifier o && Equals(o);
     }
 
+    /// <summary>
+    /// Determines whether two object instances are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="TypeLibIdentifier"/> to compare</param>
+    /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
     public bool Equals(TypeLibIdentifier other)
     {
         return MajorVersion == other.MajorVersion
@@ -41,18 +69,34 @@ public struct TypeLibIdentifier
                 && LanguageIdentifier == other.LanguageIdentifier;
     }
 
+    /// <summary>
+    /// A hash code for the current object.
+    /// </summary>
+    /// <returns>A hash code for the current object.</returns>
     public override int GetHashCode()
     {
         return MajorVersion.GetHashCode() ^ MinorVersion.GetHashCode() ^ LibID.GetHashCode() ^ LanguageIdentifier.GetHashCode();
     }
 
-    [ExcludeFromCodeCoverage] // Implement the equality operators and make their behavior identical to that of the Equals method
+    /// <summary>
+    /// The == (equality) and != (inequality) operators check if their operands are equal or not.
+    /// </summary>
+    /// <param name="left">Left object.</param>
+    /// <param name="right">Right object</param>
+    /// <returns>true if equal; otherwise, false.</returns>
+    [ExcludeFromCodeCoverage]
     public static bool operator ==(TypeLibIdentifier left, TypeLibIdentifier right)
     {
         return left.Equals(right);
     }
 
-    [ExcludeFromCodeCoverage] // Implement the equality operators and make their behavior identical to that of the Equals method
+    /// <summary>
+    /// The == (equality) and != (inequality) operators check if their operands are equal or not.
+    /// </summary>
+    /// <param name="left">The left opject</param>
+    /// <param name="right">The right object.</param>
+    /// <returns>true if equal; otherwise, false.</returns>
+    [ExcludeFromCodeCoverage]
     public static bool operator !=(TypeLibIdentifier left, TypeLibIdentifier right)
     {
         return !(left == right);

@@ -38,4 +38,8 @@
     <ProjectReference Include="..\dscom\dscom.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\dscom.common\**" />
+  </ItemGroup>
+
 </Project>

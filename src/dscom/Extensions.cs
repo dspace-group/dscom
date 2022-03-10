@@ -19,37 +19,8 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices;
 
 [ExcludeFromCodeCoverage]
-public static class Extensions
+internal static class Extensions
 {
-    /// <summary>
-    /// Returns a assembly identifier.
-    /// </summary>
-    /// <param name="assembly">An assembly that is used to create an identifer.</param>
-    /// <param name="overrideGuid">A guid that should be used</param>
-    public static TypeLibIdentifier GetLibIdentifier(this Assembly assembly, Guid overrideGuid)
-    {
-        var version = assembly.GetTLBVersionForAssembly();
-
-        // From Major, Minor, Language, Guid
-        return new TypeLibIdentifier()
-        {
-            Name = assembly.GetName().Name ?? string.Empty,
-            MajorVersion = (ushort)version.Major,
-            MinorVersion = (ushort)version.Minor,
-            LibID = overrideGuid == Guid.Empty ? assembly.GetTLBGuidForAssembly() : overrideGuid,
-            LanguageIdentifier = assembly.GetTLBLanguageIdentifierForAssembly()
-        };
-    }
-
-    /// <summary>
-    /// Returns a assembly identifier.
-    /// </summary>
-    /// <param name="assembly">An assembly that is used to create an identifer.</param>
-    public static TypeLibIdentifier GetLibIdentifier(this Assembly assembly)
-    {
-        return assembly.GetLibIdentifier(Guid.Empty);
-    }
-
     [SuppressMessage("Microsoft.Style", "IDE0060", Justification = "For future use")]
     internal static int GetTLBLanguageIdentifierForAssembly(this Assembly assembly)
     {

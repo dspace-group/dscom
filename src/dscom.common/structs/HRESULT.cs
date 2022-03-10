@@ -9,7 +9,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
 [ExcludeFromCodeCoverage]
-public struct HRESULT
+internal struct HRESULT
 {
     [FieldOffset(0)]
     private readonly int _value;

@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Interface
+#pragma warning disable CS8019
+
+// interface
+global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.REGKIND;
 global using CALLCONV = System.Runtime.InteropServices.ComTypes.CALLCONV;
 global using DISPPARAMS = System.Runtime.InteropServices.ComTypes.DISPPARAMS;
 global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;
-//struct
+
+// struct
 global using FUNCDESC = System.Runtime.InteropServices.ComTypes.FUNCDESC;
 global using FUNCKIND = System.Runtime.InteropServices.ComTypes.FUNCKIND;
 global using IDLFLAG = System.Runtime.InteropServices.ComTypes.IDLFLAG;
@@ -33,9 +37,12 @@ global using PARAMFLAG = System.Runtime.InteropServices.ComTypes.PARAMFLAG;
 global using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
 global using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
 global using TYPEDESC = System.Runtime.InteropServices.ComTypes.TYPEDESC;
-//enum
+
+// enum
 global using TYPEFLAGS = System.Runtime.InteropServices.ComTypes.TYPEFLAGS;
 global using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;
 global using TYPELIBATTR = System.Runtime.InteropServices.ComTypes.TYPELIBATTR;
 global using VARDESC = System.Runtime.InteropServices.ComTypes.VARDESC;
 global using VARKIND = System.Runtime.InteropServices.ComTypes.VARKIND;
+
+#pragma warning restore CS8019

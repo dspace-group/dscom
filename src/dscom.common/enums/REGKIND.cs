@@ -1,6 +1,9 @@
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
-public enum REGKIND
+/// <summary>
+/// Controls how a type library is registered.
+/// </summary>
+internal enum REGKIND
 {
     /// <summary>
     /// Use default register behavior.
