@@ -3,7 +3,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// <summary>
 /// Controls how a type library is registered.
 /// </summary>
-public enum REGKIND
+internal enum REGKIND
 {
     /// <summary>
     /// Use default register behavior.

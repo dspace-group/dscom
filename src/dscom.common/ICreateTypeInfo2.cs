@@ -6,7 +6,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-icreatetypeinfo2
 /// </summary>
 [ComImport, Guid("0002040E-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-public interface ICreateTypeInfo2 : ICreateTypeInfo
+internal interface ICreateTypeInfo2 : ICreateTypeInfo
 {
     [PreserveSig]
     new HRESULT SetGuid(in Guid guid);

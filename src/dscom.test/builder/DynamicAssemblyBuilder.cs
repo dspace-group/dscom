@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
 
 namespace dSPACE.Runtime.InteropServices.Tests;

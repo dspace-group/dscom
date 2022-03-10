@@ -43,4 +43,8 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\dscom.common\**" />
+  </ItemGroup>
+
 </Project>

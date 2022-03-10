@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 

@@ -14,16 +14,35 @@
 
 namespace dSPACE.Runtime.InteropServices;
 
+/// <summary>
+/// The type library exporter options.
+/// </summary>
 public class TypeLibExporterOptions
 {
+    /// <summary>
+    /// Gets or sets the inpout type library path.
+    /// </summary>
     public string TypeLibrary { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets ot sets the output file path.
+    /// </summary>
+    /// <value></value>
     public string Out { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the output typ.
+    /// </summary>
     public string OutPutType { get; set; } = "yaml";
 
+    /// <summary>
+    /// Gets or sets array of type libraries.
+    /// </summary>
     public string[] TLBReference { get; set; } = Array.Empty<string>();
 
+    /// <summary>
+    /// Gets or sets array of paths that contain type libaries.
+    /// </summary>
     public string[] TLBRefpath { get; set; } = Array.Empty<string>();
 
     /// <summary>

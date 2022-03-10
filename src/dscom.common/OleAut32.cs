@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
@@ -8,20 +7,24 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 internal class OleAut32
 {
-    private const string OleAut32Dll = "oleaut32.dll";
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
+    public static extern HRESULT LoadRegTypeLib(in Guid rguid, ushort wVerMajor, ushort wVerMinor, int lcid, out ITypeLib pptlib);
 
-    [DllImport(OleAut32Dll, SetLastError = false, ExactSpelling = true)]
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
+    public static extern HRESULT CreateTypeLib2(SYSKIND syskind, [MarshalAs(UnmanagedType.LPWStr)] string szFile, out ICreateTypeLib2 ppctlib);
+
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT UnRegisterTypeLibForUser(in Guid libID, ushort wMajorVerNum, ushort wMinorVerNum, int lcid, SYSKIND syskind);
 
-    [DllImport(OleAut32Dll, SetLastError = false, ExactSpelling = true)]
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT UnRegisterTypeLib(in Guid libID, ushort wVerMajor, ushort wVerMinor, int lcid, SYSKIND syskind);
 
-    [DllImport(OleAut32Dll, SetLastError = false, ExactSpelling = true)]
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT RegisterTypeLib(ITypeLib ptlib, [MarshalAs(UnmanagedType.LPWStr)] string szFullPath, [MarshalAs(UnmanagedType.LPWStr), Optional] string szHelpDir);
 
-    [DllImport(OleAut32Dll, SetLastError = false, ExactSpelling = true)]
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT RegisterTypeLibForUser(ITypeLib ptlib, [MarshalAs(UnmanagedType.LPWStr)] string szFullPath, [MarshalAs(UnmanagedType.LPWStr), Optional] string szHelpDir);
 
-    [DllImport(OleAut32Dll, SetLastError = false, ExactSpelling = true)]
+    [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT LoadTypeLibEx([MarshalAs(UnmanagedType.LPWStr)] string szFile, REGKIND regkind, out ITypeLib pptlib);
 }

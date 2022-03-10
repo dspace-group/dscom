@@ -37,8 +37,6 @@ public class TypeLibConverterSettings
     /// <summary>
     /// Gets or sets a path to directory of type libraries.
     /// </summary>
-    /// <typeparam name="string"></typeparam>
-    /// <returns></returns>
     public string[] TLBRefpath { get; set; } = Array.Empty<string>();
 
     /// <summary>

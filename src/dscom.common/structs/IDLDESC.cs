@@ -6,7 +6,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
 /// </summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-public struct IDLDESC
+internal struct IDLDESC
 {
     public IntPtr dwReserved;
 

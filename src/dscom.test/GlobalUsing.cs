@@ -20,27 +20,7 @@ global using System.Linq;
 global using System.Reflection;
 global using System.Reflection.Emit;
 global using System.Runtime.CompilerServices;
-global using System.Runtime.InteropServices;
+//global using System.Runtime.InteropServices;
 global using System.Text.RegularExpressions;
 global using FluentAssertions;
 global using Xunit;
-global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;
-// struct
-global using FUNCDESC = System.Runtime.InteropServices.ComTypes.FUNCDESC;
-global using IDLFLAG = System.Runtime.InteropServices.ComTypes.IDLFLAG;
-global using IMPLTYPEFLAGS = System.Runtime.InteropServices.ComTypes.IMPLTYPEFLAGS;
-global using INVOKEKIND = System.Runtime.InteropServices.ComTypes.INVOKEKIND;
-// Interface
-global using ITypeInfo = System.Runtime.InteropServices.ComTypes.ITypeInfo;
-global using ITypeInfo2 = System.Runtime.InteropServices.ComTypes.ITypeInfo2;
-global using ITypeLib2 = System.Runtime.InteropServices.ComTypes.ITypeLib2;
-global using PARAMFLAG = System.Runtime.InteropServices.ComTypes.PARAMFLAG;
-global using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
-global using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
-global using TYPEDESC = System.Runtime.InteropServices.ComTypes.TYPEDESC;
-// enum
-global using TYPEFLAGS = System.Runtime.InteropServices.ComTypes.TYPEFLAGS;
-global using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;
-global using TYPELIBATTR = System.Runtime.InteropServices.ComTypes.TYPELIBATTR;
-global using VARDESC = System.Runtime.InteropServices.ComTypes.VARDESC;
-global using VARKIND = System.Runtime.InteropServices.ComTypes.VARKIND;

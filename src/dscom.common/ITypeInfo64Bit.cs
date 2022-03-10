@@ -9,7 +9,7 @@ namespace dSPACE.Runtime.InteropServices.Exporter;
 [Guid("00020401-0000-0000-C000-000000000046")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 [ComImport]
-public interface ITypeInfo64Bit
+internal interface ITypeInfo64Bit
 {
     void GetTypeAttr(out IntPtr ppTypeAttr);
 
