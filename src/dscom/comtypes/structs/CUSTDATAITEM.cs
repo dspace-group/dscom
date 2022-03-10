@@ -6,7 +6,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct CUSTDATAITEM
+internal struct CUSTDATAITEM
 {
     public Guid guid;
 

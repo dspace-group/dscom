@@ -3,7 +3,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_com/
 /// </summary>
-public static class Constants
+internal static class Constants
 {
     public const string Kernel32 = "kernel32.dll";
 

@@ -7,7 +7,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
 [System.Security.SecurityCritical]
-public struct VARIANT
+internal struct VARIANT
 {
     [FieldOffset(0)]
     public VarEnum vt;

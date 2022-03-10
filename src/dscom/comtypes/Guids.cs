@@ -3,7 +3,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
 /// </summary>
-public static class Guids
+internal static class Guids
 {
     public const string TLBID_Ole = "00020430-0000-0000-C000-000000000046";
 

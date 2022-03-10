@@ -107,7 +107,8 @@ public class TypeLibTest : BaseTest
         var builder = CreateAssembly();
         var result = builder.Build();
 
-        var guid = new Guid(Guids.GUID_ExportedFromComPlus);
+        // ExportedFromComPlus
+        var guid = new Guid("90883F05-3D28-11D2-8F17-00A0C9A6186D");
         result.TypeLib.GetCustData(ref guid, out var pVarVal);
         Assert.NotNull(pVarVal);
         var customDataString = pVarVal.ToString();

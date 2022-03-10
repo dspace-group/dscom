@@ -52,7 +52,14 @@ public struct TypeLibIdentifier
         return left.Equals(right);
     }
 
+
     [ExcludeFromCodeCoverage] // Implement the equality operators and make their behavior identical to that of the Equals method
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
     public static bool operator !=(TypeLibIdentifier left, TypeLibIdentifier right)
     {
         return !(left == right);
