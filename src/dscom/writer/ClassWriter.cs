@@ -37,7 +37,7 @@ internal class ClassWriter : TypeWriter
 
         base.CreateTypeInfo();
 
-        Context.LogTypeExported(SourceType);
+        Context.LogTypeExported($"Class '{Name}' exported.");
     }
 
     public override void Create()

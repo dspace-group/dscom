@@ -25,7 +25,7 @@ internal class ClassInterfaceWriter : DualInterfaceWriter
 
     public override void Create()
     {
-        Context.LogTypeExported(SourceType);
+        Context.LogTypeExported($"Class interface '{Name}' exported.");
     }
 
     protected override Guid GetTypeGuid()
