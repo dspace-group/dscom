@@ -70,7 +70,10 @@ If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` meth
 This method should behave compatible to the `.NET Framework` method.
 
 ```csharp
-public object? ConvertAssemblyToTypeLib(Assembly assembly, string tlbFilePath, ITypeLibExporterNotifySink? notifySink)
+public object? ConvertAssemblyToTypeLib(
+  Assembly assembly,
+  string tlbFilePath,
+  ITypeLibExporterNotifySink? notifySink)
 ```
 
 <https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/>
@@ -81,11 +84,12 @@ Example:
 using dSPACE.Runtime.InteropServices;
 
 // The assembly to convert
-var assemblyToConvert = typeof(Program).Assembly;
+var assembly = typeof(Program).Assembly;
 
 // Convert to assembly
 var typeLibConverter = new TypeLibConverter();
-var result = typeLibConverter.ConvertAssemblyToTypeLib(assemblyToConvert, "MyTypeLib.tlb", new TypeLibConverterCallback());
+var callback = new TypeLibConverterCallback();
+var result = typeLibConverter.ConvertAssemblyToTypeLib(assembly, "MyTypeLib.tlb", callback);
 
 // Get the name of the type library
 var typeLib2 = result as System.Runtime.InteropServices.ComTypes.ITypeLib2;
