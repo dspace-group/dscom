@@ -54,9 +54,9 @@ internal abstract class DynamicBuilder<T> where T : DynamicBuilder<T>
         return WithCustomAttribute(type, new Type[] { value.GetType() }, new object[] { value });
     }
 
-    public T WithCustomAttribute<K>(object value)
+    public T WithCustomAttribute<K>(params object[] values)
     {
-        return WithCustomAttribute(typeof(K), new Type[] { value.GetType() }, new object[] { value });
+        return WithCustomAttribute(typeof(K), values.Select(z => z.GetType()).ToArray(), values);
     }
 
     public T WithCustomAttribute<K>()

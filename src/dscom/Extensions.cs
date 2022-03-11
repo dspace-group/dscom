@@ -204,4 +204,14 @@ internal static class Extensions
         }
         return returnType;
     }
+
+    internal static IEnumerable<T> GetCustomAttributesRecursive<T>(this Type element) where T : Attribute
+    {
+        var result = element.GetCustomAttributes<T>();
+        if (element.BaseType != null)
+        {
+            result = result.Union(element.BaseType.GetCustomAttributesRecursive<T>());
+        }
+        return result;
+    }
 }
