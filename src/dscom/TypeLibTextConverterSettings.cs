@@ -17,7 +17,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// The type library exporter options.
 /// </summary>
-public class TypeLibExporterOptions
+public class TypeLibTextConverterSettings
 {
     /// <summary>
     /// Gets or sets the inpout type library path.
