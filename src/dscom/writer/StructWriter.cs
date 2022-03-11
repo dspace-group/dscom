@@ -32,9 +32,10 @@ internal class StructWriter : TypeWriter
             TypeInfo.SetAlignment(8);
         }
     }
+
     public override void Create()
     {
-        Context.LogTypeExported(SourceType);
+        Context.LogTypeExported($"Struct '{Name}' exported.");
 
         uint index = 0;
 

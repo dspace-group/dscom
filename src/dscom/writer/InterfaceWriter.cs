@@ -57,7 +57,7 @@ internal abstract class InterfaceWriter : TypeWriter
     public override void Create()
     {
         DispatchIdCreator = new DispatchIdCreator(this);
-        Context.LogTypeExported(SourceType);
+        Context.LogTypeExported($"Interface '{Name}' exported.");
 
         if (IsDisposed)
         {
