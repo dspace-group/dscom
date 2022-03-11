@@ -88,15 +88,6 @@ internal class ClassWriter : TypeWriter
                     defaultInterfaceSet = true;
                 }
 
-                if (currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().Any())
-                {
-                    if (SourceType.GetCustomAttributes<ComSourceInterfacesAttribute>().Any(y => y.Value == currentInterface.GetCustomAttributes<ComEventInterfaceAttribute>().First().SourceInterface.FullName))
-                    {
-                        TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE)
-                            .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE for {currentInterface.Name}.");
-                        defaultInterfaceSet = true;
-                    }
-                }
                 index++;
             }
             else
@@ -106,37 +97,43 @@ internal class ClassWriter : TypeWriter
 
         }
 
-        //check for ComSourceInterfaces
-        foreach (var sourceInterfaceAttribute in SourceType.GetCustomAttributes<ComSourceInterfacesAttribute>())
-        {
-            var interfaceType = SourceType.Assembly.GetType(sourceInterfaceAttribute.Value);
-            if (interfaceType == null)
-            {
-                interfaceType = AppDomain.CurrentDomain.GetAssemblies().Select(z => z.GetType(sourceInterfaceAttribute.Value)).FirstOrDefault(x => x != null);
-            }
-            if (interfaceType != null)
-            {
-                var interfaceTypeInfo = Context.TypeInfoResolver.ResolveTypeInfo(interfaceType);
-                if (interfaceTypeInfo != null)
-                {
-                    TypeInfo.AddRefTypeInfo(interfaceTypeInfo, out var phRefType)
-                        .ThrowIfFailed($"Failed to add reference type {sourceInterfaceAttribute.Value}.");
-                    TypeInfo.AddImplType(index, phRefType)
-                        .ThrowIfFailed($"Failed to add interface {sourceInterfaceAttribute.Value} to {SourceType}.");
-                    TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE)
-                        .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE for {SourceType}.");
-                    index++;
-                }
-            }
-        }
-
-        base.CreateTypeInheritance();
-
         // The default interface is the class interface or the first implemented interface.
         if ((ClassInterfaceWriter != null || (interfaces.Length > 0 && index > 0)) && !defaultInterfaceSet)
         {
             TypeInfo.SetImplTypeFlags(0, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
                 .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT to {SourceType}.");
+            defaultInterfaceSet = true;
         }
+
+        //check for ComSourceInterfaces
+        var defaultSourceInterfaceSet = false;
+        foreach (var sourceInterfaceAttribute in SourceType.GetCustomAttributesRecursive<ComSourceInterfacesAttribute>())
+        {
+            foreach (var interfaceTypeValue in sourceInterfaceAttribute.Value.Split('\0').Distinct())
+            {
+                var interfaceType = SourceType.Assembly.GetType(interfaceTypeValue);
+                if (interfaceType == null)
+                {
+                    interfaceType = AppDomain.CurrentDomain.GetAssemblies().Select(z => z.GetType(interfaceTypeValue)).FirstOrDefault(x => x != null);
+                }
+                if (interfaceType != null)
+                {
+                    var interfaceTypeInfo = Context.TypeInfoResolver.ResolveTypeInfo(interfaceType);
+                    if (interfaceTypeInfo != null)
+                    {
+                        TypeInfo.AddRefTypeInfo(interfaceTypeInfo, out var phRefType)
+                            .ThrowIfFailed($"Failed to add reference type {interfaceTypeValue}.");
+                        TypeInfo.AddImplType(index, phRefType)
+                            .ThrowIfFailed($"Failed to add interface {interfaceTypeValue} to {SourceType}.");
+                        TypeInfo.SetImplTypeFlags(index, defaultSourceInterfaceSet ? IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE : IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE)
+                            .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT | IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE for {SourceType}.");
+                        defaultSourceInterfaceSet = true;
+                        index++;
+                    }
+                }
+            }
+        }
+
+        base.CreateTypeInheritance();
     }
 }
