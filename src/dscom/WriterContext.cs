@@ -49,11 +49,11 @@ internal sealed class WriterContext
 
     public NameResolver NameResolver { get; private set; }
 
-    public void LogTypeExported(Type type)
+    public void LogTypeExported(string message)
     {
         if (NotifySink != null)
         {
-            NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, $"Type '{type}' exported.");
+            NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, message);
         }
     }
 
