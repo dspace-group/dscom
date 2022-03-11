@@ -80,14 +80,15 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
 
         if (storeOnDisk)
         {
-            var options = new TypeLibExporterOptions()
+            var options = new TypeLibTextConverterSettings()
             {
                 Out = $"{TypeLibPath}.yaml",
                 TypeLibrary = TypeLibPath,
                 FilterRegex = new string[] { "file" }
             };
 
-            TypeLibExporter.ExportToYaml(options);
+            var typeLibConvert = new TypeLibConverter();
+            typeLibConvert.ConvertTypeLibToText(options);
         }
 
         AppDomain.CurrentDomain.AssemblyResolve -= ResolveEventHandler;
@@ -171,7 +172,8 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
 
         if (File.Exists(options.TypeLibrary))
         {
-            TypeLibExporter.ExportToYaml(options);
+            var typeLibConvert = new TypeLibConverter();
+            typeLibConvert.ExportToYaml(options);
         }
 
 #endif

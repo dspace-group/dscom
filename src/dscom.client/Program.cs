@@ -129,7 +129,7 @@ public static class ConsoleApp
 
     private static void ConfigureTLBDumpHandler(Command tlbdumpCommand)
     {
-        tlbdumpCommand.Handler = CommandHandler.Create<TypeLibExporterOptions>((options) =>
+        tlbdumpCommand.Handler = CommandHandler.Create<TypeLibTextConverterSettings>((options) =>
         {
             try
             {
@@ -141,7 +141,8 @@ public static class ConsoleApp
                             var yamlfilename = Path.GetFileNameWithoutExtension(options.TypeLibrary) + ".yaml";
                             options.Out = Path.Combine(Directory.GetCurrentDirectory(), yamlfilename);
                         }
-                        TypeLibExporter.ExportToYaml(options);
+                        var typeLibConvert = new TypeLibConverter();
+                        typeLibConvert.ConvertTypeLibToText(options);
                         break;
                     default:
                         throw new ArgumentException($"Output type {options.OutPutType} not supported");
