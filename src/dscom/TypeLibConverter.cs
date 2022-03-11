@@ -25,7 +25,7 @@ using dSPACE.Runtime.InteropServices.Writer;
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
-/// Provides a set of services that convert a managed assembly to a COM type library.
+/// Provides a set of services that convert a managed assembly to a COM type library ot to convert a type library to a text file.
 /// </summary>
 [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Compatibility to the mscorelib TypeLibConverter class")]
 [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Compatibility to the mscorelib TypeLibConverter class")]

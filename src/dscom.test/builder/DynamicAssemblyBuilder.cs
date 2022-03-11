@@ -164,7 +164,7 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
             process.WaitForExit();
         }
 
-        var options = new TypeLibExporterOptions()
+        var options = new TypeLibTextConverterSettings()
         {
             Out = $"{dllPath}.tlbexp.tlb.yaml",
             TypeLibrary = $"{dllPath}.tlbexp.tlb"
@@ -173,7 +173,7 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
         if (File.Exists(options.TypeLibrary))
         {
             var typeLibConvert = new TypeLibConverter();
-            typeLibConvert.ExportToYaml(options);
+            typeLibConvert.ConvertTypeLibToText(options);
         }
 
 #endif

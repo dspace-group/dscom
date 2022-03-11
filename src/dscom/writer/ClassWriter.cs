@@ -36,12 +36,11 @@ internal class ClassWriter : TypeWriter
         }
 
         base.CreateTypeInfo();
-
-        Context.LogTypeExported($"Class '{Name}' exported.");
     }
 
     public override void Create()
     {
+        Context.LogTypeExported($"Class '{Name}' exported.");
     }
 
     public TypeWriter? ClassInterfaceWriter
