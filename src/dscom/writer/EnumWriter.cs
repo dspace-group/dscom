@@ -59,5 +59,7 @@ internal class EnumWriter : TypeWriter
                 .ThrowIfFailed($"Failed to set variable name for enum {Name}.");
             index++;
         }
+
+        Context.LogTypeExported($"Enum '{Name}' exported.");
     }
 }
