@@ -95,15 +95,6 @@ if (typeLib2 != null)
     Console.WriteLine($"TypeLib name: {name}");
 }
 
-// Save the type library to a file
-var createTypeLibInstance = result as dSPACE.Runtime.InteropServices.ComTypes.ICreateTypeLib2;
-
-if (createTypeLibInstance != null)
-{
-    var hresult = createTypeLibInstance.SaveAllChanges();
-    hresult.ThrowIfFailed();
-}
-
 // The callback to load additional type libraries, if necessary
 public class TypeLibConverterCallback : ITypeLibExporterNotifySink
 {
@@ -112,7 +103,7 @@ public class TypeLibConverterCallback : ITypeLibExporterNotifySink
         Console.WriteLine($"{eventCode}: {eventMsg}");
     }
 
-    public object ResolveRef(System.Reflection.Assembly assembly)
+    public object? ResolveRef(System.Reflection.Assembly assembly)
     {
         // Returns additional type libraries
         return null;
