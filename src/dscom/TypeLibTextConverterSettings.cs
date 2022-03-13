@@ -31,11 +31,6 @@ public class TypeLibTextConverterSettings
     public string Out { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the output typ.
-    /// </summary>
-    public string OutPutType { get; set; } = "yaml";
-
-    /// <summary>
     /// Gets or sets array of type libraries.
     /// </summary>
     public string[] TLBReference { get; set; } = Array.Empty<string>();

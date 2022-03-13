@@ -133,20 +133,13 @@ public static class ConsoleApp
         {
             try
             {
-                switch (options.OutPutType)
+                if (string.IsNullOrEmpty(options.Out))
                 {
-                    case "yaml":
-                        if (string.IsNullOrEmpty(options.Out))
-                        {
-                            var yamlfilename = Path.GetFileNameWithoutExtension(options.TypeLibrary) + ".yaml";
-                            options.Out = Path.Combine(Directory.GetCurrentDirectory(), yamlfilename);
-                        }
-                        var typeLibConvert = new TypeLibConverter();
-                        typeLibConvert.ConvertTypeLibToText(options);
-                        break;
-                    default:
-                        throw new ArgumentException($"Output type {options.OutPutType} not supported");
+                    var yamlfilename = Path.GetFileNameWithoutExtension(options.TypeLibrary) + ".yaml";
+                    options.Out = Path.Combine(Directory.GetCurrentDirectory(), yamlfilename);
                 }
+                var typeLibConvert = new TypeLibConverter();
+                typeLibConvert.ConvertTypeLibToText(options);
             }
 #if DEBUG
             catch
