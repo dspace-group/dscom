@@ -42,7 +42,6 @@ public static class ConsoleApp
             {
                 new Argument("TypeLibrary", "File name of type library"),
                 new Option<string>(new string [] {"--out", "/out"}, description: "File name of the output"),
-                new Option<string>(new string [] {"--type", "/type"}, description: "Output type (only \"yaml\" is supported)"),
                 new Option(new string [] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", typeof(string[]), null, ArgumentArity.ZeroOrMore),
                 new Option(new string [] {"--filterregex", "/filterregex"}, description: "Regex to filter the output", typeof(string[]), null, ArgumentArity.ZeroOrMore),
