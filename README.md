@@ -161,7 +161,7 @@ classextern forwarder System.Exception
 
 ## Limitations
 
-- No imports of the `mscorelib` typelib (are types are VT_UNKNOWN)
+- No imports of the `mscorelib` typelib (all types are VT_UNKNOWN)
   - \_Object not supported
   - \_EventArgs not supported
   - \_Delegate not supported
