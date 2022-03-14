@@ -17,8 +17,12 @@ using System.Text;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
+// The CLI is not available for .NET Framework
 public class CLITest : IClassFixture<CompileReleaseFixture>
 {
+
+#if !NETFRAMEWORK
+
     private const string ErrorNoCommandOrOptions = "Required command was not provided.";
 
     internal record struct ProcessOutput(string StdOut, string StdErr, int ExitCode);
@@ -36,7 +40,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         DemoProjectAssembly1Path = compileFixture.DemoProjectAssembly1Path;
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath);
@@ -46,7 +50,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithoutCommandABC_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath, "ABC");
@@ -56,7 +60,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithVersionOption_VersionIsAssemblyInformationalVersionAttributeValue()
     {
         var assemblyInformationalVersion = typeof(TypeLibConverter).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
@@ -68,7 +72,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Be(versionFromLib);
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "--help");
@@ -76,7 +80,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbexport", "--help");
@@ -84,7 +88,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbdump", "--help");
@@ -92,7 +96,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbregister", "--help");
@@ -100,7 +104,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbunregister", "--help");
@@ -108,7 +112,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
@@ -116,7 +120,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdErr.Trim().Should().Contain("File abc not found");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
@@ -124,7 +128,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdErr.Trim().Should().Contain("File abc not found");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
@@ -132,7 +136,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdErr.Trim().Should().Contain("File abc not found");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
@@ -140,7 +144,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         result.StdErr.Trim().Should().Contain("File abc not found");
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTLBIsAvailableAndValid()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
@@ -163,7 +167,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         File.Delete(yamlFilePath);
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
@@ -180,7 +184,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         File.Delete(tlbFilePath);
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndOptionSilenceTX801311A6_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
@@ -197,7 +201,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         File.Delete(tlbFilePath);
     }
 
-    [FactNoFramework]
+    [Fact]
     public void CallWithCommandTlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
     {
         var guid = Guid.NewGuid().ToString();
@@ -246,4 +250,5 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         return processOutput;
     }
+#endif
 }
