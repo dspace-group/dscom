@@ -174,8 +174,8 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
 
-        result.StdOut.Trim().Should().NotBeNullOrEmpty();
-        result.StdErr.Trim().Should().NotBeNullOrEmpty();
+        result.StdOut.Trim().Should().BeNullOrEmpty();
+        result.StdErr.Trim().Should().BeNullOrEmpty();
 
         File.Delete(tlbFilePath);
     }
@@ -191,8 +191,8 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
 
-        result.StdOut.Trim().Should().NotBeNullOrEmpty();
-        result.StdErr.Trim().Should().NotBeNullOrEmpty();
+        result.StdOut.Trim().Should().BeNullOrEmpty();
+        result.StdErr.Trim().Should().BeNullOrEmpty();
 
         File.Delete(tlbFilePath);
     }
