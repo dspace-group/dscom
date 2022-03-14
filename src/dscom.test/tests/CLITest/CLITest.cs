@@ -27,30 +27,33 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
     internal string Workdir { get; } = string.Empty;
 
+    internal string DemoProjectAssembly1Path { get; }
+
     public CLITest(CompileReleaseFixture compileFixture)
     {
         DSComPath = compileFixture.DSComPath;
         Workdir = compileFixture.Workdir;
+        DemoProjectAssembly1Path = compileFixture.DemoProjectAssembly1Path;
     }
 
     [FactNoFramework]
     public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
-        var restult = Execute(DSComPath);
+        var result = Execute(DSComPath);
 
-        restult.ExitCode.Should().Be(1);
-        restult.StdErr.Trim().Should().Be(ErrorNoCommandOrOptions);
-        restult.StdOut.Trim().Should().Contain("Description");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Be(ErrorNoCommandOrOptions);
+        result.StdOut.Trim().Should().Contain("Description");
     }
 
     [FactNoFramework]
     public void CallWithoutCommandABC_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
-        var restult = Execute(DSComPath, "ABC");
+        var result = Execute(DSComPath, "ABC");
 
-        restult.ExitCode.Should().Be(1);
-        restult.StdErr.Trim().Should().Contain(ErrorNoCommandOrOptions);
-        restult.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Contain(ErrorNoCommandOrOptions);
+        result.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
     }
 
     [FactNoFramework]
@@ -60,9 +63,104 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         assemblyInformationalVersion.Should().NotBeNull("AssemblyInformationalVersionAttribute is not set");
         var versionFromLib = assemblyInformationalVersion!.InformationalVersion;
 
-        var restult = Execute(DSComPath, "--version");
-        restult.ExitCode.Should().Be(0);
-        restult.StdOut.Trim().Should().Be(versionFromLib);
+        var result = Execute(DSComPath, "--version");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Be(versionFromLib);
+    }
+
+    [FactNoFramework]
+    public void CallWithHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    {
+        var result = Execute(DSComPath, "--help");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Contain("Description");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    {
+        var result = Execute(DSComPath, "tlbexport", "--help");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Contain("Description");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    {
+        var result = Execute(DSComPath, "tlbdump", "--help");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Contain("Description");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    {
+        var result = Execute(DSComPath, "tlbregister", "--help");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Contain("Description");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    {
+        var result = Execute(DSComPath, "tlbunregister", "--help");
+        result.ExitCode.Should().Be(0);
+        result.StdOut.Trim().Should().Contain("Description");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbUnRegisterAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    {
+        var result = Execute(DSComPath, "tlbunregister", "abc");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Contain("File abc not found");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbRegisterAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    {
+        var result = Execute(DSComPath, "tlbregister", "abc");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Contain("File abc not found");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbDumpAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    {
+        var result = Execute(DSComPath, "tlbdump", "abc");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Contain("File abc not found");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    {
+        var result = Execute(DSComPath, "tlbexport", "abc");
+        result.ExitCode.Should().Be(1);
+        result.StdErr.Trim().Should().Contain("File abc not found");
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTLBIsAvailableAndValid()
+    {
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
+        var yamlFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.yaml";
+
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        var yamlFilePath = Path.Combine(Environment.CurrentDirectory, yamlFileName);
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path);
+        result.ExitCode.Should().Be(0);
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+
+        var dumpResult = Execute(DSComPath, "tlbdump", tlbFilePath);
+        dumpResult.ExitCode.Should().Be(0);
+
+        File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
+
+        File.Delete(tlbFilePath);
+        File.Delete(yamlFilePath);
     }
 
     internal static ProcessOutput Execute(string filname, params string[] args)

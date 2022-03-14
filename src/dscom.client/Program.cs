@@ -177,6 +177,11 @@ public static class ConsoleApp
                 // Is disposed at the end of the method
                 using var assemblyResolver = new AssemblyResolver(options);
 
+                if (!File.Exists(options.Assembly))
+                {
+                    throw new FileNotFoundException($"File {options.Assembly} not found.");
+                }
+
                 var assembly = Assembly.LoadFrom(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
                 var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options));
@@ -188,22 +193,18 @@ public static class ConsoleApp
 
                 return 0;
             }
+#if DEBUG
+            catch
+            {
+                throw;
+            }
+#else            
             catch (Exception e)
             {
-                Console.Error.WriteLine(e.Message);
-                if (e.InnerException != null)
-                {
-                    Console.Error.WriteLine($"Exception caught: {e.InnerException.Message}");
-                }
-
+                Console.Error.WriteLine($"Failed to export type library. {e.Message} {e.InnerException?.Message}");
                 return 1;
             }
-
-        });
-
-        tlbexportCommand.AddValidator(v =>
-        {
-            return string.Empty;
+#endif            
         });
     }
 
@@ -237,6 +238,11 @@ public static class ConsoleApp
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             throw new PlatformNotSupportedException();
+        }
+
+        if (!File.Exists(typeLibFilePath))
+        {
+            throw new ArgumentException($"File {typeLibFilePath} not found");
         }
 
         ITypeLib? typeLib = null;

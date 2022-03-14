@@ -20,6 +20,8 @@ public class CompileReleaseFixture
 
     public string DSComPath { get; private set; } = string.Empty;
 
+    public string DemoProjectAssembly1Path { get; private set; } = string.Empty;
+
     public CompileReleaseFixture()
     {
 #if !NETFRAMEWORK
@@ -39,6 +41,10 @@ public class CompileReleaseFixture
 
         // Path to descom.exe
         DSComPath = Path.Combine(Workdir, "src", "dscom.client", "bin", configuration, "net6.0", "dscom.exe");
+
+        // Path to dscom.demo assembly
+        DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
+
 #endif
     }
 }
