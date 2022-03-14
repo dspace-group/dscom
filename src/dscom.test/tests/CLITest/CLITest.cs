@@ -17,34 +17,44 @@ using System.Text;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-public class CLITest
+public class CLITest : IClassFixture<CompileReleaseFixture>
 {
-    public record struct ProcessOutput(string StdOut, string StdErr, int ExitCode);
+    private const string ErrorNoCommandOrOptions = "Required command was not provided.";
 
-    public CLITest()
+    internal record struct ProcessOutput(string StdOut, string StdErr, int ExitCode);
+
+    internal string DSComPath { get; set; } = string.Empty;
+
+    internal string Workdir { get; } = string.Empty;
+
+    public CLITest(CompileReleaseFixture compileFixture)
     {
-        var workdir = new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.Parent?.Parent;
-        if (workdir == null || !workdir.Exists)
-        {
-            throw new DirectoryNotFoundException("Workdir not found.");
-        }
-
-        Workdir = workdir.FullName;
-
-        // Compile Release
-        var restult = Execute("dotnet", "build", Workdir, "-c", "Release");
-        restult.ExitCode.Should().Be(0);
-
-        // Path to descom.exe
-        DSComPath = Path.Combine(Workdir, "src", "dscom.client", "bin", "Release", "net6.0", "dscom.exe");
+        DSComPath = compileFixture.DSComPath;
+        Workdir = compileFixture.Workdir;
     }
 
-    private string Workdir { get; }
+    [FactNoFramework]
+    public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
+    {
+        var restult = Execute(DSComPath);
 
-    private string DSComPath { get; }
+        restult.ExitCode.Should().Be(1);
+        restult.StdErr.Trim().Should().Be(ErrorNoCommandOrOptions);
+        restult.StdOut.Trim().Should().Contain("Description");
+    }
 
-    [Fact]
-    public void CLIVersion_IsAssemblyInformationalVersionAttributeValue()
+    [FactNoFramework]
+    public void CallWithoutCommandABC_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
+    {
+        var restult = Execute(DSComPath, "ABC");
+
+        restult.ExitCode.Should().Be(1);
+        restult.StdErr.Trim().Should().Contain(ErrorNoCommandOrOptions);
+        restult.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
+    }
+
+    [FactNoFramework]
+    public void CallWithVersionOption_IsAssemblyInformationalVersionAttributeValue()
     {
         var assemblyInformationalVersion = typeof(TypeLibConverter).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
         assemblyInformationalVersion.Should().NotBeNull("AssemblyInformationalVersionAttribute is not set");
@@ -55,7 +65,7 @@ public class CLITest
         restult.StdOut.Trim().Should().Be(versionFromLib);
     }
 
-    private static ProcessOutput Execute(string filname, params string[] args)
+    internal static ProcessOutput Execute(string filname, params string[] args)
     {
         var processOutput = new ProcessOutput();
         var process = new Process();
