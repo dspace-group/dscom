@@ -38,6 +38,10 @@
     <ProjectReference Include="..\dscom\dscom.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Compile Remove="tests\CLITest\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="..\dscom.common\**" />
   </ItemGroup>

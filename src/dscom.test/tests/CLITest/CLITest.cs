@@ -20,9 +20,6 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 // The CLI is not available for .NET Framework
 public class CLITest : IClassFixture<CompileReleaseFixture>
 {
-
-#if !NETFRAMEWORK
-
     private const string ErrorNoCommandOrOptions = "Required command was not provided.";
 
     internal record struct ProcessOutput(string StdOut, string StdErr, int ExitCode);
@@ -250,5 +247,4 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         return processOutput;
     }
-#endif
 }
