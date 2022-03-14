@@ -57,7 +57,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [FactNoFramework]
-    public void CallWithVersionOption_IsAssemblyInformationalVersionAttributeValue()
+    public void CallWithVersionOption_VersionIsAssemblyInformationalVersionAttributeValue()
     {
         var assemblyInformationalVersion = typeof(TypeLibConverter).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
         assemblyInformationalVersion.Should().NotBeNull("AssemblyInformationalVersionAttribute is not set");
@@ -109,7 +109,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [FactNoFramework]
-    public void CallWithCommandTlbUnRegisterAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    public void CallWithCommandTlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
         result.ExitCode.Should().Be(1);
@@ -117,7 +117,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [FactNoFramework]
-    public void CallWithCommandTlbRegisterAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    public void CallWithCommandTlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
         result.ExitCode.Should().Be(1);
@@ -125,7 +125,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [FactNoFramework]
-    public void CallWithCommandTlbDumpAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    public void CallWithCommandTlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
         result.ExitCode.Should().Be(1);
@@ -133,7 +133,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [FactNoFramework]
-    public void CallWithCommandTlbExportAndFileNotExist_StdErrIsAvailableExitCodeIs1()
+    public void CallWithCommandTlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
         result.ExitCode.Should().Be(1);
@@ -158,6 +158,68 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         dumpResult.ExitCode.Should().Be(0);
 
         File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
+
+        File.Delete(tlbFilePath);
+        File.Delete(yamlFilePath);
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
+    {
+        var tlbFileName = $"{Guid.NewGuid()}.tlb";
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--out", tlbFileName, "--silent");
+        result.ExitCode.Should().Be(0);
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+
+        result.StdOut.Trim().Should().NotBeNullOrEmpty();
+        result.StdErr.Trim().Should().NotBeNullOrEmpty();
+
+        File.Delete(tlbFilePath);
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndOptionSilenceTX801311A6_StdOutAndStdErrIsEmpty()
+    {
+        var tlbFileName = $"{Guid.NewGuid()}.tlb";
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--out", tlbFileName, "--silence", "TX801311A6");
+        result.ExitCode.Should().Be(0);
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+
+        result.StdOut.Trim().Should().NotBeNullOrEmpty();
+        result.StdErr.Trim().Should().NotBeNullOrEmpty();
+
+        File.Delete(tlbFilePath);
+    }
+
+    [FactNoFramework]
+    public void CallWithCommandTlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
+    {
+        var guid = Guid.NewGuid().ToString();
+
+        var tlbFileName = $"{guid}.tlb";
+        var yamlFileName = $"{guid}.yaml";
+
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        var yamlFilePath = Path.Combine(Environment.CurrentDirectory, yamlFileName);
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--out", tlbFilePath, "--overridetlbid", guid);
+
+        result.ExitCode.Should().Be(0);
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+
+        var dumpResult = Execute(DSComPath, "tlbdump", tlbFilePath, "/out", yamlFilePath);
+        dumpResult.ExitCode.Should().Be(0);
+
+        File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
+
+        var yamlContent = File.ReadAllText(yamlFilePath);
+        yamlContent.Should().Contain($"guid: {guid}");
 
         File.Delete(tlbFilePath);
         File.Delete(yamlFilePath);
