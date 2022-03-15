@@ -227,7 +227,7 @@ public static class ConsoleApp
         hresult = forUser
             ? OleAut32.RegisterTypeLibForUser(typeLib, typeLibFilePath, Path.GetDirectoryName(typeLibFilePath)!)
             : OleAut32.RegisterTypeLib(typeLib, typeLibFilePath, Path.GetDirectoryName(typeLibFilePath)!);
-        hresult.ThrowIfFailed($"Failed registered type library {typeLibFilePath}");
+        hresult.ThrowIfFailed($"Failed register {typeLibFilePath} (Please make sure you're running the application as administrator)");
 
         Console.WriteLine("Type library was registered successfully");
     }
@@ -258,7 +258,7 @@ public static class ConsoleApp
                 ? OleAut32.UnRegisterTypeLibForUser(typeLibAttr.guid, (ushort)typeLibAttr.wMajorVerNum, (ushort)typeLibAttr.wMinorVerNum, typeLibAttr.lcid, typeLibAttr.syskind)
                 : OleAut32.UnRegisterTypeLib(typeLibAttr.guid, (ushort)typeLibAttr.wMajorVerNum, (ushort)typeLibAttr.wMinorVerNum, typeLibAttr.lcid, typeLibAttr.syskind);
 
-            hresult.ThrowIfFailed($"Failed unregister type library {typeLibFilePath}");
+            hresult.ThrowIfFailed($"Failed unregister {typeLibFilePath} (Please make sure you're running the application as administrator)");
         }
         finally
         {
