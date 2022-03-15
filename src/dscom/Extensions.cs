@@ -214,4 +214,30 @@ internal static class Extensions
         }
         return result;
     }
+
+    internal static List<List<Type>> GetComInterfacesRecursive(this Type type)
+    {
+        var result = new List<List<Type>>
+        {
+            type.GetInterfaces().Where(x => x.IsComVisible()).ToList()
+        };
+        if (type.BaseType != null)
+        {
+            var innerResult = type.BaseType.GetComInterfacesRecursive();
+            result.AddRange(innerResult);
+        }
+        if (result.First() != null)
+        {
+            var allOtherTypes = new List<Type>();
+            result.Where(z => z != result.First()).ToList().ForEach(y => allOtherTypes.AddRange(y));
+            result.First().ToList().ForEach(y =>
+            {
+                if (allOtherTypes.Contains(y))
+                {
+                    result.First().Remove(y);
+                }
+            });
+        }
+        return result;
+    }
 }
