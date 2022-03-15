@@ -24,7 +24,6 @@ public class CompileReleaseFixture
 
     public CompileReleaseFixture()
     {
-#if !NETFRAMEWORK
         var workdir = new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.Parent?.Parent;
         if (workdir == null || !workdir.Exists)
         {
@@ -44,7 +43,5 @@ public class CompileReleaseFixture
 
         // Path to dscom.demo assembly
         DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
-
-#endif
     }
 }

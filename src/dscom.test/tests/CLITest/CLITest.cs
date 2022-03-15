@@ -226,7 +226,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         File.Delete(yamlFilePath);
     }
 
-    internal static ProcessOutput Execute(string filname, params string[] args)
+    internal static ProcessOutput Execute(string filename, params string[] args)
     {
         var processOutput = new ProcessOutput();
         var process = new Process();
@@ -235,7 +235,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         process.StartInfo.RedirectStandardError = true;
         var sb = new StringBuilder();
         process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { sb.Append(e.Data); });
-        process.StartInfo.FileName = filname;
+        process.StartInfo.FileName = filename;
         process.StartInfo.Arguments = string.Join(" ", args);
         process.Start();
 
