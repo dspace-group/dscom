@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace dSPACE.Runtime.InteropServices;
@@ -19,6 +20,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// Identifies a typlibrary.
 /// </summary>
+[Browsable(false)]
 public struct TypeLibIdentifier
 {
     /// <summary>

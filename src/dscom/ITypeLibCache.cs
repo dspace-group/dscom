@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
+
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
 /// Provides a cache that could be used the returns an ITypeLib.
 /// </summary>
+[Browsable(false)]
 public interface ITypeLibCache
 {
     /// <summary>
