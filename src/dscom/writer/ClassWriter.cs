@@ -51,7 +51,30 @@ internal class ClassWriter : TypeWriter
     public override void CreateTypeInheritance()
     {
         uint index = 0;
-        var defaultInterfaceSet = false;
+
+        var interfaces = SourceType.GetInterfaces().Where(x => x.IsComVisible());
+
+        Type? defaultInterfaceType = null;
+        var useClassInterfaceAsDefault = false;
+        if (SourceType.GetCustomAttribute<ComDefaultInterfaceAttribute>() != null)
+        {
+            defaultInterfaceType = SourceType.GetCustomAttribute<ComDefaultInterfaceAttribute>()!.Value;
+        }
+        else
+        {
+            //no default attribute
+            if (ClassInterfaceWriter != null)
+            {
+                useClassInterfaceAsDefault = true;
+            }
+            else
+            {
+                var result = SourceType.GetComInterfacesRecursive();
+                var orderedInterfaces = new List<Type>();
+                result.ForEach(t => orderedInterfaces.AddRange(t));
+                defaultInterfaceType = orderedInterfaces.FirstOrDefault();
+            }
+        }
 
         if (ClassInterfaceWriter != null)
         {
@@ -60,17 +83,16 @@ internal class ClassWriter : TypeWriter
                 .ThrowIfFailed($"Failed to add class interface reference to {SourceType}.");
             TypeInfo.AddImplType(index, phRefType)
                 .ThrowIfFailed($"Failed to add class interface implementation to {SourceType}.");
+            if (useClassInterfaceAsDefault)
+            {
+                TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
+                        .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT for class interface.");
+            }
             index++;
         }
 
-        var interfaces = SourceType.GetInterfaces();
         foreach (var currentInterface in interfaces)
         {
-            if (!currentInterface.IsComVisible())
-            {
-                continue;
-            }
-
             var referencedTypeInfo = Context.TypeInfoResolver.ResolveTypeInfo(currentInterface);
             if (referencedTypeInfo != null)
             {
@@ -80,13 +102,11 @@ internal class ClassWriter : TypeWriter
                     .ThrowIfFailed($"Failed to add interface {currentInterface.Name} to {SourceType}.");
 
                 //check for attributation
-                if (SourceType.GetCustomAttributes<ComDefaultInterfaceAttribute>().Any(y => y.Value == currentInterface))
+                if (defaultInterfaceType != null && defaultInterfaceType == currentInterface)
                 {
                     TypeInfo.SetImplTypeFlags(index, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
                         .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT for {currentInterface.Name}.");
-                    defaultInterfaceSet = true;
                 }
-
                 index++;
             }
             else
@@ -94,14 +114,6 @@ internal class ClassWriter : TypeWriter
                 Context.NotifySink!.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, 0, $"ComVisible interface {currentInterface} could not be added to source type {SourceType}.");
             }
 
-        }
-
-        // The default interface is the class interface or the first implemented interface.
-        if ((ClassInterfaceWriter != null || (interfaces.Length > 0 && index > 0)) && !defaultInterfaceSet)
-        {
-            TypeInfo.SetImplTypeFlags(0, IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
-                .ThrowIfFailed($"Failed to set IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT to {SourceType}.");
-            defaultInterfaceSet = true;
         }
 
         //check for ComSourceInterfaces
