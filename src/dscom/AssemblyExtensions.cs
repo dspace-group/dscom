@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
 using System.Reflection;
 
 namespace dSPACE.Runtime.InteropServices;
@@ -19,6 +20,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// Extension methods for <see cref="Assembly"/>.
 /// </summary>
+[Browsable(false)]
 public static class AssemblyExtensions
 {
     /// <summary>

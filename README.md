@@ -157,7 +157,7 @@ classextern forwarder System.Exception
 }
 ```
 
-**Therefore you should make sure that you do not use any types from the `mscorelib` typelib in your .NET project if you are using .NET Framework assemblies!**
+**Therefore you should make sure that you do not use any types from the `mscorelib` typelib in your .NET Framework project if you plan to migrate to .NET 5+**
 
 ## Limitations
 
