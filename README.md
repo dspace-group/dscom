@@ -7,6 +7,8 @@
 ![License](https://img.shields.io/github/license/dspace-group/dscom)
 [![dSPACE](https://img.shields.io/badge/-OpenSource%20powered%20by%20dSPACE-blue)](https://www.dspace.com/)
 
+> This is an unstable prerelease. Anything may change at any time!
+
 dscom is a replacement for `tlbexp.exe` and `TypeLibConverter.ConvertAssemblyToTypeLib`.  
 The tool consists of a library and a command line tool. The library can be used in `net6.0` or in `net48` projects.
 
