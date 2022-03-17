@@ -170,6 +170,7 @@ classextern forwarder System.Exception
   - ICloneable not supported
   - IDisposable not supported
   - ...
+- Only 64 Bit support (x64)
 - `TypeLibExporterFlags` is not supported
 - `ITypeLibExporterNotifySink` is not COM visible
 - `TypeLibConverter` is not COM visible
