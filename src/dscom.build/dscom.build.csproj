@@ -29,6 +29,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/dspace-group/dscom</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <DevelopmentDependency>true</DevelopmentDependency>
     <PackageTags>com;tlb;ole;idl;tlbexp;interop;typelib;ConvertAssemblyToTypeLib;TypeLibConverter;MsBuild</PackageTags>
   </PropertyGroup>
 
@@ -41,6 +42,8 @@
     <None Include="..\dscom\packageIcon.png" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="*.props" Pack="true" PackagePath="build" />
+    <None Include="*.targets" Pack="true" PackagePath="build" />
   </ItemGroup>
 
   <ItemGroup>
