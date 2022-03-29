@@ -1,4 +1,4 @@
-﻿// Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+// Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace dSPACE.Build.Tasks.dscom;
 
-public sealed class TlbExporterTask : Task
+public sealed class TlbExport : Task
 {
     private readonly IBuildContext _context;
 
-    public TlbExporterTask(IBuildContext context)
+    public TlbExport(IBuildContext context)
     {
         this._context = context;
     }
 
-    public TlbExporterTask() : this(new DefaultBuildContext())
+    public TlbExport() : this(new DefaultBuildContext())
     {
     }
 
