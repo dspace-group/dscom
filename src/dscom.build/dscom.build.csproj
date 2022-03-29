@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>dSPACE.Build.Tasks.dscom</AssemblyName>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>dSPACE.Build.Tasks.dscom</RootNamespace>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Carsten Igel</Authors>
+    <Company>dSPACE GmbH</Company>
+    <Product>dSPACE.Build.Tasks.dscom</Product>
+    <Description>dSPACE COM tools - MsBuild Tasks</Description>
+    <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>
+    <IsPackable>true</IsPackable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageId>dSPACE.Build.Tasks.dscom</PackageId>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dspace-group/dscom</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageTags>com;tlb;ole;idl;tlbexp;interop;typelib;ConvertAssemblyToTypeLib;TypeLibConverter;MsBuild</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="microsoft.build.tasks.core" Version="17.0.0" />
+    <PackageReference Include="MinVer" Version="2.5.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <None Include="..\dscom\packageIcon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dscom\dscom.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\dscom.common\**" />
+  </ItemGroup>
+
+</Project>
