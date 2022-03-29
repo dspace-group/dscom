@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Project>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
+  <PropertyGroup>
+    <_DsComTlbExt>.tlb</_DsComTlbExt>
+    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)\_dscom\$(TargetFramework)\dSPACE.Build.Tasks.dscom.dll</_DsComTaskAssemblyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DsComTypeLibraryUniqueId>00000000-0000-0000-0000-000000000000</DsComTypeLibraryUniqueId>
+    <DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</DsComExportTypeLibraryTargetFile>
+    <DsComExportTypeLibraryAssemblyFile>$(TargetPath)</DsComExportTypeLibraryAssemblyFile>
+    <DsComRegisterTypeLibrariesAfterBuild>false</DsComRegisterTypeLibrariesAfterBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DsComTlbExportTlbReferences Remove="*" />
+    <DsComTlbExportReferencePaths Remove="*" />
+    <DsComTlbExportAssemblyPaths Remove="*" />
+  </ItemGroup>
 </Project>
