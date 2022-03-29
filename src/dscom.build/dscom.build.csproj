@@ -14,6 +14,13 @@
     <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <BuildOutputTargetFolder>build\_dscom\</BuildOutputTargetFolder>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -29,12 +36,15 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/dspace-group/dscom</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <DevelopmentDependency>true</DevelopmentDependency>
     <PackageTags>com;tlb;ole;idl;tlbexp;interop;typelib;ConvertAssemblyToTypeLib;TypeLibConverter;MsBuild</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="microsoft.build.tasks.core" Version="17.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.Github" Version="1.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="MinVer" Version="2.5.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
