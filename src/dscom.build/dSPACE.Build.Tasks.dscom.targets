@@ -1,4 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Project>
-  
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <UsingTask AssemblyName="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Build.Tasks.dscom.TlbExport" />
+
+  <Target Name="DsComExportTypeLibraryAfterBuild" 
+          AfterTargets="AfterBuild" 
+          Inputs="$(DsComExportTypeLibraryAssemblyFile)" 
+          Outputs="$(DsComExportTypeLibraryTargetFile)"
+          Condition="'$(Platform)' == 'x64'">
+    <TlbExport 
+      TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
+      TargetFile="$(DsComExportTypeLibraryTargetFile)"
+      SourceAssemblyFile="$(DsComExportTypeLibraryAssemblyFile)"
+      TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
+      TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
+      AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
+    <!-- TODO: Update COMReference MetaData of imported project reference, if possible -->
+  </Target>
+
+  <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
+      DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
+      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'" >
+      <RegisterAssembly Assemblies="$(TargetPath)" />
+  </Target>
+
+  <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
+      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'"
+      BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
+      <UnregisterAssembly Assemblies="$(TargetPath)" />
+  </Target>
+
+  <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" AfterTargets="DsComExportTypeLibraryUnregisterAssembly">
+    <Delete 
+          Files="$(DsComExportTypeLibraryTargetFile)" 
+          Condition="Exists('$(DsComExportTypeLibraryTargetFile)')" />
+  </Target>
 </Project>
