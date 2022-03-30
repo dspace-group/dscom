@@ -18,7 +18,23 @@ using Microsoft.Build.Utilities;
 
 namespace dSPACE.Build.Tasks.dscom;
 
+/// <summary>
+/// Interface representing the execution and build context.
+/// This interface is used to separate task execution from 
+/// tlb conversion.
+/// Hence implementations will perform any TLB conversion.
+/// </summary>
 public interface IBuildContext
 {
+    /// <summary>
+    /// When implemented in a derived class, the conversion will take place
+    /// trying to load the assembly specified in the <see cref="TypeLibConverterSettings.Assembly" />
+    /// of the specified <paramref name="settings" /> object and convert it to the type library specified in
+    /// the <see cref="TypeLibConverterSettings.TypeLibrary" /> of the same parameter.
+    /// Errors, warnings and conversion messages will be written to the build <paramref name="log" />.
+    /// </summary>
+    /// <param name="settings">The conversion settings to apply to the built-in converter.</param>
+    /// <param name="log">The log to write error messages to.</param>
+    /// <returns><c>true</c>, if the conversion has taken place successfully; <c>false</c> otherwise.</returns>
     bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log);
 }

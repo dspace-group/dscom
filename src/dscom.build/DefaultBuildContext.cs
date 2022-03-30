@@ -21,10 +21,18 @@ using COMException = System.Runtime.InteropServices.COMException;
 
 namespace dSPACE.Build.Tasks.dscom;
 
+/// <summary>
+/// Default implementation of the <see cref="IBuildContext" /> interface 
+/// using <see cref="TypeLibConverter" /> as implementation for conversion 
+/// and <see cref="LoggingTypeLibExporterSink" /> as implementation for 
+/// event handling. 
+/// </summary>
 internal sealed class DefaultBuildContext : IBuildContext
 {
+    /// <inheritdoc cref="IBuildContext.ConvertAssemblyToTypeLib" />
     public bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log)
     {
+        // Load assembly from file.
         Assembly assembly;
         try
         {
@@ -45,13 +53,20 @@ internal sealed class DefaultBuildContext : IBuildContext
 
         try
         {
+            // Create type library converter.
             var converter = new TypeLibConverter();
 
+            // Create event handler.
             var sink = new LoggingTypeLibExporterSink(log);
+            // create conversion.
             var tlb = converter.ConvertAssemblyToTypeLib(assembly, settings, sink);
             if (tlb == null)
             {
                 log.LogError("The following type library could not be created successfully: {0}. Reason: Operation was not successful.", settings.Out);
+            }
+            else
+            {
+                log.LogMessage(MessageImportance.High, "Finished generation of the following type library: {0}", settings.TypeLibrary);
             }
 
             return tlb != null;
