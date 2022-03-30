@@ -19,15 +19,28 @@ using Microsoft.Build.Utilities;
 
 namespace dSPACE.Build.Tasks.dscom;
 
+/// <summary>
+/// Implementation of the a <see cref="ITypeLibExporterNotifySink" />
+/// forwarding all messages to the MsBuild log.
+/// </summary>
 internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
 {
+    /// <summary>
+    /// The logging sink.
+    /// </summary>
     private readonly TaskLoggingHelper _log;
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="LoggingTypeLibExporterSink" />
+    /// using the specified <paramref name="log" /> as logging target. 
+    /// </summary>
+    /// <param name="log">The log to write to.</param>
     internal LoggingTypeLibExporterSink(TaskLoggingHelper log)
     {
         _log = log;
     }
 
+    /// <inheritdoc cref="ITypeLibExporterNotifySink.ReportEvent" />
     void ITypeLibExporterNotifySink.ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
     {
         var importance = eventKind switch
@@ -41,6 +54,7 @@ internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
         _log.LogMessage(importance, "Received {0} event. Event Code is {1}: {2}", Enum.GetName(typeof(ExporterEventKind), eventKind), eventCode, eventMsg);
     }
 
+    /// <inheritdoc cref="ITypeLibExporterNotifySink.ResolveRef" />
     object? ITypeLibExporterNotifySink.ResolveRef(Assembly assembly)
     {
         return default;
