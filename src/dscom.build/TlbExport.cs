@@ -1,4 +1,4 @@
-// Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+﻿// Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Reflection;
 using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 using Task = Microsoft.Build.Utilities.Task;
 
@@ -28,7 +25,7 @@ public sealed class TlbExport : Task
 
     public TlbExport(IBuildContext context)
     {
-        this._context = context;
+        _context = context;
     }
 
     public TlbExport() : this(new DefaultBuildContext())
@@ -53,20 +50,20 @@ public sealed class TlbExport : Task
     {
         var settings = new TypeLibConverterSettings()
         {
-            Out = this.TargetFile,
-            Assembly = this.SourceAssemblyFile,
-            OverrideTlbId = this.TlbOverriddenId,
-            TLBReference = ConvertTaskItemToFsPath(this.TypeLibraryReferences),
-            TLBRefpath = ConvertTaskItemToFsPath(this.TypeLibraryReferencePaths),
-            ASMPath = ConvertTaskItemToFsPath(this.AssemblyPaths)
+            Out = TargetFile,
+            Assembly = SourceAssemblyFile,
+            OverrideTlbId = TlbOverriddenId,
+            TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences),
+            TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths),
+            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths)
         };
 
         if (settings.OverrideTlbId != Guid.Empty)
         {
-            this.Log.LogWarning("The default unique id of the resulting type library will be overridden with the following value: {0}", settings.OverrideTlbId);
+            Log.LogWarning("The default unique id of the resulting type library will be overridden with the following value: {0}", settings.OverrideTlbId);
         }
 
-        var checks = new FileSystemChecks(this.Log);
+        var checks = new FileSystemChecks(Log);
 
         var result = true;
         checks.VerifyFilePresent(settings.Assembly, true, ref result);
@@ -74,9 +71,9 @@ public sealed class TlbExport : Task
         checks.VerifyDirectoriesPresent(settings.TLBRefpath, false, ref result);
         checks.VerifyDirectoriesPresent(settings.ASMPath, false, ref result);
 
-        result = result && this._context.ConvertAssemblyToTypeLib(settings, this.Log);
+        result = result && _context.ConvertAssemblyToTypeLib(settings, Log);
 
-        return result && !this.Log.HasLoggedErrors;
+        return result && !Log.HasLoggedErrors;
     }
 
     private static string[] ConvertTaskItemToFsPath(IReadOnlyCollection<ITaskItem> items)

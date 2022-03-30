@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Reflection;
-using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -26,7 +25,7 @@ internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
 
     internal LoggingTypeLibExporterSink(TaskLoggingHelper log)
     {
-        this._log = log;
+        _log = log;
     }
 
     void ITypeLibExporterNotifySink.ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
@@ -39,7 +38,7 @@ internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
             _ => MessageImportance.High,
         };
 
-        this._log.LogMessage(importance, "Received {0} event. Event Code is {1}: {2}", Enum.GetName(typeof(ExporterEventKind), eventKind), eventCode, eventMsg);
+        _log.LogMessage(importance, "Received {0} event. Event Code is {1}: {2}", Enum.GetName(typeof(ExporterEventKind), eventKind), eventCode, eventMsg);
     }
 
     object? ITypeLibExporterNotifySink.ResolveRef(Assembly assembly)

@@ -22,12 +22,12 @@ internal sealed class FileSystemChecks
 
     internal FileSystemChecks(TaskLoggingHelper log)
     {
-        this._log = log;
+        _log = log;
     }
 
     internal void VerifyFilePresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
-        checkResult = checkResult && this.LogCheckIfFileSystemEntryIsMissing(
+        checkResult = checkResult && LogCheckIfFileSystemEntryIsMissing(
             File.Exists,
             fileSystemReference,
             treatAsError,
@@ -39,13 +39,13 @@ internal sealed class FileSystemChecks
     {
         foreach (var possibleFileSystemEntry in fileSystemReferences)
         {
-            this.VerifyFilePresent(possibleFileSystemEntry, treatAsError, ref checkResult);
+            VerifyFilePresent(possibleFileSystemEntry, treatAsError, ref checkResult);
         }
     }
 
     internal void VerifyDirectoryPresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
-        checkResult = checkResult && this.LogCheckIfFileSystemEntryIsMissing(
+        checkResult = checkResult && LogCheckIfFileSystemEntryIsMissing(
             Directory.Exists,
             fileSystemReference,
             treatAsError,
@@ -57,7 +57,7 @@ internal sealed class FileSystemChecks
     {
         foreach (var possibleFileSystemEntry in fileSystemReferences)
         {
-            this.VerifyDirectoryPresent(possibleFileSystemEntry, treatAsError, ref checkResult);
+            VerifyDirectoryPresent(possibleFileSystemEntry, treatAsError, ref checkResult);
         }
     }
 
@@ -66,7 +66,7 @@ internal sealed class FileSystemChecks
         var flag = performCheck(fileSystemEntry);
         if (flag)
         {
-            this.WriteMessageToLog(treatAsError, message, args);
+            WriteMessageToLog(treatAsError, message, args);
         }
 
         return !treatAsError || flag;
@@ -74,10 +74,10 @@ internal sealed class FileSystemChecks
 
     private void WriteMessageToLog(bool treatAsError, string message, params object[] args)
     {
-        Action<string, object[]> logger = this._log.LogWarning;
+        Action<string, object[]> logger = _log.LogWarning;
         if (treatAsError)
         {
-            logger = this._log.LogError;
+            logger = _log.LogError;
         }
 
         logger(message, args);
