@@ -64,7 +64,7 @@ internal sealed class FileSystemChecks
     private bool LogCheckIfFileSystemEntryIsMissing(Func<string, bool> performCheck, string fileSystemEntry, bool treatAsError, string message, params object[] args)
     {
         var flag = performCheck(fileSystemEntry);
-        if (flag)
+        if (!flag)
         {
             WriteMessageToLog(treatAsError, message, args);
         }
