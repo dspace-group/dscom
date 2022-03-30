@@ -15,6 +15,7 @@
 using System.Reflection;
 using System.Security;
 using dSPACE.Runtime.InteropServices;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 using COMException = System.Runtime.InteropServices.COMException;
@@ -66,7 +67,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             }
             else
             {
-                log.LogMessage(MessageImportance.High, "Finished generation of the following type library: {0}", settings.TypeLibrary);
+                log.LogMessage(MessageImportance.High, "Finished generation of the following type library: {0}", settings.Out);
             }
 
             return tlb != null;
