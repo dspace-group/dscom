@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Security;
 using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
@@ -35,9 +36,28 @@ internal sealed class DefaultBuildContext : IBuildContext
     {
         // Load assembly from file.
         Assembly assembly;
+        var loadContext = new AssemblyLoadContext("msbuild-load-ctx", true);
+        loadContext.Resolving += (ctx, name) =>
+        {
+            var validAssemblyExtensions = new string[] { ".dll", ".exe" };
+            var fileNameWithoutExtension = name.Name ?? string.Empty;
+            foreach (var path in settings.ASMPath)
+            {
+                foreach (var extension in validAssemblyExtensions)
+                {
+                    var possibleFileName = Path.Combine(path, $"{fileNameWithoutExtension}{extension}");
+                    if (File.Exists(possibleFileName))
+                    {
+                        return ctx.LoadFromAssemblyPath(possibleFileName);
+                    }
+                }
+            }
+
+            return default;
+        };
         try
         {
-            assembly = Assembly.LoadFrom(settings.Assembly);
+            assembly = loadContext.LoadFromAssemblyPath(settings.Assembly);
         }
         catch (Exception e) when
             (e is ArgumentNullException
@@ -49,6 +69,7 @@ internal sealed class DefaultBuildContext : IBuildContext
                or PathTooLongException)
         {
             log.LogErrorFromException(e, true, true, settings.Assembly);
+            loadContext.Unload();
             return false;
         }
 
@@ -76,6 +97,10 @@ internal sealed class DefaultBuildContext : IBuildContext
         {
             log.LogErrorFromException(e, false, true, settings.Assembly);
             return false;
+        }
+        finally
+        {
+            loadContext.Unload();
         }
     }
 }
