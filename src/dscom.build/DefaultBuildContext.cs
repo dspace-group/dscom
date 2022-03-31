@@ -27,7 +27,7 @@ namespace dSPACE.Build.Tasks.dscom;
 /// Default implementation of the <see cref="IBuildContext" /> interface 
 /// using <see cref="TypeLibConverter" /> as implementation for conversion 
 /// and <see cref="LoggingTypeLibExporterSink" /> as implementation for 
-/// event handling. 
+/// event handling.
 /// </summary>
 internal sealed class DefaultBuildContext : IBuildContext
 {
@@ -35,41 +35,11 @@ internal sealed class DefaultBuildContext : IBuildContext
     public bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log)
     {
         // Load assembly from file.
-        Assembly assembly;
-        var loadContext = new AssemblyLoadContext("msbuild-load-ctx", true);
-        loadContext.Resolving += (ctx, name) =>
-        {
-            var validAssemblyExtensions = new string[] { ".dll", ".exe" };
-            var fileNameWithoutExtension = name.Name ?? string.Empty;
-            foreach (var path in settings.ASMPath)
-            {
-                foreach (var extension in validAssemblyExtensions)
-                {
-                    var possibleFileName = Path.Combine(path, $"{fileNameWithoutExtension}{extension}");
-                    if (File.Exists(possibleFileName))
-                    {
-                        return ctx.LoadFromAssemblyPath(possibleFileName);
-                    }
-                }
-            }
+        var loadContext = CreateLoadContext(settings);
+        var assembly = LoadAssembly(settings, loadContext, log);
 
-            return default;
-        };
-        try
+        if (assembly is null)
         {
-            assembly = loadContext.LoadFromAssemblyPath(settings.Assembly);
-        }
-        catch (Exception e) when
-            (e is ArgumentNullException
-               or FileNotFoundException
-               or FileLoadException
-               or BadImageFormatException
-               or SecurityException
-               or ArgumentException
-               or PathTooLongException)
-        {
-            log.LogErrorFromException(e, true, true, settings.Assembly);
-            loadContext.Unload();
             return false;
         }
 
@@ -100,7 +70,85 @@ internal sealed class DefaultBuildContext : IBuildContext
         }
         finally
         {
-            loadContext.Unload();
+            try
+            {
+                loadContext.Unload();
+            }
+            catch (InvalidOperationException)
+            {
+                log.LogWarning("Failed to unload the assembly load context.");
+            }
         }
+    }
+
+    /// <summary>
+    /// Creates unloadable <see cref="AssemblyLoadContext"/> that will
+    /// take care of the loading and unloading the target assemblies.
+    /// </summary>
+    /// <param name="settings">The type library settings.</param>
+    /// <returns>An unloadable context.</returns>
+    private static AssemblyLoadContext CreateLoadContext(TypeLibConverterSettings settings)
+    {
+        var loadContext = new AssemblyLoadContext($"msbuild-load-ctx-{Guid.NewGuid()}", true);
+        loadContext.Resolving += (ctx, name) =>
+        {
+            var validAssemblyExtensions = new string[] { ".dll", ".exe" };
+            var fileNameWithoutExtension = name.Name ?? string.Empty;
+            foreach (var path in settings.ASMPath)
+            {
+                foreach (var extension in validAssemblyExtensions)
+                {
+                    var possibleFileName = Path.Combine(path, $"{fileNameWithoutExtension}{extension}");
+                    if (File.Exists(possibleFileName))
+                    {
+                        return ctx.LoadFromAssemblyPath(possibleFileName);
+                    }
+                }
+            }
+
+            return default;
+        };
+
+        return loadContext;
+    }
+
+    /// <summary>
+    /// Tries to load the assembly specified in the <paramref name="settings"/> using the specified
+    /// <paramref name="loadContext"/>. If the assembly cannot be loaded, the result will be <c>null</c>.
+    /// </summary>
+    /// <param name="settings">The settings.</param>
+    /// <param name="loadContext">The assembly load context.</param>
+    /// <param name="log">The log to write messages to.</param>
+    /// <returns>The assembly loaded.</returns>
+    private static Assembly? LoadAssembly(TypeLibConverterSettings settings, AssemblyLoadContext loadContext, TaskLoggingHelper log)
+    {
+        Assembly assembly;
+        try
+        {
+            assembly = loadContext.LoadFromAssemblyPath(settings.Assembly);
+        }
+        catch (Exception e) when
+            (e is ArgumentNullException
+               or FileNotFoundException
+               or FileLoadException
+               or BadImageFormatException
+               or SecurityException
+               or ArgumentException
+               or PathTooLongException)
+        {
+            log.LogErrorFromException(e, true, true, settings.Assembly);
+            try
+            {
+                loadContext.Unload();
+            }
+            catch (InvalidOperationException)
+            {
+                log.LogWarning("Failed to unload the following assembly: {0}.", settings.Assembly);
+            }
+
+            return default;
+        }
+
+        return assembly;
     }
 }
