@@ -30,7 +30,7 @@ public class TypeLibConverterSettings
     public string Assembly { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a type libaray reference.
+    /// Gets or sets a type library reference.
     /// </summary>
     public string[] TLBReference { get; set; } = Array.Empty<string>();
 
@@ -43,7 +43,6 @@ public class TypeLibConverterSettings
     /// Gets or sets a path to a directory with assemblies.
     /// </summary>
     public string[] ASMPath { get; set; } = Array.Empty<string>();
-
 
     /// <summary>
     /// Gets or sets the type library GUID.

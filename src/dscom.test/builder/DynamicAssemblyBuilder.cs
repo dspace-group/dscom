@@ -70,7 +70,7 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
         var tlbFilePath = storeOnDisk ? TypeLibPath : string.Empty;
         if (typeLibConverter.ConvertAssemblyToTypeLib(ModuleBuilder.Assembly, tlbFilePath, new TypeLibExporterNotifySink()) is not ITypeLib2 typelib)
         {
-            throw new COMException("Cannot create type libaray for this dynamic assembly");
+            throw new COMException("Cannot create type libray for this dynamic assembly");
         }
 
         if (storeOnDisk && typelib is ICreateTypeLib2 createTypeLib2)
