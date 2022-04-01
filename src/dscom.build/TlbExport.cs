@@ -16,9 +16,7 @@ using Microsoft.Build.Framework;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
-namespace dSPACE.Build.Tasks.dscom;
-
-public sealed class TlbExport : Task
+public sealed class TlbExport : Microsoft.Build.Utilities.Task, ITask
 {
     /// <summary>
     /// The build context applied to this instance.
