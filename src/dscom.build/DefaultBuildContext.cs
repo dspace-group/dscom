@@ -23,9 +23,9 @@ using COMException = System.Runtime.InteropServices.COMException;
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 /// <summary>
-/// Default implementation of the <see cref="IBuildContext" /> interface 
-/// using <see cref="TypeLibConverter" /> as implementation for conversion 
-/// and <see cref="LoggingTypeLibExporterSink" /> as implementation for 
+/// Default implementation of the <see cref="IBuildContext" /> interface
+/// using <see cref="TypeLibConverter" /> as implementation for conversion
+/// and <see cref="LoggingTypeLibExporterSink" /> as implementation for
 /// event handling.
 /// </summary>
 internal sealed class DefaultBuildContext : IBuildContext
@@ -97,7 +97,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             {
                 foreach (var extension in validAssemblyExtensions)
                 {
-                    var possibleFileName = Path.Combine(path, $"{fileNameWithoutExtension}{extension}");
+                    var possibleFileName = Path.Combine(path, fileNameWithoutExtension + extension);
                     if (File.Exists(possibleFileName))
                     {
                         return ctx.LoadFromAssemblyPath(possibleFileName);

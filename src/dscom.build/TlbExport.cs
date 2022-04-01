@@ -16,7 +16,10 @@ using Microsoft.Build.Framework;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
-public sealed class TlbExport : Microsoft.Build.Utilities.Task, ITask
+/// <summary>
+/// Represents the task to export a type library file from an assembly.
+/// </summary>
+public sealed class TlbExport : Microsoft.Build.Utilities.Task
 {
     /// <summary>
     /// The build context applied to this instance.
@@ -42,8 +45,8 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task, ITask
     }
 
     /// <summary>
-    /// Gets or sets the COM Type Library unique id. If this value 
-    /// will be equal to <see cref="Guid.Empty" />, the id of the 
+    /// Gets or sets the COM Type Library unique id. If this value
+    /// will be equal to <see cref="Guid.Empty" />, the id of the
     /// resulting COM type library will be not be changed.
     /// </summary>
     public Guid TlbOverriddenId { get; set; } = Guid.Empty;

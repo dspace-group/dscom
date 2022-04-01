@@ -31,7 +31,7 @@ internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
 
     /// <summary>
     /// Creates a new instance of the <see cref="LoggingTypeLibExporterSink" />
-    /// using the specified <paramref name="log" /> as logging target. 
+    /// using the specified <paramref name="log" /> as logging target.
     /// </summary>
     /// <param name="log">The log to write to.</param>
     internal LoggingTypeLibExporterSink(TaskLoggingHelper log)

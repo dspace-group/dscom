@@ -42,9 +42,9 @@ internal sealed class FileSystemChecks
     /// must be set to <c>true</c> and the check will fail. The result of the check will be stored in the <paramref name="checkResult" />
     /// parameter.
     /// </summary>
-    /// <param name="fileSystemReferences">The files to check.</param>
+    /// <param name="fileSystemReference">The files to check.</param>
     /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if the file does not exist.</param>
-    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied, 
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
     /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
     internal void VerifyFilePresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
@@ -64,7 +64,7 @@ internal sealed class FileSystemChecks
     /// </summary>
     /// <param name="fileSystemReferences">The files to check.</param>
     /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if at least one file does not exist.</param>
-    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied, 
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
     /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
     internal void VerifyFilesPresent(IReadOnlyCollection<string> fileSystemReferences, bool treatAsError, ref bool checkResult)
     {
@@ -80,9 +80,9 @@ internal sealed class FileSystemChecks
     /// must be set to <c>true</c> and the check will fail. The result of the check will be stored in the <paramref name="checkResult" />
     /// parameter.
     /// </summary>
-    /// <param name="fileSystemReferences">The files to check.</param>
+    /// <param name="fileSystemReference">The files to check.</param>
     /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if the directory does not exist.</param>
-    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied, 
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
     /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
     internal void VerifyDirectoryPresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
@@ -102,7 +102,7 @@ internal sealed class FileSystemChecks
     /// </summary>
     /// <param name="fileSystemReferences">The files to check.</param>
     /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if at least one directory does not exist.</param>
-    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied, 
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
     /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
     internal void VerifyDirectoriesPresent(IReadOnlyCollection<string> fileSystemReferences, bool treatAsError, ref bool checkResult)
     {
@@ -119,7 +119,7 @@ internal sealed class FileSystemChecks
     /// </summary>
     /// <param name="performCheck">The check to apply.</param>
     /// <param name="fileSystemEntry">The file system entry to check.</param>
-    /// <param name="treatAsError">If set to <c>true</c>, the <paramref name="message"> will be issued as error; else a warning shall be submitted.</param>
+    /// <param name="treatAsError">If set to <c>true</c>, the <paramref name="message" /> will be issued as error; else a warning shall be submitted.</param>
     /// <param name="message">The message to log.</param>
     /// <param name="args">Formatting arguments for the <paramref name="message" />.</param>
     /// <returns><c>true</c>, if the check is issued no error; <c>false</c> otherwise.</returns>

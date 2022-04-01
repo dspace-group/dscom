@@ -18,7 +18,7 @@ namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 /// <summary>
 /// Interface representing the execution and build context.
-/// This interface is used to separate task execution from 
+/// This interface is used to separate task execution from
 /// tlb conversion.
 /// Hence implementations will perform any TLB conversion.
 /// </summary>
