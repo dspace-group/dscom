@@ -21,7 +21,7 @@
 
   <!-- Export settings. -->
   <PropertyGroup>
-    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Build.Tasks.dscom.dll</_DsComTaskAssemblyFile>
+    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
     <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
     <_DsComExportTypeLibraryAssemblyFile>$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
   </PropertyGroup>
@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <!-- Embed task -->
-  <UsingTask AssemblyName="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Build.Tasks.dscom.TlbExport" />
+  <UsingTask AssemblyName="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
 
   <!-- 
       Create a target to be called after the build has taken place. (Target assembly must exist).
