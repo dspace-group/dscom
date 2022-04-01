@@ -19,11 +19,28 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Use target directory as reference path for assembly resolving during build -->
+    <DsComTlbExportAssemblyPaths Include="$(TargetDir)" />
+    <!-- Use source directory of reference files for assembly resolving during build -->
+    <DsComTlbExportAssemblyPaths Include="%(Reference.Root)%(Reference.Directory)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Copy COMFileReferences to list -->
+    <DsComTlbExportTlbReferences Include="@(COMFileReference)" />
+  </ItemGroup>
+
+  <!-- Embed task -->
   <UsingTask AssemblyName="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Build.Tasks.dscom.TlbExport" />
 
+  <!-- 
+      Create a target to be called after the build has taken place. (Target assembly must exist).
+      Call target only if target file has changed or resulting type library is missing.
+  -->
   <Target Name="DsComExportTypeLibraryAfterBuild" 
           AfterTargets="AfterBuild" 
-          Inputs="$(DsComExportTypeLibraryAssemblyFile)" 
+          Inputs="$(DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(DsComExportTypeLibraryTargetFile)"
           Condition="'$(Platform)' == 'x64'">
     <TlbExport 
@@ -35,19 +52,23 @@
       AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
   </Target>
 
+  <!-- Target to optionally register type library -->
   <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
       DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
+      AfterTargets="AfterBuild"
       Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'" >
       <RegisterAssembly Assemblies="$(TargetPath)" />
   </Target>
 
+  <!-- Target to optionally unregister type library. Should be called before removing. -->
   <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
       Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'"
       BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
       <UnregisterAssembly Assemblies="$(TargetPath)" />
   </Target>
 
-  <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" AfterTargets="DsComExportTypeLibraryUnregisterAssembly">
+  <!-- Remove type library on clean -->
+  <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" DependsOnTargets="DsComExportTypeLibraryUnregisterAssembly">
     <Delete 
           Files="$(DsComExportTypeLibraryTargetFile)" 
           Condition="Exists('$(DsComExportTypeLibraryTargetFile)')" />

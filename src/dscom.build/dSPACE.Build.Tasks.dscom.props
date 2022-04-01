@@ -18,17 +18,20 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
+  <!-- Default settings for input and output -->
   <PropertyGroup>
     <_DsComTlbExt>.tlb</_DsComTlbExt>
     <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)\_dscom\$(TargetFramework)\dSPACE.Build.Tasks.dscom.dll</_DsComTaskAssemblyFile>
+    <DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</DsComExportTypeLibraryTargetFile>
   </PropertyGroup>
+  <!-- Conversion settings -->
   <PropertyGroup>
     <DsComTypeLibraryUniqueId>00000000-0000-0000-0000-000000000000</DsComTypeLibraryUniqueId>
-    <DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</DsComExportTypeLibraryTargetFile>
     <DsComExportTypeLibraryAssemblyFile>$(TargetPath)</DsComExportTypeLibraryAssemblyFile>
     <DsComRegisterTypeLibrariesAfterBuild>false</DsComRegisterTypeLibrariesAfterBuild>
   </PropertyGroup>
 
+  <!-- Clear properties -->
   <ItemGroup>
     <DsComTlbExportTlbReferences Remove="*" />
     <DsComTlbExportReferencePaths Remove="*" />
