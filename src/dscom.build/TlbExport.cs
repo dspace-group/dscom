@@ -99,7 +99,7 @@ public sealed class TlbExport : Task
         // Issue a warning, if the type library is about to be overridden.
         if (settings.OverrideTlbId != Guid.Empty)
         {
-            Log.LogWarning("The default unique id of the resulting type library will be overridden with the following value: {0}", settings.OverrideTlbId);
+            Log.LogMessage(MessageImportance.High, "The default unique id of the resulting type library will be overridden with the following value: {0}", settings.OverrideTlbId);
         }
 
         // Perform file system checks.
