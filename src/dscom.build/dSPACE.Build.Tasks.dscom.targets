@@ -33,7 +33,6 @@
       TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
       TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
       AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
-    <!-- TODO: Update COMReference MetaData of imported project reference, if possible -->
   </Target>
 
   <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
