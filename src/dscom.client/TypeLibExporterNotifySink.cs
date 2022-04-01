@@ -93,6 +93,13 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
         var name = assembly.GetName().Name;
         outputPath = Path.Combine(outputPath, $"{name!}.tlb");
 
+        if (!Options.CreateMissingDependentTLBs ?? false)
+        {
+            var message = $"The referenced library {name} does not have a type library and auto generation of dependent type libs is disabled";
+            ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, 0, message);
+            return null!;
+        }
+
         var typeLibConverter = new TypeLibConverter();
         if (!assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Any(z => z.Key.Equals(".NETFrameworkAssembly", StringComparison.Ordinal)))
         {
