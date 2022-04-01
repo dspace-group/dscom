@@ -19,6 +19,13 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
+  <!-- Export settings. -->
+  <PropertyGroup>
+    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)\_dscom\$(TargetFramework)\dSPACE.Build.Tasks.dscom.dll</_DsComTaskAssemblyFile>
+    <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
+    <_DsComExportTypeLibraryAssemblyFile>$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Use target directory as reference path for assembly resolving during build -->
     <DsComTlbExportAssemblyPaths Include="$(TargetDir)" />
@@ -45,8 +52,8 @@
           Condition="'$(Platform)' == 'x64'">
     <TlbExport 
       TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
-      TargetFile="$(DsComExportTypeLibraryTargetFile)"
-      SourceAssemblyFile="$(DsComExportTypeLibraryAssemblyFile)"
+      TargetFile="$(_DsComExportTypeLibraryTargetFile)"
+      SourceAssemblyFile="$(_DsComExportTypeLibraryAssemblyFile)"
       TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
       TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
       AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
