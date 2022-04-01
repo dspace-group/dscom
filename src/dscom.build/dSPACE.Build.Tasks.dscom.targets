@@ -47,8 +47,8 @@
   -->
   <Target Name="DsComExportTypeLibraryAfterBuild" 
           AfterTargets="AfterBuild" 
-          Inputs="$(DsComExportTypeLibraryAssemblyFile)"
-          Outputs="$(DsComExportTypeLibraryTargetFile)"
+          Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
+          Outputs="$(_DsComExportTypeLibraryTargetFile)"
           Condition="'$(Platform)' == 'x64'">
     <TlbExport 
       TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
