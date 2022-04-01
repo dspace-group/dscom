@@ -15,13 +15,12 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Security;
-using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 using COMException = System.Runtime.InteropServices.COMException;
 
-namespace dSPACE.Build.Tasks.dscom;
+namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 /// <summary>
 /// Default implementation of the <see cref="IBuildContext" /> interface 

@@ -14,7 +14,7 @@
 
 using Microsoft.Build.Utilities;
 
-namespace dSPACE.Build.Tasks.dscom;
+namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 /// <summary>
 /// Implementation of file system contracts and the corresponding checks using the logging mechanisms of MsBuild.

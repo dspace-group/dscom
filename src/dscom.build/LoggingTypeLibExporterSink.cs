@@ -13,11 +13,10 @@
 // limitations under the License.
 
 using System.Reflection;
-using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace dSPACE.Build.Tasks.dscom;
+namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 /// <summary>
 /// Implementation of the a <see cref="ITypeLibExporterNotifySink" />

@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using dSPACE.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
-using Task = Microsoft.Build.Utilities.Task;
+namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
 namespace dSPACE.Build.Tasks.dscom;
 
