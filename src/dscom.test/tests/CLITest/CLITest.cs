@@ -26,15 +26,26 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
     internal string DSComPath { get; set; } = string.Empty;
 
-    internal string Workdir { get; } = string.Empty;
-
     internal string DemoProjectAssembly1Path { get; }
+
+    internal string DemoProjectAssembly2Path { get; }
 
     public CLITest(CompileReleaseFixture compileFixture)
     {
         DSComPath = compileFixture.DSComPath;
-        Workdir = compileFixture.Workdir;
         DemoProjectAssembly1Path = compileFixture.DemoProjectAssembly1Path;
+        DemoProjectAssembly2Path = compileFixture.DemoProjectAssembly2Path;
+
+        foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.tlb"))
+        {
+            File.Delete(file);
+        }
+
+        foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.yaml"))
+        {
+            File.Delete(file);
+        }
+
     }
 
     [Fact]
@@ -142,26 +153,43 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTLBIsAvailableAndValid()
+    public void CallWithCommandTlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTlbIsAvailableAndValid()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var yamlFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.yaml";
 
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
         var yamlFilePath = Path.Combine(Environment.CurrentDirectory, yamlFileName);
+        var dependentTlbPath = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
 
         var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path);
         result.ExitCode.Should().Be(0);
 
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
 
         var dumpResult = Execute(DSComPath, "tlbdump", tlbFilePath);
         dumpResult.ExitCode.Should().Be(0);
 
         File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
+    }
 
-        File.Delete(tlbFilePath);
-        File.Delete(yamlFilePath);
+    [Fact]
+    public void CallWithCommandTlbExportDemoAssemblyAndCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
+    {
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
+        var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--createmissingdependenttlbs", "false");
+        result.ExitCode.Should().Be(0);
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(dependentTlbPath).Should().BeFalse($"File {dependentTlbPath} should not be available.");
+
+        result.StdErr.Should().Contain("auto generation of dependent type libs is disabled");
+        result.StdErr.Should().Contain(Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path));
     }
 
     [Fact]
@@ -177,8 +205,6 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         result.StdOut.Trim().Should().BeNullOrEmpty();
         result.StdErr.Trim().Should().BeNullOrEmpty();
-
-        File.Delete(tlbFilePath);
     }
 
     [Fact]
@@ -194,8 +220,6 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         result.StdOut.Trim().Should().BeNullOrEmpty();
         result.StdErr.Trim().Should().BeNullOrEmpty();
-
-        File.Delete(tlbFilePath);
     }
 
     [Fact]
@@ -221,9 +245,6 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         var yamlContent = File.ReadAllText(yamlFilePath);
         yamlContent.Should().Contain($"guid: {guid}");
-
-        File.Delete(tlbFilePath);
-        File.Delete(yamlFilePath);
     }
 
     internal static ProcessOutput Execute(string filename, params string[] args)
