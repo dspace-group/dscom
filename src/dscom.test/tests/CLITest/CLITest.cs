@@ -77,7 +77,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
         var result = Execute(DSComPath, "--version");
         result.ExitCode.Should().Be(0);
-        result.StdOut.Trim().Should().Be(versionFromLib);
+        versionFromLib.Should().StartWith(result.StdOut.Trim());
     }
 
     [Fact]
