@@ -39,4 +39,10 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     /// Gets or sets a value indicating whether the output should be verbose.
     /// </summary>
     public bool Verbose { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether to generate missing TLB files for dependent assemblies.  
+    /// </summary>
+    public bool? CreateMissingDependentTLBs { get; set; } = true;
+
 }
