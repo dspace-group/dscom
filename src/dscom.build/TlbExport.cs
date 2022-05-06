@@ -49,7 +49,7 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// will be equal to <see cref="Guid.Empty" />, the id of the
     /// resulting COM type library will be not be changed.
     /// </summary>
-    public Guid TlbOverriddenId { get; set; } = Guid.Empty;
+    public string TlbOverriddenId { get; set; } = Guid.Empty.ToString();
 
     /// <summary>
     /// Gets or sets the name of the resulting COM type library file (tlb).
@@ -85,12 +85,18 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// <inheritdoc cref="Task.Execute()" />
     public override bool Execute()
     {
+        if (!Guid.TryParse(TlbOverriddenId, out var tlbOverriddenId))
+        {
+            Log.LogError("Cannot convert {0} to a valid Guid", TlbOverriddenId);
+            return false;
+        }
+
         // Create type library converter settings from task paramters
         var settings = new TypeLibConverterSettings()
         {
             Out = TargetFile,
             Assembly = SourceAssemblyFile,
-            OverrideTlbId = TlbOverriddenId,
+            OverrideTlbId = tlbOverriddenId,
             TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences),
             TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths),
             ASMPath = ConvertTaskItemToFsPath(AssemblyPaths)
