@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <!-- Embed task -->
-  <UsingTask AssemblyName="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
+  <UsingTask AssemblyFile="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
 
   <!-- 
       Create a target to be called after the build has taken place. (Target assembly must exist).
