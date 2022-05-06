@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using SystemInteropServices = System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
@@ -85,6 +86,13 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// <inheritdoc cref="Task.Execute()" />
     public override bool Execute()
     {
+        if (!SystemInteropServices.RuntimeInformation.IsOSPlatform(SystemInteropServices.OSPlatform.Windows))
+        {
+            var verbatimDescription = $"{SystemInteropServices.RuntimeInformation.OSDescription} {SystemInteropServices.RuntimeInformation.OSArchitecture} ({SystemInteropServices.RuntimeInformation.ProcessArchitecture} [{SystemInteropServices.RuntimeInformation.RuntimeIdentifier} - {SystemInteropServices.RuntimeInformation.FrameworkDescription}])";
+            Log.LogError("This task can only be executed on Microsoft Windows (TM) based operating systems. This platform does not support the creation of this task: {0}", verbatimDescription);
+            return false;
+        }
+
         if (!Guid.TryParse(TlbOverriddenId, out var tlbOverriddenId))
         {
             Log.LogError("Cannot convert {0} to a valid Guid", TlbOverriddenId);
