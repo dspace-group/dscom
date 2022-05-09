@@ -21,6 +21,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 using COMException = System.Runtime.InteropServices.COMException;
+using SystemInteropServices = System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
 
@@ -32,7 +33,30 @@ namespace dSPACE.Runtime.InteropServices.BuildTasks;
 /// </summary>
 internal sealed class DefaultBuildContext : IBuildContext
 {
-    /// <inheritdoc cref="IBuildContext.ConvertAssemblyToTypeLib" />
+    /// <inheritdoc cref="IBuildContext.IsRunningOnWindows" />
+    public bool IsRunningOnWindows => SystemInteropServices.RuntimeInformation.IsOSPlatform(SystemInteropServices.OSPlatform.Windows);
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="IBuildContext.RuntimeDescription" />
+    public string RuntimeDescription => $"{SystemInteropServices.RuntimeInformation.OSDescription} {SystemInteropServices.RuntimeInformation.OSArchitecture} ({SystemInteropServices.RuntimeInformation.ProcessArchitecture} [{SystemInteropServices.RuntimeInformation.RuntimeIdentifier} - {SystemInteropServices.RuntimeInformation.FrameworkDescription}])";
+#else
+    /// <inheritdoc cref="IBuildContext.RuntimeDescription" />
+    public string RuntimeDescription => $"{SystemInteropServices.RuntimeInformation.OSDescription} {SystemInteropServices.RuntimeInformation.OSArchitecture} ({SystemInteropServices.RuntimeInformation.ProcessArchitecture} [{SystemInteropServices.RuntimeInformation.FrameworkDescription}])";
+#endif
+
+    /// <inheritdoc cref="IBuildContext.EnsureFileExists(string?)" />
+    public bool EnsureFileExists(string? fileNameAndPath)
+    {
+        return File.Exists(fileNameAndPath);
+    }
+
+    /// <inheritdoc cref="IBuildContext.EnsureDirectoryExists(string?)" />
+    public bool EnsureDirectoryExists(string? directoryPath)
+    {
+        return Directory.Exists(directoryPath);
+    }
+
+    /// <inheritdoc cref="IBuildContext.ConvertAssemblyToTypeLib(TypeLibConverterSettings, TaskLoggingHelper)" />
     public bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log)
     {
         // Load assembly from file.

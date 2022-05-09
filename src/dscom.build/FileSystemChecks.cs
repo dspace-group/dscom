@@ -27,13 +27,20 @@ internal sealed class FileSystemChecks
     private readonly TaskLoggingHelper _log;
 
     /// <summary>
+    /// The build context.
+    /// </summary>
+    private readonly IBuildContext _context;
+
+    /// <summary>
     /// Creates a new instance of the <see cref="FileSystemChecks" /> class
     /// using the supplied <paramref name="log" /> to write messages to.
     /// </summary>
     /// <param name="log">The log to apply.</param>
-    internal FileSystemChecks(TaskLoggingHelper log)
+    /// <param name="context">The context to apply.</param>
+    internal FileSystemChecks(TaskLoggingHelper log, IBuildContext context)
     {
         _log = log;
+        _context = context;
     }
 
     /// <summary>
@@ -49,7 +56,7 @@ internal sealed class FileSystemChecks
     internal void VerifyFilePresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
         checkResult = checkResult && LogCheckIfFileSystemEntryIsMissing(
-            File.Exists,
+            _context.EnsureFileExists,
             fileSystemReference,
             treatAsError,
             "The following file is required, but does not exist: {0}",
@@ -87,7 +94,7 @@ internal sealed class FileSystemChecks
     internal void VerifyDirectoryPresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
     {
         checkResult = checkResult && LogCheckIfFileSystemEntryIsMissing(
-            Directory.Exists,
+            _context.EnsureDirectoryExists,
             fileSystemReference,
             treatAsError,
             "The following directory is required, but does not exist: {0}",

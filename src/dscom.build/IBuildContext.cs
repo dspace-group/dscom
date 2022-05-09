@@ -25,6 +25,32 @@ namespace dSPACE.Runtime.InteropServices.BuildTasks;
 public interface IBuildContext
 {
     /// <summary>
+    /// Gets a value indicating whether the current run-time is windows-based or not.
+    /// </summary>
+    bool IsRunningOnWindows { get; }
+
+    /// <summary>
+    /// Gets a verbatim description of the current run-time.
+    /// </summary>
+    string RuntimeDescription { get; }
+
+    /// <summary>
+    /// When implemented it will return, whether the specified <paramref name="fileNameAndPath"/>
+    /// points to a valid file or not.
+    /// </summary>
+    /// <param name="fileNameAndPath">The name and path of the file.</param>
+    /// <returns><c>true</c>, if the file exists; <c>false</c> otherwise.</returns>
+    bool EnsureFileExists(string? fileNameAndPath);
+
+    /// <summary>
+    /// When implemented it will return, whether the specified <paramref name="directoryPath"/>
+    /// points to a valid directory or not.
+    /// </summary>
+    /// <param name="directoryPath">The name and path of the directory.</param>
+    /// <returns><c>true</c>, if the directory exists; <c>false</c> otherwise.</returns>
+    bool EnsureDirectoryExists(string? directoryPath);
+
+    /// <summary>
     /// When implemented in a derived class, the conversion will take place
     /// trying to load the assembly specified in the <see cref="TypeLibConverterSettings.Assembly" />
     /// of the specified <paramref name="settings" /> object and convert it to the type library specified in
