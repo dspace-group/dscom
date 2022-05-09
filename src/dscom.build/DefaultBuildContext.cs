@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System.Reflection;
+#if NET5_0_OR_GREATER
 using System.Runtime.Loader;
+#endif
 using System.Security;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -34,8 +36,12 @@ internal sealed class DefaultBuildContext : IBuildContext
     public bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log)
     {
         // Load assembly from file.
+#if NET5_0_OR_GREATER
         var loadContext = CreateLoadContext(settings);
         var assembly = LoadAssembly(settings, loadContext, log);
+#else
+        var assembly = LoadAssembly(settings, log);
+#endif
 
         if (assembly is null)
         {
@@ -67,6 +73,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             log.LogErrorFromException(e, false, true, settings.Assembly);
             return false;
         }
+#if NET5_0_OR_GREATER
         finally
         {
             try
@@ -78,8 +85,10 @@ internal sealed class DefaultBuildContext : IBuildContext
                 log.LogWarning("Failed to unload the assembly load context.");
             }
         }
+#endif
     }
 
+#if NET5_0_OR_GREATER
     /// <summary>
     /// Creates unloadable <see cref="AssemblyLoadContext"/> that will
     /// take care of the loading and unloading the target assemblies.
@@ -150,4 +159,77 @@ internal sealed class DefaultBuildContext : IBuildContext
 
         return assembly;
     }
+#else
+    /// <summary>
+    /// Tries to load the assembly specified in the <paramref name="settings"/> using the current
+    /// <see cref="AppDomain"/>. If the assembly cannot be loaded, the result will be <c>null</c>.
+    /// </summary>
+    /// <param name="settings">The settings.</param>
+    /// <param name="log">The log to write messages to.</param>
+    /// <returns>The assembly loaded.</returns>
+    private static Assembly? LoadAssembly(TypeLibConverterSettings settings, TaskLoggingHelper log)
+    {
+        try
+        {
+            var content = File.ReadAllBytes(settings.Assembly);
+            var appDomain = AppDomain.CurrentDomain;
+            var resolveHandler = CreateResolveHandler(settings, log);
+            try
+            {
+                appDomain.AssemblyResolve += resolveHandler;
+                return appDomain.Load(content);
+            }
+            finally
+            {
+                appDomain.AssemblyResolve -= resolveHandler;
+            }
+        }
+        catch (Exception e) when
+            (e is ArgumentNullException
+               or PathTooLongException
+               or DirectoryNotFoundException
+               or IOException
+               or UnauthorizedAccessException
+               or FileNotFoundException
+               or NotSupportedException
+               or SecurityException)
+        {
+            log.LogErrorFromException(e, true, true, settings.Assembly);
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// Creates an <see cref="ResolveEventHandler" /> that tries to look up a dependent assembly.
+    /// </summary>
+    /// <param name="settings">The conversion settings.</param>
+    /// <param name="log">The task logging helper.</param>
+    /// <returns>A new resolve event handler instance.</returns>
+    private static ResolveEventHandler CreateResolveHandler(TypeLibConverterSettings settings, TaskLoggingHelper log)
+    {
+        Assembly? AssemblyResolveClosure(object? sender, ResolveEventArgs args)
+        {
+            var validAssemblyExtensions = new string[] { string.Empty, ".dll", ".exe" };
+            var fileNameWithoutExtension = args.Name ?? string.Empty;
+            foreach (var path in settings.ASMPath)
+            {
+                foreach (var extension in validAssemblyExtensions)
+                {
+                    var possibleFileName = Path.Combine(path, fileNameWithoutExtension + extension);
+                    if (File.Exists(possibleFileName))
+                    {
+                        var content = File.ReadAllBytes(possibleFileName);
+                        return AppDomain.CurrentDomain.Load(content);
+                    }
+                }
+            }
+
+            log.LogWarning("Failed to resolve {0} in the following directories: {1}", args.Name, string.Join(", ", settings.ASMPath));
+
+            return default;
+        }
+
+        return AssemblyResolveClosure;
+    }
+#endif
 }

@@ -88,7 +88,11 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     {
         if (!SystemInteropServices.RuntimeInformation.IsOSPlatform(SystemInteropServices.OSPlatform.Windows))
         {
+#if NET5_0_OR_GREATER
             var verbatimDescription = $"{SystemInteropServices.RuntimeInformation.OSDescription} {SystemInteropServices.RuntimeInformation.OSArchitecture} ({SystemInteropServices.RuntimeInformation.ProcessArchitecture} [{SystemInteropServices.RuntimeInformation.RuntimeIdentifier} - {SystemInteropServices.RuntimeInformation.FrameworkDescription}])";
+#else
+            var verbatimDescription = $"{SystemInteropServices.RuntimeInformation.OSDescription} {SystemInteropServices.RuntimeInformation.OSArchitecture} ({SystemInteropServices.RuntimeInformation.ProcessArchitecture} [{SystemInteropServices.RuntimeInformation.FrameworkDescription}])";
+#endif
             Log.LogError("This task can only be executed on Microsoft Windows (TM) based operating systems. This platform does not support the creation of this task: {0}", verbatimDescription);
             return false;
         }
