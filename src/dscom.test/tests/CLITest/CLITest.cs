@@ -30,11 +30,14 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
     internal string DemoProjectAssembly2Path { get; }
 
+    internal string DemoProjectAssembly3Path { get; }
+
     public CLITest(CompileReleaseFixture compileFixture)
     {
         DSComPath = compileFixture.DSComPath;
         DemoProjectAssembly1Path = compileFixture.DemoProjectAssembly1Path;
         DemoProjectAssembly2Path = compileFixture.DemoProjectAssembly2Path;
+        DemoProjectAssembly3Path = compileFixture.DemoProjectAssembly3Path;
 
         foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.tlb"))
         {
@@ -177,20 +180,19 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     [Fact]
     public void TlbExportCreateMissingDependentTLBsFalseAndOverrideTlbId_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
-        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
-        var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly3Path)}.tlb";
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
-        var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
 
-        var parameters = new[] { "tlbexport", DemoProjectAssembly1Path, "--createmissingdependenttlbs", "false", "--overridetlbid", "12345678-1234-1234-1234-123456789012" };
+        var parameters = new[] { "tlbexport", DemoProjectAssembly3Path, "--createmissingdependenttlbs", "false", "--overridetlbid", "12345678-1234-1234-1234-123456789012" };
 
         var result = Execute(DSComPath, parameters);
         result.ExitCode.Should().Be(0);
-        var fileName = Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path);
-        result.StdOut.Should().NotContain($"The referenced library {fileName} does not have a type library");
+        var fileName = Path.GetFileNameWithoutExtension(DemoProjectAssembly3Path);
+
+        result.StdOut.Should().NotContain($"{fileName} does not have a type library");
+        result.StdErr.Should().NotContain($"{fileName} does not have a type library");
 
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
-        File.Exists(dependentTlbPath).Should().BeFalse($"File {dependentTlbPath} should not be available.");
     }
 
     [Fact]
