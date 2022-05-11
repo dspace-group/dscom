@@ -89,7 +89,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    public void TlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbexport", "--help");
         result.ExitCode.Should().Be(0);
@@ -97,7 +97,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    public void TlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbdump", "--help");
         result.ExitCode.Should().Be(0);
@@ -105,7 +105,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    public void TlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbregister", "--help");
         result.ExitCode.Should().Be(0);
@@ -113,7 +113,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
+    public void TlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbunregister", "--help");
         result.ExitCode.Should().Be(0);
@@ -121,7 +121,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
+    public void TlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
         result.ExitCode.Should().Be(1);
@@ -129,7 +129,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
+    public void TlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
         result.ExitCode.Should().Be(1);
@@ -137,7 +137,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
+    public void TlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
         result.ExitCode.Should().Be(1);
@@ -145,7 +145,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
+    public void TlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
         result.ExitCode.Should().Be(1);
@@ -153,7 +153,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTlbIsAvailableAndValid()
+    public void TlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTlbIsAvailableAndValid()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var yamlFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.yaml";
@@ -175,7 +175,26 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportDemoAssemblyAndCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
+    public void TlbExportCreateMissingDependentTLBsFalseAndOverrideTlbId_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
+    {
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
+        var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
+
+        var parameters = new[] { "tlbexport", DemoProjectAssembly1Path, "--createmissingdependenttlbs", "false", "--overridetlbid", "12345678-1234-1234-1234-123456789012" };
+
+        var result = Execute(DSComPath, parameters);
+        result.ExitCode.Should().Be(0);
+        var fileName = Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path);
+        result.StdOut.Should().NotContain($"The referenced library {fileName} does not have a type library");
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(dependentTlbPath).Should().BeFalse($"File {dependentTlbPath} should not be available.");
+    }
+
+    [Fact]
+    public void TlbExportCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
@@ -193,7 +212,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportDemoAssemblyAndCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
+    public void TlbExportCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
@@ -208,7 +227,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportDemoAssemblyAndCreateMissingDependentTLBsNoValue_ExitCodeIs1()
+    public void TlbExportCreateMissingDependentTLBsNoValue_ExitCodeIs1()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
@@ -223,7 +242,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
+    public void TlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
@@ -238,7 +257,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndOptionSilenceTX801311A6_StdOutAndStdErrIsEmpty()
+    public void TlbExportAndOptionSilenceTX801311A6_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
@@ -253,7 +272,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void CallWithCommandTlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
+    public void TlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
     {
         var guid = Guid.NewGuid().ToString();
 
