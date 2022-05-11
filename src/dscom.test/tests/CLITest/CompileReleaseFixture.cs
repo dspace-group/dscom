@@ -24,6 +24,8 @@ public class CompileReleaseFixture
 
     public string DemoProjectAssembly2Path { get; private set; } = string.Empty;
 
+    public string DemoProjectAssembly3Path { get; private set; } = string.Empty;
+
     public CompileReleaseFixture()
     {
         var workdir = new DirectoryInfo(Environment.CurrentDirectory).Parent?.Parent?.Parent?.Parent?.Parent;
@@ -46,5 +48,6 @@ public class CompileReleaseFixture
         // Path to dscom.demo assemblies
         DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
         DemoProjectAssembly2Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly2", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly2.dll");
+        DemoProjectAssembly3Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly3", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly3.dll");
     }
 }
