@@ -57,10 +57,10 @@ internal class ElemDescBasedWriter : BaseWriter
             var marshasinfo = string.Empty;
             if (TypeProvider.HasMarshalAsAttribute)
             {
-                marshasinfo = $" with MarshalAsAttribute: { TypeProvider.MarshalAsAttribute!.Value}";
+                marshasinfo = $" with MarshalAsAttribute: {TypeProvider.MarshalAsAttribute!.Value}";
                 if (TypeProvider.MarshalAsAttribute!.SafeArraySubType == VarEnum.VT_EMPTY)
                 {
-                    marshasinfo += $" SafeArraySubType: { TypeProvider.MarshalAsAttribute!.SafeArraySubType}";
+                    marshasinfo += $" SafeArraySubType: {TypeProvider.MarshalAsAttribute!.SafeArraySubType}";
                 }
             }
             Context.LogWarning($"Type library exporter warning processing '{Type.Name}'{marshasinfo}. Warning: The method or field has an invalid managed/unmanaged type combination, check the MarshalAs directive.", unchecked(HRESULT.TLBX_E_BAD_NATIVETYPE));

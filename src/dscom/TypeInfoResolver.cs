@@ -105,7 +105,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         else
         {
             var assembly = type.Assembly;
-            var identifier = assembly.GetLibIdentifier(Guid.Empty);
+            var identifier = assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId);
 
             retval = ResolveTypeInfo(type.GUID);
 
