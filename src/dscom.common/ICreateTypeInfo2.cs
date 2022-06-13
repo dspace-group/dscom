@@ -93,19 +93,19 @@ internal interface ICreateTypeInfo2 : ICreateTypeInfo
     HRESULT DeleteImplType(uint index);
 
     [PreserveSig]
-    HRESULT SetCustData(in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object pVarVal);
+    HRESULT SetCustData(in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
-    HRESULT SetFuncCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object pVarVal);
+    HRESULT SetFuncCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
-    HRESULT SetParamCustData(uint indexFunc, uint indexParam, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object pVarVal);
+    HRESULT SetParamCustData(uint indexFunc, uint indexParam, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
-    HRESULT SetVarCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object pVarVal);
+    HRESULT SetVarCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
-    HRESULT SetImplTypeCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object pVarVal);
+    HRESULT SetImplTypeCustData(uint index, in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
     HRESULT SetHelpStringContext(uint dwHelpStringContext);

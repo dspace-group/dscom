@@ -42,7 +42,7 @@ internal interface ICreateTypeLib2 : ICreateTypeLib
     HRESULT DeleteTypeInfo([MarshalAs(UnmanagedType.LPWStr)] string? szName);
 
     [PreserveSig]
-    HRESULT SetCustData(in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] object? pVarVal);
+    HRESULT SetCustData(in Guid guid, [MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
 
     [PreserveSig]
     HRESULT SetHelpStringContext(uint dwHelpStringContext);

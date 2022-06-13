@@ -51,7 +51,15 @@ public class TypeLibConverter
     {
         CheckPlatform();
 
-        OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, settings.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
+        ICreateTypeLib2 typelib;
+        if (Environment.Is64BitProcess)
+        {
+            OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, settings.Out!, out typelib).ThrowIfFailed("Failed to create type library.");
+        }
+        else
+        {
+            OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN32, settings.Out!, out typelib).ThrowIfFailed("Failed to create type library.");
+        }
 
         using var writer = new LibraryWriter(assembly, new WriterContext(settings, typelib, notifySink));
         writer.Create();
