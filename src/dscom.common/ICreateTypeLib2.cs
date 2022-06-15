@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
@@ -42,7 +42,7 @@ internal interface ICreateTypeLib2 : ICreateTypeLib
     HRESULT DeleteTypeInfo([MarshalAs(UnmanagedType.LPWStr)] string? szName);
 
     [PreserveSig]
-    HRESULT SetCustData(in Guid guid, [MarshalAs(UnmanagedType.Struct)] ref object pVarVal);
+    HRESULT SetCustData(in Guid guid, [In, MarshalAs(UnmanagedType.Struct)] ref object? pVarVal);
 
     [PreserveSig]
     HRESULT SetHelpStringContext(uint dwHelpStringContext);

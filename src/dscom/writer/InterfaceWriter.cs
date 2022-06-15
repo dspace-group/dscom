@@ -25,7 +25,7 @@ internal abstract class InterfaceWriter : TypeWriter
 
     public DispatchIdCreator? DispatchIdCreator { get; protected set; }
 
-    public int VTableOffsetUserMethodStart { get; set; } = 56;
+    public int VTableOffsetUserMethodStart { get; set; } = 7 * IntPtr.Size;
 
     public ComInterfaceType ComInterfaceType { get; set; }
 
@@ -79,7 +79,7 @@ internal abstract class InterfaceWriter : TypeWriter
         foreach (var item in MethodWriter)
         {
             // item.FunctionIndex = functionIndex;
-            // item.VTableOffset = VTableOffsetUserMethodStart + (index * 8);
+            // item.VTableOffset = VTableOffsetUserMethodStart + (index * IntPtr.Size);
             item.Create();
             // functionIndex += item.IsValid ? 1 : 0;
             // index++;
@@ -129,7 +129,7 @@ internal abstract class InterfaceWriter : TypeWriter
         foreach (var methodWriter in MethodWriter)
         {
             methodWriter.FunctionIndex = functionIndex;
-            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * 8);
+            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * IntPtr.Size);
             DispatchIdCreator!.RegisterMember(methodWriter);
             functionIndex += methodWriter.IsValid ? 1 : 0;
             index++;
