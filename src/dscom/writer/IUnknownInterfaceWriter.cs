@@ -23,7 +23,7 @@ internal class IUnknownInterfaceWriter : InterfaceWriter
         TypeFlags = TYPEFLAGS.TYPEFLAG_FOLEAUTOMATION;
         TypeKind = TYPEKIND.TKIND_INTERFACE;
         FuncKind = FUNCKIND.FUNC_PUREVIRTUAL;
-        VTableOffsetUserMethodStart = 24;
+        VTableOffsetUserMethodStart = 3 * IntPtr.Size;
         ComInterfaceType = ComInterfaceType.InterfaceIsIUnknown;
         UseHResultAsReturnValue = true;
     }
