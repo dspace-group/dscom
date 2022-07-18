@@ -47,3 +47,21 @@ jobs:
       - name: Nuget push tool
         run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET }} --source https://api.nuget.org/v3/index.json
         working-directory: src/dscom.client/bin/Release
+
+      - name: Publish 32Bit binary
+        run: dotnet publish .\src\dscom.client\dscom.client.csproj --no-self-contained -c Release -r win-x86 -f net6.0 /p:PublishSingleFile=true; copy src\dscom.client\bin\Release\net6.0\win-x86\publish\dscom.exe src\dscom.client\bin\Release\net6.0\win-x86\publish\dscom32.exe
+
+      - name: Release 32Bit binary
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: src\dscom.client\bin\Release\net6.0\win-x86\publish\dscom32.exe  
+
+      - name: Publish 64Bit binary
+        run: dotnet publish .\src\dscom.client\dscom.client.csproj --no-self-contained -c Release -r win-x64 -f net6.0 /p:PublishSingleFile=true
+      
+      - name: Release 64Bit binary
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: src\dscom.client\bin\Release\net6.0\win-x64\publish\dscom.exe          
