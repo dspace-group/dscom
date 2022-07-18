@@ -21,11 +21,12 @@ internal abstract class InterfaceWriter : TypeWriter
 {
     public InterfaceWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {
+        VTableOffsetUserMethodStart = 7 * context.IntPtrSize;
     }
 
     public DispatchIdCreator? DispatchIdCreator { get; protected set; }
 
-    public int VTableOffsetUserMethodStart { get; set; } = 56;
+    public int VTableOffsetUserMethodStart { get; set; }
 
     public ComInterfaceType ComInterfaceType { get; set; }
 
@@ -70,20 +71,8 @@ internal abstract class InterfaceWriter : TypeWriter
         // Handle special IDs like 0 or -4, and try to fix duplicate DispIds if possible.
         DispatchIdCreator.NormalizeIds();
 
-        // This index is necessary to generate the correct offset of the VTable.
-        // Every method must be considered, even those that cannot be generated.
-        // var index = 0;
-
-        // // The index of the function inside the type library
-        // var functionIndex = 0;
-        foreach (var item in MethodWriter)
-        {
-            // item.FunctionIndex = functionIndex;
-            // item.VTableOffset = VTableOffsetUserMethodStart + (index * 8);
-            item.Create();
-            // functionIndex += item.IsValid ? 1 : 0;
-            // index++;
-        }
+        // Create all writer.
+        MethodWriter.ForEach(writer => writer.Create());
 
         TypeInfo.LayOut().ThrowIfFailed($"Failed to layout type {SourceType}.");
     }
@@ -129,7 +118,7 @@ internal abstract class InterfaceWriter : TypeWriter
         foreach (var methodWriter in MethodWriter)
         {
             methodWriter.FunctionIndex = functionIndex;
-            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * 8);
+            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * Context.IntPtrSize);
             DispatchIdCreator!.RegisterMember(methodWriter);
             functionIndex += methodWriter.IsValid ? 1 : 0;
             index++;

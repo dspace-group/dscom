@@ -38,7 +38,12 @@ public class TypeLibConverter
     /// <returns>An object that implements the <see langword="ITypeLib" /> interface.</returns>
     public object? ConvertAssemblyToTypeLib(Assembly assembly, string tlbFilePath, ITypeLibExporterNotifySink? notifySink)
     {
-        var options = new TypeLibConverterSettings() { Out = tlbFilePath };
+        var options = new TypeLibConverterSettings
+        {
+            Out = tlbFilePath,
+            Win32 = !Environment.Is64BitProcess
+        };
+
         return ConvertAssemblyToTypeLib(assembly, options, notifySink);
     }
 
@@ -51,7 +56,7 @@ public class TypeLibConverter
     {
         CheckPlatform();
 
-        OleAut32.CreateTypeLib2(SYSKIND.SYS_WIN64, settings.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
+        OleAut32.CreateTypeLib2(settings.Win32 ? SYSKIND.SYS_WIN32 : SYSKIND.SYS_WIN64, settings.Out!, out var typelib).ThrowIfFailed("Failed to create type library.");
 
         using var writer = new LibraryWriter(assembly, new WriterContext(settings, typelib, notifySink));
         writer.Create();
