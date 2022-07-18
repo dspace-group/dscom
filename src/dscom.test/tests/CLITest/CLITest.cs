@@ -229,7 +229,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
-    public void TlbExportCreateMissingDependentTLBsNoValue_ExitCodeIs1()
+    public void TlbExportCreateMissingDependentTLBsNoValue_ExitCodeIs0()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
         var dependentFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
@@ -237,10 +237,10 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
 
         var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--createmissingdependenttlbs");
-        result.ExitCode.Should().Be(1);
+        result.ExitCode.Should().Be(0);
 
-        File.Exists(tlbFilePath).Should().BeFalse($"File {tlbFilePath} should not be available.");
-        File.Exists(dependentTlbPath).Should().BeFalse($"File {dependentTlbPath} should not be available.");
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
     }
 
     [Fact]
