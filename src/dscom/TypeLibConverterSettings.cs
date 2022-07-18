@@ -52,5 +52,5 @@ public class TypeLibConverterSettings
     /// <summary>
     /// Gets or sets a value indicating whether the TLB is 32Bit.
     /// </summary>
-    public bool Win32 { get; set; }
+    public bool Win32 { get; set; } = !Environment.Is64BitProcess;
 }
