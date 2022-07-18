@@ -29,3 +29,9 @@ jobs:
 
       - name: Test (Release)
         run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Nuget pack library
+        run: dotnet pack -c Release src/dscom/dscom.csproj
+
+      - name: Nuget pack tool
+        run: dotnet pack -c Release src/dscom.client/dscom.client.csproj
