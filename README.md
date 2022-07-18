@@ -9,8 +9,8 @@
 
 > This is an unstable prerelease. Anything may change at any time!
 
-dscom is a replacement for `tlbexp.exe` and `TypeLibConverter.ConvertAssemblyToTypeLib`.  
-The tool consists of a library and a command line tool. The library can be used in `net6.0` or in `net48` projects.
+dscom generates a type library that describes the types defined in a common language runtime assembly and is a replacement for `tlbexp.exe` and `TypeLibConverter.ConvertAssemblyToTypeLib`.  
+The tool consists of a library and a command line tool. The library can be used in `net5+` or in `net48` projects.
 
 Fortunately, .NET still supports COM, but there is no support for generating TLBs.  
 From the Microsoft documentation:
@@ -22,7 +22,15 @@ From the Microsoft documentation:
 One main goal is to make `dscom` behave like `tlbexp.exe`.
 
 _Happy IUnknowing and IDispatching ;-)_
-
+- [dSPACE COM tools](#dspace-com-tools)
+  - [Command Line Client](#command-line-client)
+    - [Installation](#installation)
+    - [32Bit support](#32bit-support)
+    - [Usage](#usage)
+  - [Library](#library)
+  - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
+    - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
+  - [Limitations](#limitations)
 ## Command Line Client
 
 The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe` and `OleView` (View TypeLib).
@@ -39,13 +47,29 @@ It supports the following features:
 The installation is quite simple. You can use `dotnet tool` to install the `dscom` binary.
 
 ```bash
-c:\> dotnet tool install --global dscom
+dotnet tool install --global dscom
 ```
 
 Here you can find all available versions:  
 <https://www.nuget.org/packages/dscom/>
 
+Alternatively you can download dscom.exe from the relase page.  
+<https://github.com/dspace-group/dscom/releases>
+
+### 32Bit support
+
+`dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies.
+Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the release page.
+
+* **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
+* **dscom.exe** to create a 32Bit TLB from a AnyCPU assembly (with the switch `--win32`)
+* **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
+
+<https://github.com/dspace-group/dscom/releases>
+
 ### Usage
+
+Use `dscom --help` to get further information.  
 
 ```bash
 c:\> dscom --help
@@ -66,7 +90,8 @@ Commands:
   tlbunregister <TypeLibrary>  Unregister a type library
 ```
 
-## dSPACE.Runtime.InteropServices library
+
+## Library
 
 If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
 This method should behave compatible to the `.NET Framework` method.
@@ -172,7 +197,6 @@ classextern forwarder System.Exception
   - ICloneable not supported
   - IDisposable not supported
   - ...
-- Only 64 Bit support (x64)
 - `TypeLibExporterFlags` is not supported
 - `ITypeLibExporterNotifySink` is not COM visible
 - `TypeLibConverter` is not COM visible
