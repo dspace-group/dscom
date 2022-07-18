@@ -3,7 +3,8 @@
   <PropertyGroup>
     <AssemblyName>dSPACE.Runtime.InteropServices</AssemblyName>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <Platforms>x64</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU;x86</Platforms>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

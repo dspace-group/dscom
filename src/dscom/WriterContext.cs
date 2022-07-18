@@ -49,6 +49,11 @@ internal sealed class WriterContext
 
     public NameResolver NameResolver { get; private set; }
 
+    /// <summary>
+    /// Gets size of a pointer or handle in this process, measured in bytes. The value of this property is 4 in a 32-bit process, and 8 in a 64-bit process. 
+    /// </summary>
+    internal int IntPtrSize => Options.Win32 ? 4 : 8;
+
     public void LogTypeExported(string message)
     {
         if (NotifySink != null)

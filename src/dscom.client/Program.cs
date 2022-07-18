@@ -37,6 +37,7 @@ public static class ConsoleApp
                 new Option<string[]>(new string [] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
                 new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new string [] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
+                new Option<bool?>(new string [] {"--win32", "/win32"}, description: "Create a 32-bit type library"),
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
@@ -69,7 +70,7 @@ public static class ConsoleApp
                 tlbunregisterCommand
             };
 
-        rootCommand.Description = "dSPACE COM tools";
+        rootCommand.Description = $"dSPACE COM tools ({(Environment.Is64BitProcess ? "64Bit" : "32Bit")})";
 
         ConfigureTLBExportHandler(tlbexportCommand);
         ConfigureTLBDumpHandler(tlbdumpCommand);
@@ -199,13 +200,13 @@ public static class ConsoleApp
             {
                 throw;
             }
-#else            
+#else
             catch (Exception e)
             {
                 Console.Error.WriteLine($"Failed to export type library. {e.Message} {e.InnerException?.Message}");
                 return 1;
             }
-#endif            
+#endif
         });
     }
 
