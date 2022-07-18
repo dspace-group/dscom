@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <AssemblyName>dSPACE.Runtime.InteropServices</AssemblyName>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
-    <PlatformTarget>x64</PlatformTarget>
+    <TargetFrameworks>net6.0-windows;net48-windows</TargetFrameworks>
+    <Platforms>x64</Platforms>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
