@@ -6,8 +6,8 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0-windows/dscom.dll",
-            "args": ["tlbexport", "/verbose", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0-windows/dSPACE.Runtime.InteropServices.DemoAssembly1.dll", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0-windows/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb"],
+            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0/dscom.dll",
+            "args": ["tlbexport", "/verbose", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.dll", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb"],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
@@ -17,8 +17,8 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0-windows/dscom.dll",
-            "args": ["tlbdump", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0-windows/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0-windows/dSPACE.Runtime.InteropServices.DemoAssembly1.yaml", "/tlbrefpath:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0-windows/", "/filterregex=\\.file\\="],
+            "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net6.0/dscom.dll",
+            "args": ["tlbdump", "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb", "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/dSPACE.Runtime.InteropServices.DemoAssembly1.yaml", "/tlbrefpath:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net6.0/", "/filterregex=\\.file\\="],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
