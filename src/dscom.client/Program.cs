@@ -37,7 +37,7 @@ public static class ConsoleApp
                 new Option<string[]>(new string [] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
                 new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new string [] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
-                new Option<bool?>(new string [] {"--win32", "/win32"}, description: "Create a 32-bit type library"),
+                new Option<bool>(new string [] {"--win32", "/win32"}, description: "Create a 32-bit type library"),
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
@@ -169,6 +169,8 @@ public static class ConsoleApp
                 options.ASMPath = options.ASMPath.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
                 options.TLBReference = options.TLBReference.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
                 options.TLBRefpath = options.TLBRefpath.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
+
+                Console.WriteLine(options.Win32);
 
                 if (string.IsNullOrEmpty(options.Out))
                 {
