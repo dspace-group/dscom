@@ -312,9 +312,9 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         process.Start();
 
         process.BeginErrorReadLine();
+        process.WaitForExit();
         processOutput.StdOut = process.StandardOutput.ReadToEnd();
         processOutput.StdErr = sb.ToString();
-        process.WaitForExit();
         processOutput.ExitCode = process.ExitCode;
 
         return processOutput;
