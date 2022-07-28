@@ -170,8 +170,6 @@ public static class ConsoleApp
                 options.TLBReference = options.TLBReference.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
                 options.TLBRefpath = options.TLBRefpath.SelectMany(p => !string.IsNullOrEmpty(p) ? p.Split(";") : Array.Empty<string>()).ToArray();
 
-                Console.WriteLine(options.Win32);
-
                 if (string.IsNullOrEmpty(options.Out))
                 {
                     var tlbfilename = Path.GetFileNameWithoutExtension(options.Assembly) + ".tlb";
