@@ -10,3 +10,4 @@ Release/
 test.results/
 .tmp/
 _temporary.cs
+.publish/

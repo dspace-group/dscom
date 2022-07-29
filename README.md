@@ -44,7 +44,7 @@ It supports the following features:
 
 ### Installation
 
-The installation is quite simple. You can use `dotnet tool` to install the `dscom` binary.
+The installation is quite simple. You can use `dotnet tool` to install the `dscom` binary if you want to create a 64Bit TLB.
 
 ```bash
 dotnet tool install --global dscom
@@ -58,11 +58,10 @@ Alternatively you can download dscom.exe from the relase page.
 
 ### 32Bit support
 
-`dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies.
+`dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies and can only generate a 64bit TLB.
 Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the release page.
 
 * **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
-* **dscom.exe** to create a 32Bit TLB from a AnyCPU assembly (with the switch `--win32`)
 * **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
 
 <https://github.com/dspace-group/dscom/releases>
