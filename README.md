@@ -59,16 +59,18 @@ Alternatively you can download dscom.exe from the relase page.
 ### 32Bit support
 
 `dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies and can only generate a 64bit TLB.
-Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the release page.
+Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the [release page](https://github.com/dspace-group/dscom/releases).
 
 * **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
 * **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
 
+> Warning!  
 > If your assembly is an AnyCPU assembly, then an yourassemblyname.comhost.dll is created as a 64 bit dll.  
 > Therefore after calling regserv32.exe a 64 bit dll is registred.  
-> To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as a 64 bit assembly.
+> To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as a AnyCPU assembly.  
+> see: <https://github.com/dotnet/runtime/issues/32493>
 
-<https://github.com/dspace-group/dscom/releases>
+
 
 ### Usage
 
