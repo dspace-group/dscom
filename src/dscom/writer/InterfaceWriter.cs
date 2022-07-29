@@ -21,7 +21,7 @@ internal abstract class InterfaceWriter : TypeWriter
 {
     public InterfaceWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {
-        VTableOffsetUserMethodStart = 7 * context.IntPtrSize;
+        VTableOffsetUserMethodStart = 7 * IntPtr.Size;
     }
 
     public DispatchIdCreator? DispatchIdCreator { get; protected set; }
@@ -118,7 +118,7 @@ internal abstract class InterfaceWriter : TypeWriter
         foreach (var methodWriter in MethodWriter)
         {
             methodWriter.FunctionIndex = functionIndex;
-            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * Context.IntPtrSize);
+            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * IntPtr.Size);
             DispatchIdCreator!.RegisterMember(methodWriter);
             functionIndex += methodWriter.IsValid ? 1 : 0;
             index++;

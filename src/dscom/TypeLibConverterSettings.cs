@@ -48,9 +48,4 @@ public class TypeLibConverterSettings
     /// Gets or sets the type library GUID.
     /// </summary>
     public Guid OverrideTlbId { get; set; } = Guid.Empty;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the TLB is 32Bit.
-    /// </summary>
-    public bool Win32 { get; set; } = !Environment.Is64BitProcess;
 }
