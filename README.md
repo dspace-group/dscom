@@ -64,6 +64,10 @@ Depending on whether you want to process 32bit or 64bit assemblies, you need to 
 * **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
 * **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
 
+> If your assembly is an AnyCPU assembly, then an yourassemblyname.comhost.dll is created as a 64 bit dll.  
+> Therefore after calling regserv32.exe a 64 bit dll is registred.  
+> To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as a 64 bit assembly.
+
 <https://github.com/dspace-group/dscom/releases>
 
 ### Usage
