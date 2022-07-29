@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ComHostTypeLibrary Condition="Exists('MyLibrary.tlb')" Include="comtestdotnet.tlb" Id="1" />
+    <ComHostTypeLibrary Condition="Exists('comtestdotnet.tlb')" Include="comtestdotnet.tlb" Id="1" />
   </ItemGroup>
 
   <Target Name="tlb" AfterTargets="CoreBuild">
