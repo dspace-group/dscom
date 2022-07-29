@@ -1,6 +1,10 @@
 {
     "dotnet-test-explorer.testProjectPath": "src\\dscom.test\\dscom.test.csproj",
-    "editor.quickSuggestions": true,
+    "editor.quickSuggestions": {
+        "comments": "on",
+        "strings": "on",
+        "other": "on"
+    },
     "editor.suggestOnTriggerCharacters": true,
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
