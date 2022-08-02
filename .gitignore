@@ -1,6 +1,7 @@
 ﻿*.tlb
 *.dll
 *.user
+*.exe
 launchSettings.json
 .vs/
 bin/
