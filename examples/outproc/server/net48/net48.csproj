@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <Target Name="tlb" AfterTargets="CoreBuild">
+    <Exec Command="dscom tlbexport $(TargetPath) /out:$(ProjectDir)$(TargetName).tlb" />
+    <Exec Command="dscom tlbdump $(ProjectDir)$(TargetName).tlb /out:$(ProjectDir)$(TargetName).yaml" />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+
+</Project>
