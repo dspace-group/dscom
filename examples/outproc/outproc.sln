@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{2B015EE0-7F40-4CD1-91F2-3DD141EF0A23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "net48", "server\net48\net48.csproj", "{ADC2438E-EBC9-4900-89B3-4655B3DE187C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADC2438E-EBC9-4900-89B3-4655B3DE187C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC2438E-EBC9-4900-89B3-4655B3DE187C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC2438E-EBC9-4900-89B3-4655B3DE187C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC2438E-EBC9-4900-89B3-4655B3DE187C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ADC2438E-EBC9-4900-89B3-4655B3DE187C} = {2B015EE0-7F40-4CD1-91F2-3DD141EF0A23}
+	EndGlobalSection
+EndGlobal
