@@ -1,10 +1,10 @@
 using System.Runtime.InteropServices;
 
-namespace net48;
+namespace Server.Common;
 
 [ComVisible(true)]
-// [ComDefaultInterface(typeof(IGreeter))]
-// [ClassInterface(ClassInterfaceType.None)]
+[ComDefaultInterface(typeof(IGreeter))]
+[ClassInterface(ClassInterfaceType.None)]
 [Guid("A9BD4ABF-1518-4F3C-B017-6BC45F983FF0")]
 public class Greeter : IGreeter
 {

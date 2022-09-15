@@ -12,68 +12,16 @@ class Program
     [DllImport("ole32.dll")]
     internal static extern int CoResumeClassObjects();
 
+    private const string ProgId = "Greeter.Net48";
     private const string Version = "1.0";
-    private static void CreateSubKey(RegistryKey parentKey, string name, string value)
-    {
-        using (RegistryKey subKey = parentKey.CreateSubKey(name, true))
-        {
-            if (value != null)
-            {
-                subKey.SetValue(null, value);
-            }
-        }
-    }
+
+    private const string Title = "Net48 Greeter";
+
+    private const string Description = "FullFramework Greeter App";
+
     static void Register()
     {
-        string appTitle = $"Greeter title";
-
-        string appDescription = $"Greeter Application";
-
-        string versionIndependentProgId = $"Greeter.Application";
-        string progId = $"{versionIndependentProgId}.{Version}";
-
-        string clsId = "{a9bd4abf-1518-4f3c-b017-6bc45f983ff0}".ToUpper();
-
-        using (RegistryKey progIdKey = Registry.ClassesRoot.CreateSubKey(progId, true))
-        {
-            progIdKey.SetValue(null, appDescription);
-            CreateSubKey(progIdKey, "CLSID", clsId);
-        }
-
-        using (
-            RegistryKey versionIndependentProgIdKey = Registry.ClassesRoot.CreateSubKey(
-                versionIndependentProgId,
-                true))
-        {
-            versionIndependentProgIdKey.SetValue(null, appDescription);
-            CreateSubKey(versionIndependentProgIdKey, "CLSID", clsId);
-            CreateSubKey(versionIndependentProgIdKey, "CurVer", progId);
-        }
-
-        using (RegistryKey clsIdRootKey = Registry.ClassesRoot.OpenSubKey("CLSID", true))
-        {
-            using (RegistryKey clsIdKey = clsIdRootKey.CreateSubKey(clsId, true))
-            {
-                clsIdKey.SetValue(null, appDescription);
-                CreateSubKey(clsIdKey, "ProgID", progId);
-                CreateSubKey(clsIdKey, "VersionIndependentProgID", versionIndependentProgId);
-                CreateSubKey(clsIdKey, "Programmable", string.Empty);
-                CreateSubKey(clsIdKey, "LocalServer32", System.Reflection.Assembly.GetExecutingAssembly().Location);
-                clsIdKey.SetValue("AppID", clsId);
-            }
-        }
-
-        using (RegistryKey appIdRootKey = Registry.ClassesRoot.OpenSubKey("AppID", true))
-        {
-            CreateSubKey(appIdRootKey, clsId, appTitle);
-
-            var fileNameOfExecutingAssembly = Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            using (RegistryKey exeKey = appIdRootKey.CreateSubKey(fileNameOfExecutingAssembly, true))
-            {
-                exeKey.SetValue("AppID", clsId);
-            }
-        }
+        Server.Common.RegistryHelper.RegisterOutProcServer<Server.Common.Greeter>(ProgId, Version, Title, Description);
     }
 
     //-Embedding
@@ -107,7 +55,7 @@ class Program
         }
 
         var registration = new RegistrationServices();
-        var cookie = registration.RegisterTypeForComClients(typeof(Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
+        var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
 
         if (useConsole)
         {
