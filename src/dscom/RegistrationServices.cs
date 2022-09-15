@@ -10,6 +10,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Reflection;
+using System.Runtime.InteropServices;
+
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
@@ -23,9 +26,19 @@ public class RegistrationServices
     /// <param name="g">The <see cref="T:System.Guid" /> used to register the specified type.</param>
     /// <exception cref="T:System.ArgumentException">The <paramref name="type" /> parameter is <see langword="null" />.</exception>
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
-    public void RegisterTypeForComClients(Type type, ref Guid g)
+    public static void RegisterTypeForComClients(Type type, ref Guid g)
     {
+        var genericClassFactory = typeof(ClassFactory<>);
+        Type[] typeArgs = { type };
+        var constructedClassFactory = genericClassFactory.MakeGenericType(typeArgs);
 
+        var createdClassFactory = Activator.CreateInstance(constructedClassFactory);
+
+        var hr = ComTypes.Ole32.CoRegisterClassObject(g, createdClassFactory!, (uint)(ComTypes.RegistrationClassContext.InProcessServer | ComTypes.RegistrationClassContext.LocalServer), (uint)ComTypes.RegistrationConnectionType.MultipleUse, out _);
+        if (hr < 0)
+        {
+            Marshal.ThrowExceptionForHR(hr);
+        }
     }
 
     /// <summary>Registers the specified type with COM using the specified execution context and connection type.</summary>
@@ -35,10 +48,33 @@ public class RegistrationServices
     /// <returns>An integer that represents a cookie value.</returns>
     /// <exception cref="T:System.ArgumentException">The <paramref name="type" /> parameter is <see langword="null" />.</exception>
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
-    public int RegisterTypeForComClients(Type type, ComTypes.RegistrationClassContext classContext, ComTypes.RegistrationConnectionType flags)
+    public static int RegisterTypeForComClients(Type type, ComTypes.RegistrationClassContext classContext, ComTypes.RegistrationConnectionType flags)
     {
-        return 0;
+        var guid = new Guid(type.GetCustomAttributes<GuidAttribute>().First().Value);
 
+        var genericClassFactory = typeof(ClassFactory<>);
+        Type[] typeArgs = { type };
+        var constructedClassFactory = genericClassFactory.MakeGenericType(typeArgs);
+
+        var createdClassFactory = Activator.CreateInstance(constructedClassFactory);
+
+        var hr = ComTypes.Ole32.CoRegisterClassObject(guid, createdClassFactory!, (uint)classContext, (uint)flags, out var cookie);
+        if (hr < 0)
+        {
+            Marshal.ThrowExceptionForHR(hr);
+        }
+        return cookie;
+    }
+
+    /// <summary>Unregisters the specified type referenced by the cookie.</summary>
+    /// <param name="cookie">The cookie to unregister for use from COM.</param>
+    public static void UnregisterTypeForComClients(int cookie)
+    {
+        var hr = ComTypes.Ole32.CoRevokeClassObject(cookie);
+        if (hr < 0)
+        {
+            Marshal.ThrowExceptionForHR(hr);
+        }
     }
 }
 

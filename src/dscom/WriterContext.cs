@@ -33,10 +33,7 @@ internal sealed class WriterContext
                 TypeInfoResolver = typeInfoResolver;
             }
         }
-        if (TypeInfoResolver == null)
-        {
-            TypeInfoResolver = new TypeInfoResolver(this);
-        }
+        TypeInfoResolver ??= new TypeInfoResolver(this);
     }
 
     public ITypeLibExporterNotifySink? NotifySink { get; private set; }

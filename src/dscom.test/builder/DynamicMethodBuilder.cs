@@ -130,10 +130,7 @@ internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
             var hasDefaultValue = item.DefaultValue != null;
 
             var parameterAttribute = item.ParameterAttributes;
-            if (parameterAttribute == null)
-            {
-                parameterAttribute = hasDefaultValue ? ParameterAttributes.HasDefault : ParameterAttributes.None;
-            }
+            parameterAttribute ??= hasDefaultValue ? ParameterAttributes.HasDefault : ParameterAttributes.None;
 
             var paramBuilder = methodBuilder.DefineParameter(index, parameterAttribute.Value, $"Param{index}");
             if (ParamAttributes != null)
