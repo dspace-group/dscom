@@ -9,6 +9,8 @@ internal static class Constants
 
     public const string OleAut32 = "oleaut32.dll";
 
+    public const string Ole32 = "ole32.dll";
+
     public const int LCID_NEUTRAL = 0;
 
     public const uint BASE_OLEAUT_DISPID = 0x60020000;

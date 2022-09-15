@@ -91,10 +91,7 @@ internal static class MarshalExtension
         var buildNumber = 0;
         var revisionNumber = 0;
 
-        if (assemblyName == null)
-        {
-            assemblyName = "";
-        }
+        assemblyName ??= "";
 
         ComCompatibleVersionAttribute? versionAttr = null;
         try
