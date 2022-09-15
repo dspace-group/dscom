@@ -5,7 +5,7 @@ namespace Server.Common;
 
 [ComVisible(true)]
 [Guid("fe48e076-b535-4438-882c-a534a2c5df7e")]
-[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+[InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
 public interface IGreeter
 {
     string SayHello(string name);

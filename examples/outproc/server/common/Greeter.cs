@@ -15,6 +15,8 @@ public class Greeter : IGreeter
 
     public string SayHello(string name)
     {
-        return $"Hello {name}. This is the Net48 OutProc server! PID: {System.Diagnostics.Process.GetCurrentProcess().Id}";
+        var text = $"Hello {name}. This is the Net48 OutProc server! PID: {System.Diagnostics.Process.GetCurrentProcess().Id}";
+        Console.WriteLine(text);
+        return text;
     }
 }

@@ -18,13 +18,16 @@ public class RegistryHelper
 
     public static void RegisterOutProcServer<T>(string versionIndependentProgId, string version, string title, string description) where T : class
     {
+
+        var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".exe");
+
         string progId = $"{versionIndependentProgId}.{version}";
-        GuidAttribute guid = (GuidAttribute) typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
+        GuidAttribute guid = (GuidAttribute)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
         if (guid == null)
         {
             throw new ArgumentException("Coclass guid not set!");
         }
-        string clsId =  String.Format("{{{0}}}",guid.Value);
+        string clsId = String.Format("{{{0}}}", guid.Value);
 
         using (RegistryKey progIdKey = Registry.ClassesRoot.CreateSubKey(progId, true))
         {
@@ -54,8 +57,14 @@ public class RegistryHelper
                 CreateSubKey(clsIdKey, "ProgID", progId);
                 CreateSubKey(clsIdKey, "VersionIndependentProgID", versionIndependentProgId);
                 CreateSubKey(clsIdKey, "Programmable", string.Empty);
-                CreateSubKey(clsIdKey, "LocalServer32", System.Reflection.Assembly.GetEntryAssembly().Location);
+                CreateSubKey(clsIdKey, "LocalServer32", exePath);
+
                 clsIdKey.SetValue("AppID", clsId);
+
+                Console.WriteLine("Register LocalServer32: " + exePath);
+                Console.WriteLine("Register AppID: " + clsId);
+                Console.WriteLine("Register ProgID: " + progId);
+                Console.WriteLine("Register VersionIndependentProgID: " + versionIndependentProgId);
             }
         }
 
@@ -67,7 +76,7 @@ public class RegistryHelper
             }
             CreateSubKey(appIdRootKey, clsId, title);
 
-            var fileNameOfExecutingAssembly = Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var fileNameOfExecutingAssembly = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".exe");
 
             using (RegistryKey exeKey = appIdRootKey.CreateSubKey(fileNameOfExecutingAssembly, true))
             {
