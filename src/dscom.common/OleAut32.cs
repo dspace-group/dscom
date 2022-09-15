@@ -27,4 +27,15 @@ internal class OleAut32
 
     [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT LoadTypeLibEx([MarshalAs(UnmanagedType.LPWStr)] string szFile, REGKIND regkind, out ITypeLib pptlib);
+
+    [DllImport("ole32.dll")]
+    public static extern int CoResumeClassObjects();
+
+    [DllImport("ole32.dll")]
+    private static extern int CoRegisterClassObject(
+    [MarshalAs(UnmanagedType.LPStruct)] Guid rclsid,
+    [MarshalAs(UnmanagedType.IUnknown)] object pUnk,
+    uint dwClsContext,
+    uint flags,
+    out uint lpdwRegister);
 }

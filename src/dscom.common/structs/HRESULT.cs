@@ -132,4 +132,7 @@ internal struct HRESULT
 
     [SuppressMessage("Microsoft.Style", "IDE1006", Justification = "")]
     public const int TLBX_I_USEIUNKNOWN = 0x0013116F;
+
+    [SuppressMessage("Microsoft.Style", "IDE1006", Justification = "")]
+    public const int CLASS_E_NOAGGREGATION = unchecked((int)0x80040110);
 }
