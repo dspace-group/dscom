@@ -20,4 +20,12 @@ internal class Ole32
 
     [DllImport(Constants.Ole32)]
     public static extern int CoRevokeClassObject(int register);
+
+    [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]
+    [return: MarshalAs(UnmanagedType.Interface)]
+    public static extern object CoGetClassObject(
+    [In, MarshalAs(UnmanagedType.LPStruct)] Guid rclsid,
+    uint dwClsContext,
+    IntPtr pServerInfo,
+    [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid);
 }

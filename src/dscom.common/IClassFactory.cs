@@ -6,7 +6,7 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/de-de/windows/win32/api/unknwn/nn-unknwn-iclassfactory
 /// </summary>
 [ComImport, Guid("00000001-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-public interface IClassFactory
+internal interface IClassFactory
 {
     /// <summary>
     /// Creates an uninitialized object.
