@@ -30,7 +30,8 @@ internal class Program
             }
         }
 
-        var cookie = RegistrationServices.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
+        var registration = new RegistrationServices();
+        var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
 
         var hr = CoResumeClassObjects();
         if (hr < 0)
@@ -40,6 +41,6 @@ internal class Program
 
         Console.WriteLine("Running...");
         Console.ReadLine();
-        RegistrationServices.UnregisterTypeForComClients(cookie);
+        registration.UnregisterTypeForComClients(cookie);
     }
 }
