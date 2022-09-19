@@ -12,19 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Namespaces
-global using System;
-global using System.Collections.Generic;
-global using System.IO;
-global using System.Linq;
-global using System.Reflection;
-global using System.Reflection.Emit;
-global using System.Runtime.CompilerServices;
-global using System.Text.RegularExpressions;
-global using FluentAssertions;
-global using Xunit;
-
-
 #pragma warning disable CS8019
 
 // interface

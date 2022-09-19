@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
@@ -6,7 +9,8 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-idispatch
 /// </summary>
 [System.Security.SuppressUnmanagedCodeSecurity, ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("00020400-0000-0000-C000-000000000046")]
-internal interface IDispatch
+[EditorBrowsable(EditorBrowsableState.Never)]
+public interface IDispatch
 {
     [System.Security.SecurityCritical]
     void GetTypeInfoCount(out uint pctinfo);

@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
@@ -7,7 +10,8 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 [ComVisible(false)]
 [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("00000000-0000-0000-C000-000000000046")]
-internal interface IUnknown
+[EditorBrowsable(EditorBrowsableState.Never)]
+public interface IUnknown
 {
     IntPtr QueryInterface(ref Guid riid);
 

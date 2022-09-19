@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
@@ -9,7 +12,8 @@ namespace dSPACE.Runtime.InteropServices.Exporter;
 [Guid("00020401-0000-0000-C000-000000000046")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 [ComImport]
-internal interface ITypeInfo64Bit
+[EditorBrowsable(EditorBrowsableState.Never)]
+public interface ITypeInfo64Bit
 {
     void GetTypeAttr(out IntPtr ppTypeAttr);
 

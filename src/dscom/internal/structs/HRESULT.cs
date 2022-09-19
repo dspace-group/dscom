@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -9,7 +12,8 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
 [ExcludeFromCodeCoverage]
-internal struct HRESULT
+[EditorBrowsable(EditorBrowsableState.Never)]
+public struct HRESULT
 {
     [FieldOffset(0)]
     private readonly int _value;

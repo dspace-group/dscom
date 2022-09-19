@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
@@ -6,7 +9,8 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/oaidl/nn-oaidl-icreatetypelib
 /// </summary>
 [ComImport, Guid("00020406-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-internal interface ICreateTypeLib
+[EditorBrowsable(EditorBrowsableState.Never)]
+public interface ICreateTypeLib
 {
     [PreserveSig]
     HRESULT CreateTypeInfo([In, MarshalAs(UnmanagedType.LPWStr)] string szName, TYPEKIND tkind, out ICreateTypeInfo ppCTInfo);

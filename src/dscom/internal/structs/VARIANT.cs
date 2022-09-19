@@ -1,3 +1,7 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
@@ -7,7 +11,9 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
 [System.Security.SecurityCritical]
-internal struct VARIANT
+[EditorBrowsable(EditorBrowsableState.Never)]
+[ExcludeFromCodeCoverage]
+public struct VARIANT
 {
     [FieldOffset(0)]
     public VarEnum vt;

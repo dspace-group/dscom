@@ -1,9 +1,14 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
+
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/
 /// </summary>
-internal static class Guids
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class Guids
 {
     public const string TLBID_Ole = "00020430-0000-0000-C000-000000000046";
 

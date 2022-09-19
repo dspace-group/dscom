@@ -42,8 +42,4 @@
     <Compile Remove="tests\CLITest\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\dscom.common\**" />
-  </ItemGroup>
-
 </Project>

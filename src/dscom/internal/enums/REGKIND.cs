@@ -1,9 +1,14 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
+
 namespace dSPACE.Runtime.InteropServices.ComTypes;
 
 /// <summary>
 /// Controls how a type library is registered.
 /// </summary>
-internal enum REGKIND
+[EditorBrowsable(EditorBrowsableState.Never)]
+public enum REGKIND
 {
     /// <summary>
     /// Use default register behavior.

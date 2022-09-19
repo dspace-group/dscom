@@ -1,9 +1,14 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
+
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_com/
 /// </summary>
-internal static class Constants
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class Constants
 {
     public const string Kernel32 = "kernel32.dll";
 

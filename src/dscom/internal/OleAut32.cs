@@ -1,3 +1,6 @@
+#pragma warning disable 1591
+
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.ComTypes;
@@ -5,7 +8,8 @@ namespace dSPACE.Runtime.InteropServices.ComTypes;
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_com/
 /// </summary>
-internal class OleAut32
+[EditorBrowsable(EditorBrowsableState.Never)]
+public class OleAut32
 {
     [DllImport(Constants.OleAut32, SetLastError = false, ExactSpelling = true)]
     public static extern HRESULT LoadRegTypeLib(in Guid rguid, ushort wVerMajor, ushort wVerMinor, int lcid, out ITypeLib pptlib);
