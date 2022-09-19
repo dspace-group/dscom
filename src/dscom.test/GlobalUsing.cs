@@ -28,7 +28,7 @@ global using Xunit;
 #pragma warning disable CS8019
 
 // interface
-global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.REGKIND;
+global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
 global using CALLCONV = System.Runtime.InteropServices.ComTypes.CALLCONV;
 global using DISPPARAMS = System.Runtime.InteropServices.ComTypes.DISPPARAMS;
 global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;

@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 
-namespace dSPACE.Runtime.InteropServices.ComTypes;
+namespace dSPACE.Runtime.InteropServices.ComTypes.Internal;
 
 /// <summary>
 /// Controls how a type library is registered.

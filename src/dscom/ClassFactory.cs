@@ -50,7 +50,7 @@ internal class ClassFactory<T> : ComTypes.IClassFactory where T : new()
 
         if (outer != null)
         {
-            throw new COMException(string.Empty, ComTypes.HRESULT.CLASS_E_NOAGGREGATION);
+            throw new COMException(string.Empty, HRESULT.CLASS_E_NOAGGREGATION);
         }
 
         foreach (var i in classType.GetInterfaces())
