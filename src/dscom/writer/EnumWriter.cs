@@ -14,8 +14,6 @@
 
 using System.Globalization;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.ComTypes;
-using dSPACE.Runtime.InteropServices.ComTypes.Internal;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 

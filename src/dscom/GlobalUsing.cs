@@ -15,18 +15,16 @@
 #pragma warning disable CS8019
 
 // interface
-global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
-global using HRESULT = dSPACE.Runtime.InteropServices.ComTypes.Internal.HRESULT;
 global using CUSTDATA = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATA;
 global using CUSTDATAITEM = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATAITEM;
+global using HRESULT = dSPACE.Runtime.InteropServices.ComTypes.Internal.HRESULT;
 global using IDLDESC = dSPACE.Runtime.InteropServices.ComTypes.Internal.IDLDESC;
 global using PARAMDESCEX = dSPACE.Runtime.InteropServices.ComTypes.Internal.PARAMDESCEX;
+global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
 global using VARIANT = dSPACE.Runtime.InteropServices.ComTypes.Internal.VARIANT;
-
 global using CALLCONV = System.Runtime.InteropServices.ComTypes.CALLCONV;
 global using DISPPARAMS = System.Runtime.InteropServices.ComTypes.DISPPARAMS;
 global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;
-
 // struct
 global using FUNCDESC = System.Runtime.InteropServices.ComTypes.FUNCDESC;
 global using FUNCKIND = System.Runtime.InteropServices.ComTypes.FUNCKIND;
@@ -44,7 +42,6 @@ global using PARAMFLAG = System.Runtime.InteropServices.ComTypes.PARAMFLAG;
 global using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
 global using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
 global using TYPEDESC = System.Runtime.InteropServices.ComTypes.TYPEDESC;
-
 // enum
 global using TYPEFLAGS = System.Runtime.InteropServices.ComTypes.TYPEFLAGS;
 global using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;

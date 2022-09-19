@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.ComTypes;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
