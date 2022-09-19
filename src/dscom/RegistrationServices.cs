@@ -37,7 +37,7 @@ public class RegistrationServices
 
         var createdClassFactory = Activator.CreateInstance(constructedClassFactory);
 
-        var hr = ComTypes.Ole32.CoRegisterClassObject(g, createdClassFactory!, (uint)(ComTypes.RegistrationClassContext.InProcessServer | ComTypes.RegistrationClassContext.LocalServer), (uint)ComTypes.RegistrationConnectionType.MultipleUse, out _);
+        var hr = Ole32.CoRegisterClassObject(g, createdClassFactory!, (uint)(ComTypes.RegistrationClassContext.InProcessServer | ComTypes.RegistrationClassContext.LocalServer), (uint)ComTypes.RegistrationConnectionType.MultipleUse, out _);
         if (hr < 0)
         {
             Marshal.ThrowExceptionForHR(hr);
@@ -61,7 +61,7 @@ public class RegistrationServices
 
         var createdClassFactory = Activator.CreateInstance(constructedClassFactory);
 
-        var hr = ComTypes.Ole32.CoRegisterClassObject(guid, createdClassFactory!, (uint)classContext, (uint)flags, out var cookie);
+        var hr = Ole32.CoRegisterClassObject(guid, createdClassFactory!, (uint)classContext, (uint)flags, out var cookie);
         if (hr < 0)
         {
             Marshal.ThrowExceptionForHR(hr);
@@ -73,7 +73,7 @@ public class RegistrationServices
     /// <param name="cookie">The cookie to unregister for use from COM.</param>
     public void UnregisterTypeForComClients(int cookie)
     {
-        var hr = ComTypes.Ole32.CoRevokeClassObject(cookie);
+        var hr = Ole32.CoRevokeClassObject(cookie);
         if (hr < 0)
         {
             Marshal.ThrowExceptionForHR(hr);

@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 
-namespace dSPACE.Runtime.InteropServices;
+namespace dSPACE.Runtime.InteropServices.Internal;
 
 /// <summary>
 /// For more information: https://docs.microsoft.com/en-us/windows/win32/api/_automat/

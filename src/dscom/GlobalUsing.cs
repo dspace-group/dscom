@@ -15,34 +15,51 @@
 #pragma warning disable CS8019
 
 // interface
-global using CUSTDATA = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATA;
-global using CUSTDATAITEM = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATAITEM;
-global using HRESULT = dSPACE.Runtime.InteropServices.ComTypes.Internal.HRESULT;
-global using IDLDESC = dSPACE.Runtime.InteropServices.ComTypes.Internal.IDLDESC;
-global using PARAMDESCEX = dSPACE.Runtime.InteropServices.ComTypes.Internal.PARAMDESCEX;
-global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
-global using VARIANT = dSPACE.Runtime.InteropServices.ComTypes.Internal.VARIANT;
-global using CALLCONV = System.Runtime.InteropServices.ComTypes.CALLCONV;
-global using DISPPARAMS = System.Runtime.InteropServices.ComTypes.DISPPARAMS;
-global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;
-// struct
-global using FUNCDESC = System.Runtime.InteropServices.ComTypes.FUNCDESC;
-global using FUNCKIND = System.Runtime.InteropServices.ComTypes.FUNCKIND;
-global using IDLFLAG = System.Runtime.InteropServices.ComTypes.IDLFLAG;
-global using IMPLTYPEFLAGS = System.Runtime.InteropServices.ComTypes.IMPLTYPEFLAGS;
-global using INVOKEKIND = System.Runtime.InteropServices.ComTypes.INVOKEKIND;
 global using ITypeComp = System.Runtime.InteropServices.ComTypes.ITypeComp;
 global using ITypeInfo = System.Runtime.InteropServices.ComTypes.ITypeInfo;
 global using ITypeInfo2 = System.Runtime.InteropServices.ComTypes.ITypeInfo2;
 global using ITypeLib = System.Runtime.InteropServices.ComTypes.ITypeLib;
 global using ITypeLib2 = System.Runtime.InteropServices.ComTypes.ITypeLib2;
-global using LIBFLAGS = System.Runtime.InteropServices.ComTypes.LIBFLAGS;
+global using ITypeInfo64Bit = dSPACE.Runtime.InteropServices.ComTypes.Internal.ITypeInfo64Bit;
+global using ICreateTypeInfo2 = dSPACE.Runtime.InteropServices.ComTypes.Internal.ICreateTypeInfo2;
+global using ICreateTypeLib2 = dSPACE.Runtime.InteropServices.ComTypes.Internal.ICreateTypeLib2;
+global using ICreateTypeLib = dSPACE.Runtime.InteropServices.ComTypes.Internal.ICreateTypeLib;
+global using IClassFactory = dSPACE.Runtime.InteropServices.ComTypes.Internal.IClassFactory;
+global using IDispatch = dSPACE.Runtime.InteropServices.ComTypes.Internal.IDispatch;
+global using IUnknown = dSPACE.Runtime.InteropServices.ComTypes.Internal.IUnknown;
+
+// class
+global using Constants = dSPACE.Runtime.InteropServices.Internal.Constants;
+global using Ole32 = dSPACE.Runtime.InteropServices.ComTypes.Internal.Ole32;
+global using Guids = dSPACE.Runtime.InteropServices.Internal.Guids;
+
+// struct
+global using CUSTDATA = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATA;
+global using CUSTDATAITEM = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATAITEM;
+global using HRESULT = dSPACE.Runtime.InteropServices.ComTypes.Internal.HRESULT;
+global using IDLDESC = dSPACE.Runtime.InteropServices.ComTypes.Internal.IDLDESC;
+global using PARAMDESCEX = dSPACE.Runtime.InteropServices.ComTypes.Internal.PARAMDESCEX;
+global using OleAut32 = dSPACE.Runtime.InteropServices.ComTypes.Internal.OleAut32;
+
+global using DISPPARAMS = System.Runtime.InteropServices.ComTypes.DISPPARAMS;
+global using ELEMDESC = System.Runtime.InteropServices.ComTypes.ELEMDESC;
+global using FUNCDESC = System.Runtime.InteropServices.ComTypes.FUNCDESC;
 global using PARAMDESC = System.Runtime.InteropServices.ComTypes.PARAMDESC;
-global using PARAMFLAG = System.Runtime.InteropServices.ComTypes.PARAMFLAG;
-global using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
 global using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
 global using TYPEDESC = System.Runtime.InteropServices.ComTypes.TYPEDESC;
+
 // enum
+global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
+global using VARIANT = dSPACE.Runtime.InteropServices.ComTypes.Internal.VARIANT;
+
+global using CALLCONV = System.Runtime.InteropServices.ComTypes.CALLCONV;
+global using IDLFLAG = System.Runtime.InteropServices.ComTypes.IDLFLAG;
+global using FUNCKIND = System.Runtime.InteropServices.ComTypes.FUNCKIND;
+global using IMPLTYPEFLAGS = System.Runtime.InteropServices.ComTypes.IMPLTYPEFLAGS;
+global using LIBFLAGS = System.Runtime.InteropServices.ComTypes.LIBFLAGS;
+global using PARAMFLAG = System.Runtime.InteropServices.ComTypes.PARAMFLAG;
+global using SYSKIND = System.Runtime.InteropServices.ComTypes.SYSKIND;
+global using INVOKEKIND = System.Runtime.InteropServices.ComTypes.INVOKEKIND;
 global using TYPEFLAGS = System.Runtime.InteropServices.ComTypes.TYPEFLAGS;
 global using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;
 global using TYPELIBATTR = System.Runtime.InteropServices.ComTypes.TYPELIBATTR;

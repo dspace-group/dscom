@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices;
 
 [ComVisible(true)]
-internal class ClassFactory<T> : ComTypes.IClassFactory where T : new()
+internal class ClassFactory<T> : IClassFactory where T : new()
 {
     public void CreateInstance(
         [MarshalAs(UnmanagedType.Interface)] object instancePointer,

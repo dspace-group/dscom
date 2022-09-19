@@ -73,11 +73,11 @@ internal static class MarshalHelper
             case "System.Guid":
                 return VarEnum.VT_USERDEFINED;
             default:
-                if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.IDispatch")
+                if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.Internal.IDispatch")
                 {
                     return VarEnum.VT_DISPATCH;
                 }
-                else if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.IUnknown")
+                else if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.Internal.IUnknown")
                 {
                     return VarEnum.VT_UNKNOWN;
                 }

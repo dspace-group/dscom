@@ -108,8 +108,8 @@ internal static class Extensions
             VarEnum.VT_UI8 => typeof(ulong),
             VarEnum.VT_SAFEARRAY => typeof(object[]),
             VarEnum.VT_DATE => typeof(DateTime),
-            VarEnum.VT_UNKNOWN => typeof(ComTypes.IUnknown),
-            VarEnum.VT_DISPATCH => typeof(ComTypes.IDispatch),
+            VarEnum.VT_UNKNOWN => typeof(IUnknown),
+            VarEnum.VT_DISPATCH => typeof(IDispatch),
             VarEnum.VT_PTR => typeof(IntPtr),
             _ => throw new NotSupportedException(),
         };

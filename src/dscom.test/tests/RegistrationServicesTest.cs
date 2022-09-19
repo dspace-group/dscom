@@ -25,11 +25,8 @@ public class RegistrationServicesTest : BaseTest
         var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass), ComTypes.RegistrationClassContext.LocalServer, ComTypes.RegistrationConnectionType.MultipleUse);
 
         var guid = new Guid(typeof(RegistrationServicesTestClass).GetCustomAttribute<GuidAttribute>()!.Value);
-        var guidIClassFactory = new Guid(typeof(ComTypes.IClassFactory).GetCustomAttribute<GuidAttribute>()!.Value);
-        var classFactory = ComTypes.Ole32.CoGetClassObject(guid, (uint)ComTypes.RegistrationClassContext.LocalServer, IntPtr.Zero, guidIClassFactory);
-
-        // CreateInstance(null, interfaceGuid, out IntPtr ptr);
-        // Marshal.GetObjectForIUnknown(ptr) as IGreeter;        
+        var guidIClassFactory = new Guid(typeof(IClassFactory).GetCustomAttribute<GuidAttribute>()!.Value);
+        var classFactory = Ole32.CoGetClassObject(guid, (uint)ComTypes.RegistrationClassContext.LocalServer, IntPtr.Zero, guidIClassFactory);
 
         classFactory.Should().NotBeNull();
 

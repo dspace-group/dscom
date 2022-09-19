@@ -3,7 +3,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace dSPACE.Runtime.InteropServices.Exporter;
+namespace dSPACE.Runtime.InteropServices.ComTypes.Internal;
 
 /// <summary>
 /// The original ITypeInfo interface in the CLR has incorrect definitions for GetRefTypeOfImplType and GetRefTypeInfo.

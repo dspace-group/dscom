@@ -3,7 +3,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace dSPACE.Runtime.InteropServices.ComTypes;
+namespace dSPACE.Runtime.InteropServices.ComTypes.Internal;
 
 /// <summary>
 /// For more information: https://docs.microsoft.com/de-de/windows/win32/api/unknwn/nn-unknwn-iclassfactory
