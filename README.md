@@ -28,6 +28,8 @@ _Happy IUnknowing and IDispatching ;-)_
     - [32Bit support](#32bit-support)
     - [Usage](#usage)
   - [Library](#library)
+    - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
+    - [RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients](#registrationservicesregistertypeforcomclients-and-registrationservicesunregistertypeforcomclients)
   - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
   - [Limitations](#limitations)
@@ -70,8 +72,6 @@ Depending on whether you want to process 32bit or 64bit assemblies, you need to 
 > To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as an AnyCPU assembly.  
 > see: <https://github.com/dotnet/runtime/issues/32493>
 
-
-
 ### Usage
 
 Use `dscom --help` to get further information.  
@@ -97,6 +97,22 @@ Commands:
 
 
 ## Library
+
+Usage:  
+```bash
+dotnet add package dSPACE.Runtime.InteropServices
+```
+
+dSPACE.Runtime.InteropServices supports the following methods and classes:  
+
+* TypeLibConverter
+  * ConvertAssemblyToTypeLib
+* RegistrationServices
+  * RegisterTypeForComClients
+  * UnregisterTypeForComClients
+
+
+### TypeLibConverter.ConvertAssemblyToTypeLib
 
 If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
 This method should behave compatible to the `.NET Framework` method.
@@ -145,6 +161,29 @@ public class TypeLibConverterCallback : ITypeLibExporterNotifySink
         return null;
     }
 }
+```
+### RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients
+
+The `dSPACE.Runtime.InteropServices.RegistrationServices` provides a set of services for registering and unregistering managed assemblies for use from COM.  
+This method is equivalent to calling CoRegisterClassObject in COM.  
+You can register a .NET class so that other applications can connect to it (For example as INPROC_SERVER or as a LOCAL_SERVER).  
+
+A outproc demo application is available here: [examples\outproc](examples\outproc)
+
+Example:  
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+var registration = new RegistrationServices();
+var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), 
+  RegistrationClassContext.LocalServer, 
+  RegistrationConnectionType.MultipleUse);
+
+Console.WriteLine($"Press enter to stop the server");
+Console.ReadLine();
+
+registration.UnregisterTypeForComClients(cookie);
 ```
 
 ## Migration notes (mscorelib vs System.Private.CoreLib)
