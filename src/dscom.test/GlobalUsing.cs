@@ -26,7 +26,6 @@ global using Xunit;
 
 #pragma warning disable CS8019
 
-// interface
 global using ITypeComp = System.Runtime.InteropServices.ComTypes.ITypeComp;
 global using ITypeInfo = System.Runtime.InteropServices.ComTypes.ITypeInfo;
 global using ITypeInfo2 = System.Runtime.InteropServices.ComTypes.ITypeInfo2;
@@ -40,12 +39,10 @@ global using IClassFactory = dSPACE.Runtime.InteropServices.ComTypes.Internal.IC
 global using IDispatch = dSPACE.Runtime.InteropServices.ComTypes.Internal.IDispatch;
 global using IUnknown = dSPACE.Runtime.InteropServices.ComTypes.Internal.IUnknown;
 
-// class
 global using Constants = dSPACE.Runtime.InteropServices.Internal.Constants;
 global using Ole32 = dSPACE.Runtime.InteropServices.ComTypes.Internal.Ole32;
 global using Guids = dSPACE.Runtime.InteropServices.Internal.Guids;
 
-// struct
 global using CUSTDATA = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATA;
 global using CUSTDATAITEM = dSPACE.Runtime.InteropServices.ComTypes.Internal.CUSTDATAITEM;
 global using HRESULT = dSPACE.Runtime.InteropServices.ComTypes.Internal.HRESULT;
@@ -60,7 +57,6 @@ global using PARAMDESC = System.Runtime.InteropServices.ComTypes.PARAMDESC;
 global using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
 global using TYPEDESC = System.Runtime.InteropServices.ComTypes.TYPEDESC;
 
-// enum
 global using REGKIND = dSPACE.Runtime.InteropServices.ComTypes.Internal.REGKIND;
 global using VARIANT = dSPACE.Runtime.InteropServices.ComTypes.Internal.VARIANT;
 

@@ -15,7 +15,6 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.Exporter;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 

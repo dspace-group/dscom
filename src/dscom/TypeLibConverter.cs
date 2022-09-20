@@ -18,7 +18,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using dSPACE.Runtime.InteropServices.ComTypes;
 using dSPACE.Runtime.InteropServices.Exporter;
 using dSPACE.Runtime.InteropServices.Writer;
 

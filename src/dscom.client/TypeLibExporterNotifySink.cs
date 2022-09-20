@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Reflection;
-using dSPACE.Runtime.InteropServices.ComTypes;
 
 namespace dSPACE.Runtime.InteropServices;
 
