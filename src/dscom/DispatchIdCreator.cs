@@ -14,7 +14,6 @@
 
 using System.Collections;
 using System.Reflection;
-using dSPACE.Runtime.InteropServices.ComTypes;
 using dSPACE.Runtime.InteropServices.Writer;
 
 namespace dSPACE.Runtime.InteropServices;

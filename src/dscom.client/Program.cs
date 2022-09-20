@@ -17,7 +17,6 @@ using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.ComTypes;
 
 namespace dSPACE.Runtime.InteropServices;
 

@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using dSPACE.Runtime.InteropServices.ComTypes;
-
 namespace dSPACE.Runtime.InteropServices;
 
 internal sealed class WriterContext
@@ -33,10 +31,7 @@ internal sealed class WriterContext
                 TypeInfoResolver = typeInfoResolver;
             }
         }
-        if (TypeInfoResolver == null)
-        {
-            TypeInfoResolver = new TypeInfoResolver(this);
-        }
+        TypeInfoResolver ??= new TypeInfoResolver(this);
     }
 
     public ITypeLibExporterNotifySink? NotifySink { get; private set; }

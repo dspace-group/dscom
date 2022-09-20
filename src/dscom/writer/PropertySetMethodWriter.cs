@@ -30,7 +30,7 @@ internal class PropertySetMethodWriter : PropertyMethodWriter
             if (MethodInfo.GetParameters().Any(p =>
              {
                  return p.ParameterType == typeof(object) ||
-                 p.ParameterType.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.IDispatch" ||
+                 p.ParameterType.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.Internal.IDispatch" ||
                  p.ParameterType.IsInterface;
              }))
             {

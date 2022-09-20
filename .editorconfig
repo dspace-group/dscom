@@ -168,3 +168,5 @@ dotnet_diagnostic.CA1200.severity = none        # Avoid using cref tags with a p
 dotnet_diagnostic.CA5351.severity = none        # Do Not Use Broken Cryptographic Algorithms
 dotnet_diagnostic.CS0618.severity = none        # Obsolete
 dotnet_diagnostic.CA1305.severity = none        # CultureInfo
+dotnet_diagnostic.CA1837.severity = none        # Use Environment.ProcessId instead of Process.GetCurrentProcess().Id
+
