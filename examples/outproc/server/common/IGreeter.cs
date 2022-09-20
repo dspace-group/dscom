@@ -9,4 +9,5 @@ namespace Server.Common;
 public interface IGreeter
 {
     string SayHello(string name);
+    string GetInstanceId();
 }

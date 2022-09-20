@@ -33,8 +33,13 @@ public class RegistrationServicesTest : BaseTest
     public void RegisterTypeForComClients_TestClassAsLocalServer_ShouldBeRegistered()
     {
         var registrationServices = new RegistrationServices();
-        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass), ComTypes.RegistrationClassContext.LocalServer, ComTypes.RegistrationConnectionType.MultipleUse);
-        var classFactory = Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass, (uint)ComTypes.RegistrationClassContext.LocalServer, IntPtr.Zero, _guidOfiClassFactory) as IClassFactory;
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.MultipleUse);
+        var classFactory = Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+            (uint)ComTypes.RegistrationClassContext.LocalServer,
+            IntPtr.Zero,
+            _guidOfiClassFactory) as IClassFactory;
 
         // Create instance of IRegistrationServicesTestInterface
         classFactory.Should().NotBeNull();
@@ -50,60 +55,118 @@ public class RegistrationServicesTest : BaseTest
     }
 
     [Fact]
-    public void RegisterTypeForComClients_MultipleUseOfTestClassAsLocalServer_InstanceShouldBeReused()
+    public void UnregisterTypeForComClients_TestClassAsLocalServer_ShouldUnregisterTheClassFactory()
     {
         var registrationServices = new RegistrationServices();
-        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass), ComTypes.RegistrationClassContext.LocalServer, ComTypes.RegistrationConnectionType.MultipleUse);
-        var classFactory = Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass, (uint)ComTypes.RegistrationClassContext.LocalServer, IntPtr.Zero, _guidOfiClassFactory) as IClassFactory;
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.MultipleUse);
+
+        Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+            (uint)ComTypes.RegistrationClassContext.LocalServer,
+            IntPtr.Zero,
+            _guidOfiClassFactory)
+                .Should().NotBeNull().And.BeAssignableTo<IClassFactory>();
+
+        registrationServices.UnregisterTypeForComClients(cookie);
+
+        var exception = Assert.Throws<COMException>(() =>
+        {
+            Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+                (uint)ComTypes.RegistrationClassContext.LocalServer,
+                IntPtr.Zero,
+                _guidOfiClassFactory);
+        });
+
+        exception.Message.Trim().Should().Be("Class not registered");
+    }
+
+    [Fact]
+    public void RegisterTypeForComClients_MultipleUseOfTestClassAsLocalServer_OutProcServerShouldBeReused()
+    {
+        var registrationServices = new RegistrationServices();
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.MultipleUse);
+        var classFactory = Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+            (uint)ComTypes.RegistrationClassContext.LocalServer,
+            IntPtr.Zero,
+            _guidOfiClassFactory) as IClassFactory;
 
         // Create instance of IRegistrationServicesTestInterface
         classFactory.Should().NotBeNull();
         classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject1);
         var testInstance1 = Marshal.GetObjectForIUnknown(ppvObject1) as IRegistrationServicesTestInterface;
         testInstance1.Should().NotBeNull();
-        var instanceId1 = testInstance1!.GetInstanceId();
+        var pid1 = testInstance1!.GetPid();
 
         classFactory.Should().NotBeNull();
         classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject2);
         var testInstance2 = Marshal.GetObjectForIUnknown(ppvObject2) as IRegistrationServicesTestInterface;
         testInstance2.Should().NotBeNull();
-        var instanceId2 = testInstance2!.GetInstanceId();
+        var pid2 = testInstance2!.GetPid();
 
-        instanceId1.Should().NotBeNullOrEmpty();
-        instanceId2.Should().NotBeNullOrEmpty();
-        instanceId2.Should().NotBe(Guid.Empty.ToString());
-        instanceId2.Should().NotBe(Guid.Empty.ToString());
-        instanceId1.Should().Be(instanceId2);
+        // In case of a InprocServer this test is actually unnecessary, because the test uses the unit test runtime process
+        pid2.Should().NotBe(0);
+        pid2.Should().NotBe(0);
+        pid1.Should().Be(pid2);
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
     }
 
     [Fact]
-    public void RegisterTypeForComClients_SingleUseOfTestClassAsLocalServer_InstanceShouldNotBeReused()
+    public void RegisterTypeForComClients_SingleUseOfTestClassAsLocalServer_OutProcServerShouldNotBeReused()
     {
         var registrationServices = new RegistrationServices();
-        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass), ComTypes.RegistrationClassContext.LocalServer, ComTypes.RegistrationConnectionType.SingleUse);
-        var classFactory = Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass, (uint)ComTypes.RegistrationClassContext.LocalServer, IntPtr.Zero, _guidOfiClassFactory) as IClassFactory;
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.SingleUse);
 
-        // Create instance of IRegistrationServicesTestInterface
-        classFactory.Should().NotBeNull();
-        classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject);
+        // this is not testable in a InprocServer. Only check if RegisterTypeForComClients returns a cookie
 
-        // IRegistrationServicesTestInterface should be available
-        var testInstance1 = Marshal.GetObjectForIUnknown(ppvObject) as IRegistrationServicesTestInterface;
-        testInstance1.Should().NotBeNull();
-        var instanceId1 = testInstance1!.GetInstanceId();
+        cookie.Should().NotBe(0);
 
-        var testInstance2 = Marshal.GetObjectForIUnknown(ppvObject) as IRegistrationServicesTestInterface;
-        testInstance2.Should().NotBeNull();
-        var instanceId2 = testInstance2!.GetInstanceId();
+        // Cleanup
+        registrationServices.UnregisterTypeForComClients(cookie);
+    }
 
-        instanceId1.Should().NotBeNullOrEmpty();
-        instanceId2.Should().NotBeNullOrEmpty();
-        instanceId2.Should().NotBe(Guid.Empty.ToString());
-        instanceId2.Should().NotBe(Guid.Empty.ToString());
-        instanceId1.Should().Be(instanceId2);
+    [Fact]
+    public void RegisterTypeForComClients_SuspendedTestClassAsLocalServer_CoGetClassObjectThrowsComException()
+    {
+        var registrationServices = new RegistrationServices();
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.Suspended);
+
+        var exception = Assert.Throws<COMException>(() =>
+        {
+            Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+                (uint)ComTypes.RegistrationClassContext.LocalServer,
+                IntPtr.Zero,
+                _guidOfiClassFactory);
+        });
+
+        exception.Message.Trim().Should().Be("Class not registered");
+
+        registrationServices.UnregisterTypeForComClients(cookie);
+    }
+
+    [Fact]
+    public void RegisterTypeForComClients_SuspendedTestClassAsLocalServerWithCoResumeClassObjects_CoGetClassObjectShouldReturnAIClassFactory()
+    {
+        var registrationServices = new RegistrationServices();
+        var cookie = registrationServices.RegisterTypeForComClients(typeof(RegistrationServicesTestClass),
+            ComTypes.RegistrationClassContext.LocalServer,
+            ComTypes.RegistrationConnectionType.Suspended);
+
+        Ole32.CoResumeClassObjects().Should().Be(HRESULT.S_OK);
+
+        Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+            (uint)ComTypes.RegistrationClassContext.LocalServer,
+            IntPtr.Zero,
+            _guidOfiClassFactory)
+            .Should().NotBeNull().And.BeAssignableTo<IClassFactory>();
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
@@ -126,6 +189,12 @@ public interface IRegistrationServicesTestInterface
     /// </summary>
     /// <returns>A unique test string.</returns>
     string GetInstanceId();
+
+    /// <summary>
+    /// Returns the PID of this COM server
+    /// </summary>
+    /// <returns>A PID.</returns>
+    int GetPid();
 }
 
 [ComVisible(true)]
@@ -142,6 +211,11 @@ public class RegistrationServicesTestClass : IRegistrationServicesTestInterface
     public string GetInstanceId()
     {
         return _instanceGuid.ToString();
+    }
+
+    public int GetPid()
+    {
+        return System.Diagnostics.Process.GetCurrentProcess().Id;
     }
 
     public string GetSuccessString()

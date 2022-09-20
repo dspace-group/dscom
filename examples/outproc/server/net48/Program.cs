@@ -40,12 +40,12 @@ class Program
         }
 
         var registration = new RegistrationServices();
-        var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
+        var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.SingleUse | RegistrationConnectionType.Suspended);
 
         System.Console.WriteLine($"OutProc COM server running. PID:{System.Diagnostics.Process.GetCurrentProcess().Id}");
         System.Console.WriteLine($"RegisterTypeForComClients return cookie {cookie}");
-        
-       var hr = CoResumeClassObjects();
+
+        var hr = CoResumeClassObjects();
         if (hr < 0)
         {
             Marshal.ThrowExceptionForHR(hr);

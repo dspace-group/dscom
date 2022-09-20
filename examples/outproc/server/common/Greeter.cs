@@ -8,9 +8,17 @@ namespace Server.Common;
 [Guid("A9BD4ABF-1518-4F3C-B017-6BC45F983FF0")]
 public class Greeter : IGreeter
 {
+    private readonly Guid _instanceGuid;
+
+    public string GetInstanceId()
+    {
+        return _instanceGuid.ToString();
+    }
+
     public Greeter()
     {
-        System.Console.WriteLine($"Greeter object created. PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
+        _instanceGuid = Guid.NewGuid();
+        System.Console.WriteLine($"Greeter object created. PID: {System.Diagnostics.Process.GetCurrentProcess().Id} ID:{_instanceGuid}");
     }
 
     public string SayHello(string name)
