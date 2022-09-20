@@ -19,8 +19,11 @@ public class RegistryHelper
     public static void RegisterOutProcServer<T>(string versionIndependentProgId, string version, string title, string description) where T : class
     {
 
-        var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".exe");
-
+        var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
+        if (!(System.Environment.Version < new System.Version(5,0)))
+        {
+            exePath +=".exe";
+        }
         string progId = $"{versionIndependentProgId}.{version}";
         GuidAttribute guid = (GuidAttribute)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
         if (guid == null)
@@ -76,12 +79,46 @@ public class RegistryHelper
             }
             CreateSubKey(appIdRootKey, clsId, title);
 
-            var fileNameOfExecutingAssembly = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName + ".exe");
-
+            var fileNameOfExecutingAssembly = Path.Combine(AppDomain.CurrentDomain.FriendlyName);
+            if (!(System.Environment.Version < new System.Version(5,0)))
+            {
+                fileNameOfExecutingAssembly +=".exe";
+            }
             using (RegistryKey exeKey = appIdRootKey.CreateSubKey(fileNameOfExecutingAssembly, true))
             {
                 exeKey.SetValue("AppID", clsId);
             }
         }
+    }
+
+    public static void UnregisterOutProcServer<T>(string versionIndependentProgId, string version)
+    {
+        GuidAttribute guid = (GuidAttribute)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
+        if (guid == null)
+        {
+            throw new ArgumentException("Coclass guid not set!");
+        }
+        string clsId = String.Format("{{{0}}}", guid.Value);
+        using (RegistryKey? clsIdRootKey = Registry.ClassesRoot.OpenSubKey("CLSID", true))
+        {
+            System.Console.WriteLine($"Deleting {clsId} from {clsIdRootKey}");
+            clsIdRootKey?.DeleteSubKeyTree(clsId,false);
+        }
+        using (RegistryKey? clsIdRootKey = Registry.ClassesRoot.OpenSubKey("AppID", true))
+        {
+            System.Console.WriteLine($"Deleting {clsId} from {clsIdRootKey}");
+            clsIdRootKey?.DeleteSubKeyTree(clsId,false);
+            var fileNameOfExecutingAssembly = Path.Combine(AppDomain.CurrentDomain.FriendlyName);
+            if (!(System.Environment.Version < new System.Version(5,0)))
+            {
+                fileNameOfExecutingAssembly +=".exe";
+            }
+            System.Console.WriteLine($"Deleting {fileNameOfExecutingAssembly} from {clsIdRootKey}");
+            clsIdRootKey?.DeleteSubKeyTree(fileNameOfExecutingAssembly,false);
+        }
+
+        string progId = $"{versionIndependentProgId}.{version}";
+        Registry.ClassesRoot.DeleteSubKeyTree(versionIndependentProgId,false);
+        Registry.ClassesRoot.DeleteSubKeyTree(progId,false);
     }
 }

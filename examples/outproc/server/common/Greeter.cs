@@ -10,12 +10,12 @@ public class Greeter : IGreeter
 {
     public Greeter()
     {
-
+        System.Console.WriteLine($"Greeter object created. PID: {System.Diagnostics.Process.GetCurrentProcess().Id}");
     }
 
     public string SayHello(string name)
     {
-        var text = $"Hello {name}. This is the Net48 OutProc server! PID: {System.Diagnostics.Process.GetCurrentProcess().Id}";
+        var text = $"Hello {name}. This is the {System.Environment.Version.ToString()} OutProc server! PID: {System.Diagnostics.Process.GetCurrentProcess().Id}";
         Console.WriteLine(text);
         return text;
     }

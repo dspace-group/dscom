@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
@@ -19,69 +18,55 @@ class Program
 
     private const string Description = "FullFramework Greeter App";
 
-    static void Register()
-    {
-        Server.Common.RegistryHelper.RegisterOutProcServer<Server.Common.Greeter>(ProgId, Version, Title, Description);
-    }
 
-    //-Embedding
 
     [MTAThread()]
-    //[STAThread()]
     static void Main(string[] args)
     {
-        System.Windows.Forms.MessageBox.Show(args.Length > 0 ? args[0] : "");
-
-        bool useConsole = true;
-        if (args.Length > 0)
+        if (args.Length == 1)
         {
-            switch (args[0].ToLower())
+            if (args[0].Equals("/regserver", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-regserver", StringComparison.OrdinalIgnoreCase))
             {
-                case "/regserver":
-                case "-regserver":
-                    Register();
-                    return;
-                case "/unregserver":
-                case "-unregserver":
-                    Unregister();
-                    return;
-                case "/embedding":
-                case "-embedding":
-                    useConsole = false;
-                    break;
-                default:
-                    break;
+                // Register
+                Register();
+                return;
+            }
+            else if (args[0].Equals("/unregserver", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-unregserver", StringComparison.OrdinalIgnoreCase))
+            {
+                // Unregister
+                Unregister();
+                return;
             }
         }
 
         var registration = new RegistrationServices();
         var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
 
-        if (useConsole)
+        System.Console.WriteLine($"OutProc COM server running. PID:{System.Diagnostics.Process.GetCurrentProcess().Id}");
+        System.Console.WriteLine($"RegisterTypeForComClients return cookie {cookie}");
+        
+       var hr = CoResumeClassObjects();
+        if (hr < 0)
         {
-            System.Console.WriteLine(System.Diagnostics.Process.GetCurrentProcess().Id);
-            System.Console.WriteLine($"RegisterTypeForComClients return cookie {cookie}");
-        }
-        int hResult = CoResumeClassObjects();
-
-        if (useConsole)
-        {
-            System.Console.WriteLine($"CoResumeClassObjects returned {hResult}");
-            System.Console.WriteLine($"Press CTRL+C to stop");
+            Marshal.ThrowExceptionForHR(hr);
         }
 
-        //System.Console.ReadLine();
+        System.Console.WriteLine($"CoResumeClassObjects returned {hr}");
+        System.Console.WriteLine($"Press enter to stop");
 
-        Application.Run(new Form());
-        //System.Environment.Exit(0);
+        Console.ReadLine();
+        registration.UnregisterTypeForComClients(cookie);
+    }
 
-        // Dispatcher.Run();
-        // //new System.Threading.AutoResetEvent(false).WaitOne();
-        // registration.UnregisterTypeForComClients(cookie);
+    static void Register()
+    {
+        // Register
+        Server.Common.RegistryHelper.RegisterOutProcServer<Server.Common.Greeter>(ProgId, Version, Title, Description);
     }
 
     private static void Unregister()
     {
-        throw new NotImplementedException();
+        // Unregister
+        Server.Common.RegistryHelper.UnregisterOutProcServer<Server.Common.Greeter>(ProgId, Version);
     }
 }
