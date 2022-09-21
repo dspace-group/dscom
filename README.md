@@ -168,7 +168,7 @@ The `dSPACE.Runtime.InteropServices.RegistrationServices` provides a set of serv
 This method is equivalent to calling CoRegisterClassObject in COM.  
 You can register a .NET class so that other applications can connect to it (For example as INPROC_SERVER or as a LOCAL_SERVER).  
 
-A outproc demo application is available here: [examples\outproc](examples\outproc)
+A outproc demo application is available here: [examples\outproc](https://github.com/dspace-group/dscom/tree/main/examples/outproc)
 
 Example:  
 
