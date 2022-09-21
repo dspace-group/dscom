@@ -18,7 +18,7 @@ namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
 /// Provides a set of services for registering and unregistering managed assemblies for use from COM.
-/// /// </summary>
+/// </summary>
 [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Compatibility to the mscorelib TypeLibConverter class")]
 [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Compatibility to the mscorelib TypeLibConverter class")]
 public class RegistrationServices
