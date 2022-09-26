@@ -280,11 +280,11 @@ internal class TypeProvider
                 return VarEnum.VT_USERDEFINED;
 
             default:
-                if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.Internal.IDispatch")
+                if (type.ToString() == typeof(IDispatch).FullName)
                 {
                     return VarEnum.VT_DISPATCH;
                 }
-                else if (type.ToString() == "dSPACE.Runtime.InteropServices.ComTypes.Internal.IUnknown")
+                else if (type.ToString() == typeof(IUnknown).FullName)
                 {
                     return VarEnum.VT_UNKNOWN;
                 }

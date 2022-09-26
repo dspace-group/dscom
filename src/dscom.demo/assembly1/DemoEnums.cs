@@ -25,7 +25,6 @@ namespace dSPACE.Runtime.InteropServices.DemoAssembly1.EnumNamespace1
     }
 }
 
-
 namespace dSPACE.Runtime.InteropServices.DemoAssembly1.EnumNamespace2
 {
     [ComVisible(Constants.DEFAULT_VISIBILITY)]
@@ -34,5 +33,4 @@ namespace dSPACE.Runtime.InteropServices.DemoAssembly1.EnumNamespace2
         A,
         B
     }
-
 }

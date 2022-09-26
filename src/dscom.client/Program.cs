@@ -15,6 +15,7 @@
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -51,7 +52,6 @@ public static class ConsoleApp
             {
                 new Argument<string>("TypeLibrary", "File name of type library"),
                 new Option<bool>(new string [] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
-
             };
 
         var tlbunregisterCommand = new Command("tlbunregister", "Unregister a type library")
@@ -86,18 +86,11 @@ public static class ConsoleApp
             {
                 UnRegisterTypeLib(options.TypeLibrary, options.ForUser);
             }
-#if DEBUG
-            catch
-            {
-                throw;
-            }
-#else
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to unregister type library. {e.Message}");
-                return 1;
+                return HandleException(e, "Failed to unregister type library.");
             }
-#endif
+
             return 0;
         });
     }
@@ -110,18 +103,11 @@ public static class ConsoleApp
             {
                 RegisterTypeLib(options.TypeLibrary, options.ForUser);
             }
-#if DEBUG
-            catch
-            {
-                throw;
-            }
-#else
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to register type library. {e.Message}");
-                return 1;
+                return HandleException(e, "Failed to register type library.");
             }
-#endif
+
             return 0;
         });
     }
@@ -140,18 +126,10 @@ public static class ConsoleApp
                 var typeLibConvert = new TypeLibConverter();
                 typeLibConvert.ConvertTypeLibToText(options);
             }
-#if DEBUG
-            catch
-            {
-                throw;
-            }
-#else
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to dump type library. {e.Message} {e.InnerException?.Message}");
-                return 1;
+                return HandleException(e, "Failed to dump type library.");
             }
-#endif
 
             return 0;
         });
@@ -193,18 +171,10 @@ public static class ConsoleApp
 
                 return 0;
             }
-#if DEBUG
-            catch
-            {
-                throw;
-            }
-#else
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Failed to export type library. {e.Message} {e.InnerException?.Message}");
-                return 1;
+                return HandleException(e, "Failed to export type library.");
             }
-#endif
         });
     }
 
@@ -271,5 +241,16 @@ public static class ConsoleApp
             }
         }
         Console.WriteLine($"Type library {typeLibFilePath} unregistered successfully");
+    }
+
+    private static int HandleException(Exception e, string errorText)
+    {
+        Console.Error.WriteLine($"{errorText} {e.Message} {e.InnerException?.Message}");
+        if (Debugger.IsAttached)
+        {
+            throw e;
+        }
+
+        return 1;
     }
 }
