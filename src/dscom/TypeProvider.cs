@@ -323,7 +323,7 @@ internal class TypeProvider
                 }
                 else if (type.IsValueType && !type.IsPrimitive && !type.IsEnum)
                 {
-                    //struct
+                    // struct
                     return VarEnum.VT_USERDEFINED;
                 }
 
@@ -333,6 +333,7 @@ internal class TypeProvider
                     return VarEnum.VT_USERDEFINED;
                 }
 
+                // Don't log a warning! See behavior of tlbexp.exe.
                 return VarEnum.VT_UNKNOWN;
         }
     }

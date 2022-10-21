@@ -232,14 +232,15 @@ classextern forwarder System.Exception
 
 ## Limitations
 
-- No imports of the `mscorelib` typelib (all types are VT_UNKNOWN)
+- No imports of the `mscorelib` typelib (all types are **VT_UNKNOWN**)
   - \_Object not supported
   - \_EventArgs not supported
   - \_Delegate not supported
   - \_Type not supported
-  - ISerializable not supported
-  - ICloneable not supported
-  - IDisposable not supported
+  - System.Runtime.Serialization.ISerializable not supported
+  - System.ICloneable not supported
+  - System.IDisposable not supported
+  - System.Array not supported
   - ...
 - `TypeLibExporterFlags` is not supported
 - `ITypeLibExporterNotifySink` is not COM visible
