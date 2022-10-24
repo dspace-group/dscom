@@ -192,7 +192,8 @@ public class MarshalAsTest : BaseTest
     {
         var result = CreateAssembly(CreateAssemblyName())
             .WithInterface("TestInterface")
-                .WithMethod("TestMethod").WithReturnType(typeof(System.Collections.IList))
+                .WithMethod("TestMethod")
+                    .WithReturnType(typeof(System.Collections.IList))
                     .WithReturnTypeCustomAttribute<MarshalAsAttribute>(UnmanagedType.IUnknown)
                     .Build()
                .Build()
@@ -203,7 +204,7 @@ public class MarshalAsTest : BaseTest
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
         funcDesc.Should().NotBeNull("TestMethod should be available");
         funcDesc!.Value.cParams.Should().Be(0);
-
+        // ToDo: What additional properties can be tested here 
     }
 
     [Theory]
