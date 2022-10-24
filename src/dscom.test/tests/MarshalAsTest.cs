@@ -48,17 +48,17 @@ public class MarshalAsTest : BaseTest
 
             if (kv.Value == null)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDesc.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be availble");
+                funcDesc.Should().NotBeNull($"{methodName} should be available");
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be availble {kv.Value}");
+                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
             }
         }
     }
@@ -94,17 +94,17 @@ public class MarshalAsTest : BaseTest
 
             if (kv.Value == null)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDescSet.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDescSet.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDescSet.Should().NotBeNull($"{methodName} should be availble");
+                funcDescSet.Should().NotBeNull($"{methodName} should be available");
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be availble {kv.Value}");
+                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
             }
 
             // Check getter
@@ -112,27 +112,27 @@ public class MarshalAsTest : BaseTest
 
             if (kv.Value == null)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDescGet.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDescGet.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDescGet.Should().NotBeNull($"{methodName} should be availble");
+                funcDescGet.Should().NotBeNull($"{methodName} should be available");
 
                 if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)
                 {
                     // Return type should be VT_HRESULT
-                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return type of {methodName} should be availble {kv.Value}");
+                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return type of {methodName} should be available {kv.Value}");
 
                     // check first parameter
                     var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-                    firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be availble {kv.Value}");
+                    firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
                 }
                 else
                 {
                     // Check return value
-                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"Return type of {methodName} should be availble {kv.Value}");
+                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"Return type of {methodName} should be available {kv.Value}");
                 }
             }
         }
@@ -165,26 +165,45 @@ public class MarshalAsTest : BaseTest
 
             if (kv.Value == null)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDesc.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be availble");
+                funcDesc.Should().NotBeNull($"{methodName} should be available");
 
                 // return value should be VT_HRESULT
-                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return value of {methodName} should be availble and VarEnum.VT_HRESULT");
+                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return value of {methodName} should be available and VarEnum.VT_HRESULT");
 
                 // first parameter should be VT_PTR
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be availble VarEnum.VT_PTR");
+                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
 
                 // first parameter inner type
                 var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(firstParam.tdesc.lpValue);
-                subtypeDesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be availble VarEnum.VT_PTR");
+                subtypeDesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
             }
         }
+    }
+
+    [Fact]
+    public void MethodWithReturnValueAndMarshalAsAttribute_NoWarning()
+    {
+        var result = CreateAssembly(CreateAssemblyName())
+            .WithInterface("TestInterface")
+                .WithMethod("TestMethod").WithReturnType(typeof(System.Collections.IList))
+                    .WithReturnTypeCustomAttribute<MarshalAsAttribute>(UnmanagedType.IUnknown)
+                    .Build()
+               .Build()
+            .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
+        funcDesc.Should().NotBeNull("TestMethod should be available");
+        funcDesc!.Value.cParams.Should().Be(0);
+
     }
 
     [Theory]
@@ -215,16 +234,16 @@ public class MarshalAsTest : BaseTest
 
             if (kv.Value == null)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDesc.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be availble");
+                funcDesc.Should().NotBeNull($"{methodName} should be available");
 
                 // check return value
-                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be availble {kv.Value}");
+                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
             }
         }
     }
@@ -356,17 +375,17 @@ public class MarshalAsTest : BaseTest
             // Array of Array not supported
             if (parameterType.IsArray)
             {
-                // Is not suppported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be availble");
+                // Is not supported TLBX_E_BAD_NATIVETYPE
+                funcDesc.Should().BeNull($"{methodName} should not no be available");
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be availble");
+                funcDesc.Should().NotBeNull($"{methodName} should be available");
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_SAFEARRAY, $"First parameter of {methodName} should be availble VarEnum.VT_SAFEARRAY");
+                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_SAFEARRAY, $"First parameter of {methodName} should be available VarEnum.VT_SAFEARRAY");
                 var firstParamSub = Marshal.PtrToStructure<ELEMDESC>(firstParam.tdesc.lpValue);
                 if (firstParamSub.tdesc.lpValue != IntPtr.Zero && firstParamSub.tdesc.GetVarEnum() == VarEnum.VT_PTR)
                 {
@@ -433,19 +452,19 @@ public class MarshalAsTest : BaseTest
             funcDesc.Should().NotBeNull();
 
             // return value should be VT_PTR
-            funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"Return value of {methodName} should be availble and VarEnum.VT_HRESULT");
+            funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"Return value of {methodName} should be available and VarEnum.VT_HRESULT");
 
             // return value inner type should VT_USERDEFINED
             var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(funcDesc!.Value.elemdescFunc.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be availble VarEnum.VT_PTR");
+            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
 
             // first parameter should be VT_PTR
             var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-            firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be availble VarEnum.VT_PTR");
+            firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
 
             // first parameter inner type should be VT_USERDEFINED
             subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(firstParam.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be availble VarEnum.VT_PTR");
+            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
         }
     }
 

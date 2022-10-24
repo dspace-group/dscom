@@ -16,12 +16,11 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
 {
-    public TypeLibExporterNotifySink()
-    { }
+    public TypeLibExporterNotifySink() { }
 
     public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
     {
-
+        Console.WriteLine($"{eventKind}:{eventCode}:{eventMsg}");
     }
 
     public object ResolveRef(Assembly assembly)
