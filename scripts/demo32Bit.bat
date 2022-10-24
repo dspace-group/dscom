@@ -17,12 +17,12 @@ IF ERRORLEVEL 1 goto error
 
 @REM dscom
 echo ############## dscom.exe tlbexport
-dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net6.0 --no-self-contained  tlbexport /win32 /silent "%net60dll%" "/out:%net60dll%.tlb"
+dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net6.0 --no-self-contained -- tlbexport --silent "%net60dll%" "--out" "%net60dll%.tlb"
 
 IF ERRORLEVEL 1 goto error
 
 echo ############## dscom.exe tlbdump
-dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net6.0 --no-self-contained tlbdump %filterregex% "/tlbrefpath:%net60dll%.tlb/.." "%net60dll%.tlb" "/out:%net60dll%.yaml"
+dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net6.0 --no-self-contained -- tlbdump %filterregex% "/tlbrefpath:%net60dll%.tlb/.." "%net60dll%.tlb" "/out:%net60dll%.yaml"
 IF ERRORLEVEL 1 goto error
 
 WHERE tlbexp
