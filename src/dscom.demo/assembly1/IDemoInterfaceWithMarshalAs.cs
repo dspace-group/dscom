@@ -783,8 +783,10 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Decimal_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] decimal Param1);
     #endregion
 
-    #region Marshal the return value 
+    #region Marshal the IList values in return and parameters
     [return: MarshalAs(UnmanagedType.IUnknown)]
     IList TestMethod_ReturnValue_System_IList_IUnknown();
+    void TestMethod_System_IList_SaveArray([MarshalAs(UnmanagedType.SafeArray)] IList elements);
+
     #endregion
 }
