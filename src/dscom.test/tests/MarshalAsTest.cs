@@ -187,14 +187,16 @@ public class MarshalAsTest : BaseTest
         }
     }
 
-    [Fact]
-    public void MethodWithReturnValueAndMarshalAsAttribute_NoWarning()
+    [Theory]
+    [InlineData(UnmanagedType.IUnknown, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.Bool, VarEnum.VT_BOOL)]
+    public void MethodWithReturnValueAndMarshalAsAttribute_NoWarning(UnmanagedType marshalType, VarEnum varEnumType)
     {
         var result = CreateAssembly(CreateAssemblyName())
             .WithInterface("TestInterface")
                 .WithMethod("TestMethod")
                     .WithReturnType(typeof(System.Collections.IList))
-                    .WithReturnTypeCustomAttribute<MarshalAsAttribute>(UnmanagedType.IUnknown)
+                    .WithReturnTypeCustomAttribute<MarshalAsAttribute>(marshalType)
                     .Build()
                .Build()
             .Build();
@@ -204,7 +206,48 @@ public class MarshalAsTest : BaseTest
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
         funcDesc.Should().NotBeNull("TestMethod should be available");
         funcDesc!.Value.cParams.Should().Be(0);
-        // ToDo: What additional properties can be tested here 
+
+        funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(varEnumType, $"First Parameter type of TestMethod should be {varEnumType}");
+
+        // TODO: 
+        // Check for:
+        // MarshalAs(UnmanagedType.Bool
+        // MarshalAs(UnmanagedType.VariantBool
+        // MarshalAs(UnmanagedType.I1
+        // MarshalAs(UnmanagedType.U1
+        // MarshalAs(UnmanagedType.I2
+        // MarshalAs(UnmanagedType.U2
+        // MarshalAs(UnmanagedType.I4
+        // MarshalAs(UnmanagedType.U4
+        // MarshalAs(UnmanagedType.I8
+        // MarshalAs(UnmanagedType.U8
+        // MarshalAs(UnmanagedType.R4
+        // MarshalAs(UnmanagedType.R8
+        // MarshalAs(UnmanagedType.Currency
+        // MarshalAs(UnmanagedType.BStr
+        // MarshalAs(UnmanagedType.LPStr
+        // MarshalAs(UnmanagedType.LPWStr
+        // MarshalAs(UnmanagedType.LPTStr
+        // MarshalAs(UnmanagedType.IUnknown
+        // MarshalAs(UnmanagedType.IDispatch
+        // MarshalAs(UnmanagedType.Struct
+        // MarshalAs(UnmanagedType.Interface
+        // MarshalAs(UnmanagedType.SafeArray
+        // MarshalAs(UnmanagedType.SysInt
+        // MarshalAs(UnmanagedType.SysUInt
+        // MarshalAs(UnmanagedType.VBByRefStr
+        // MarshalAs(UnmanagedType.AnsiBStr
+        // MarshalAs(UnmanagedType.TBStr
+        // MarshalAs(UnmanagedType.FunctionPtr
+        // MarshalAs(UnmanagedType.AsAny
+        // MarshalAs(UnmanagedType.LPArray
+        // MarshalAs(UnmanagedType.LPStruct
+        // MarshalAs(UnmanagedType.Error
+        // MarshalAs(UnmanagedType.IInspectable
+        // MarshalAs(UnmanagedType.HString
+        // MarshalAs(UnmanagedType.LPUTF8Str
+
+        result.TypeLibExporterNotifySink.ReportedEvents.Count.Should().Be(1);
     }
 
     [Theory]

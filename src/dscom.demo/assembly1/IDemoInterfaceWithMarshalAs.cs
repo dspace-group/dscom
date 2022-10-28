@@ -786,7 +786,41 @@ public interface IDemoInterfaceWithMarshalAs
     #region Marshal the IList values in return and parameters
     [return: MarshalAs(UnmanagedType.IUnknown)]
     IList TestMethod_ReturnValue_System_IList_IUnknown();
-    void TestMethod_System_IList_SaveArray([MarshalAs(UnmanagedType.SafeArray)] IList elements);
+    void TestMethod_System_IList_Bool([MarshalAs(UnmanagedType.Bool)] IList Param1);
+    void TestMethod_System_IList_VariantBool([MarshalAs(UnmanagedType.VariantBool)] IList Param1);
+    void TestMethod_System_IList_I1([MarshalAs(UnmanagedType.I1)] IList Param1);
+    void TestMethod_System_IList_U1([MarshalAs(UnmanagedType.U1)] IList Param1);
+    void TestMethod_System_IList_I2([MarshalAs(UnmanagedType.I2)] IList Param1);
+    void TestMethod_System_IList_U2([MarshalAs(UnmanagedType.U2)] IList Param1);
+    void TestMethod_System_IList_I4([MarshalAs(UnmanagedType.I4)] IList Param1);
+    void TestMethod_System_IList_U4([MarshalAs(UnmanagedType.U4)] IList Param1);
+    void TestMethod_System_IList_I8([MarshalAs(UnmanagedType.I8)] IList Param1);
+    void TestMethod_System_IList_U8([MarshalAs(UnmanagedType.U8)] IList Param1);
+    void TestMethod_System_IList_R4([MarshalAs(UnmanagedType.R4)] IList Param1);
+    void TestMethod_System_IList_R8([MarshalAs(UnmanagedType.R8)] IList Param1);
+    void TestMethod_System_IList_Currency([MarshalAs(UnmanagedType.Currency)] IList Param1);
+    void TestMethod_System_IList_BStr([MarshalAs(UnmanagedType.BStr)] IList Param1);
+    void TestMethod_System_IList_LPStr([MarshalAs(UnmanagedType.LPStr)] IList Param1);
+    void TestMethod_System_IList_LPWStr([MarshalAs(UnmanagedType.LPWStr)] IList Param1);
+    void TestMethod_System_IList_LPTStr([MarshalAs(UnmanagedType.LPTStr)] IList Param1);
+    void TestMethod_System_IList_IUnknown([MarshalAs(UnmanagedType.IUnknown)] IList Param1);
+    void TestMethod_System_IList_IDispatch([MarshalAs(UnmanagedType.IDispatch)] IList Param1);
+    void TestMethod_System_IList_Struct([MarshalAs(UnmanagedType.Struct)] IList Param1);
+    void TestMethod_System_IList_Interface([MarshalAs(UnmanagedType.Interface)] IList Param1);
+    void TestMethod_System_IList_SafeArray([MarshalAs(UnmanagedType.SafeArray)] IList Param1);
+    void TestMethod_System_IList_SysInt([MarshalAs(UnmanagedType.SysInt)] IList Param1);
+    void TestMethod_System_IList_SysUInt([MarshalAs(UnmanagedType.SysUInt)] IList Param1);
+    void TestMethod_System_IList_VBByRefStr([MarshalAs(UnmanagedType.VBByRefStr)] IList Param1);
+    void TestMethod_System_IList_AnsiBStr([MarshalAs(UnmanagedType.AnsiBStr)] IList Param1);
+    void TestMethod_System_IList_TBStr([MarshalAs(UnmanagedType.TBStr)] IList Param1);
+    void TestMethod_System_IList_FunctionPtr([MarshalAs(UnmanagedType.FunctionPtr)] IList Param1);
+    void TestMethod_System_IList_AsAny([MarshalAs(UnmanagedType.AsAny)] IList Param1);
+    void TestMethod_System_IList_LPArray([MarshalAs(UnmanagedType.LPArray)] IList Param1);
+    void TestMethod_System_IList_LPStruct([MarshalAs(UnmanagedType.LPStruct)] IList Param1);
+    void TestMethod_System_IList_Error([MarshalAs(UnmanagedType.Error)] IList Param1);
+    void TestMethod_System_IList_IInspectable([MarshalAs(UnmanagedType.IInspectable)] IList Param1);
+    void TestMethod_System_IList_HString([MarshalAs(UnmanagedType.HString)] IList Param1);
+    void TestMethod_System_IList_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] IList Param1);
 
     #endregion
 }
