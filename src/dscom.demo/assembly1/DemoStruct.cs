@@ -31,6 +31,7 @@ public struct DemoStruct
     public int System_Int32;
     public ulong System_UInt64;
     public long System_Int64;
+    public IntPtr System_IntPtr;
     public float System_Single;
     public double System_Double;
     public string System_String;

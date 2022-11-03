@@ -259,7 +259,7 @@ internal class TypeProvider
             case "System.Delegate":
                 return VarEnum.VT_UNKNOWN;
             case "System.IntPtr":
-                return VarEnum.VT_I8;
+                return Environment.Is64BitProcess ? VarEnum.VT_I8 : VarEnum.VT_I4;
             case "System.Drawing.Color":
                 return VarEnum.VT_USERDEFINED;
             case "System.Guid":
@@ -323,7 +323,7 @@ internal class TypeProvider
                 }
                 else if (type.IsValueType && !type.IsPrimitive && !type.IsEnum)
                 {
-                    //struct
+                    // struct
                     return VarEnum.VT_USERDEFINED;
                 }
 
@@ -333,6 +333,7 @@ internal class TypeProvider
                     return VarEnum.VT_USERDEFINED;
                 }
 
+                // Don't log a warning! See behavior of tlbexp.exe.
                 return VarEnum.VT_UNKNOWN;
         }
     }
