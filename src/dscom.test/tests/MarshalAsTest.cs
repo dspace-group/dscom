@@ -223,7 +223,7 @@ public class MarshalAsTest : BaseTest
     [InlineData(UnmanagedType.IInspectable, VarEnum.VT_UNKNOWN)]
     [InlineData(UnmanagedType.HString, VarEnum.VT_UNKNOWN)]
     [InlineData(UnmanagedType.LPUTF8Str, VarEnum.VT_UNKNOWN)]
-    public void MethodWithReturnValueAndMarshalAsAttribute_NoWarning(UnmanagedType marshalType, VarEnum varEnumType)
+    public void MethodWithReturnTypeIListAndMarshalAsAttribute_NoWarningExpected(UnmanagedType marshalType, VarEnum varEnumType)
     {
         var type = typeof(System.Collections.IList);
 
