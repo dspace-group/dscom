@@ -23,6 +23,7 @@ namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
 [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
 public interface IDemoInterfaceWithMarshalAs
 {
+    #region boolean
     void TestMethod_System_Boolean_Bool([MarshalAs(UnmanagedType.Bool)] bool Param1);
     void TestMethod_System_Boolean_U8([MarshalAs(UnmanagedType.U8)] bool Param1);
     void TestMethod_System_Boolean_VariantBool([MarshalAs(UnmanagedType.VariantBool)] bool Param1);
@@ -58,6 +59,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Boolean_IInspectable([MarshalAs(UnmanagedType.IInspectable)] bool Param1);
     void TestMethod_System_Boolean_HString([MarshalAs(UnmanagedType.HString)] bool Param1);
     void TestMethod_System_Boolean_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] bool Param1);
+    #endregion
+
+    #region byte
     void TestMethod_System_Byte_Bool([MarshalAs(UnmanagedType.Bool)] byte Param1);
     void TestMethod_System_Byte_VariantBool([MarshalAs(UnmanagedType.VariantBool)] byte Param1);
     void TestMethod_System_Byte_I1([MarshalAs(UnmanagedType.I1)] byte Param1);
@@ -93,6 +97,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Byte_IInspectable([MarshalAs(UnmanagedType.IInspectable)] byte Param1);
     void TestMethod_System_Byte_HString([MarshalAs(UnmanagedType.HString)] byte Param1);
     void TestMethod_System_Byte_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] byte Param1);
+    #endregion
+
+    #region sbyte
     void TestMethod_System_SByte_Bool([MarshalAs(UnmanagedType.Bool)] sbyte Param1);
     void TestMethod_System_SByte_VariantBool([MarshalAs(UnmanagedType.VariantBool)] sbyte Param1);
     void TestMethod_System_SByte_I1([MarshalAs(UnmanagedType.I1)] sbyte Param1);
@@ -128,6 +135,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_SByte_IInspectable([MarshalAs(UnmanagedType.IInspectable)] sbyte Param1);
     void TestMethod_System_SByte_HString([MarshalAs(UnmanagedType.HString)] sbyte Param1);
     void TestMethod_System_SByte_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] sbyte Param1);
+    #endregion
+
+    #region short
     void TestMethod_System_Int16_Bool([MarshalAs(UnmanagedType.Bool)] short Param1);
     void TestMethod_System_Int16_VariantBool([MarshalAs(UnmanagedType.VariantBool)] short Param1);
     void TestMethod_System_Int16_I1([MarshalAs(UnmanagedType.I1)] short Param1);
@@ -163,6 +173,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Int16_IInspectable([MarshalAs(UnmanagedType.IInspectable)] short Param1);
     void TestMethod_System_Int16_HString([MarshalAs(UnmanagedType.HString)] short Param1);
     void TestMethod_System_Int16_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] short Param1);
+    #endregion
+
+    #region ushort
     void TestMethod_System_UInt16_Bool([MarshalAs(UnmanagedType.Bool)] ushort Param1);
     void TestMethod_System_UInt16_VariantBool([MarshalAs(UnmanagedType.VariantBool)] ushort Param1);
     void TestMethod_System_UInt16_I1([MarshalAs(UnmanagedType.I1)] ushort Param1);
@@ -198,6 +211,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_UInt16_IInspectable([MarshalAs(UnmanagedType.IInspectable)] ushort Param1);
     void TestMethod_System_UInt16_HString([MarshalAs(UnmanagedType.HString)] ushort Param1);
     void TestMethod_System_UInt16_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] ushort Param1);
+    #endregion
+
+    #region uint
     void TestMethod_System_UInt32_Bool([MarshalAs(UnmanagedType.Bool)] uint Param1);
     void TestMethod_System_UInt32_VariantBool([MarshalAs(UnmanagedType.VariantBool)] uint Param1);
     void TestMethod_System_UInt32_I1([MarshalAs(UnmanagedType.I1)] uint Param1);
@@ -233,6 +249,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_UInt32_IInspectable([MarshalAs(UnmanagedType.IInspectable)] uint Param1);
     void TestMethod_System_UInt32_HString([MarshalAs(UnmanagedType.HString)] uint Param1);
     void TestMethod_System_UInt32_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] uint Param1);
+    #endregion
+
+    #region int
     void TestMethod_System_Int32_Bool([MarshalAs(UnmanagedType.Bool)] int Param1);
     void TestMethod_System_Int32_VariantBool([MarshalAs(UnmanagedType.VariantBool)] int Param1);
     void TestMethod_System_Int32_I1([MarshalAs(UnmanagedType.I1)] int Param1);
@@ -268,6 +287,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Int32_IInspectable([MarshalAs(UnmanagedType.IInspectable)] int Param1);
     void TestMethod_System_Int32_HString([MarshalAs(UnmanagedType.HString)] int Param1);
     void TestMethod_System_Int32_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] int Param1);
+    #endregion
+
+    #region ulong
     void TestMethod_System_UInt64_Bool([MarshalAs(UnmanagedType.Bool)] ulong Param1);
     void TestMethod_System_UInt64_VariantBool([MarshalAs(UnmanagedType.VariantBool)] ulong Param1);
     void TestMethod_System_UInt64_I1([MarshalAs(UnmanagedType.I1)] ulong Param1);
@@ -303,6 +325,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_UInt64_IInspectable([MarshalAs(UnmanagedType.IInspectable)] ulong Param1);
     void TestMethod_System_UInt64_HString([MarshalAs(UnmanagedType.HString)] ulong Param1);
     void TestMethod_System_UInt64_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] ulong Param1);
+    #endregion
+
+    #region long
     void TestMethod_System_Int64_Bool([MarshalAs(UnmanagedType.Bool)] long Param1);
     void TestMethod_System_Int64_VariantBool([MarshalAs(UnmanagedType.VariantBool)] long Param1);
     void TestMethod_System_Int64_I1([MarshalAs(UnmanagedType.I1)] long Param1);
@@ -338,6 +363,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Int64_IInspectable([MarshalAs(UnmanagedType.IInspectable)] long Param1);
     void TestMethod_System_Int64_HString([MarshalAs(UnmanagedType.HString)] long Param1);
     void TestMethod_System_Int64_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] long Param1);
+    #endregion
+
+    #region float
     void TestMethod_System_Single_Bool([MarshalAs(UnmanagedType.Bool)] float Param1);
     void TestMethod_System_Single_VariantBool([MarshalAs(UnmanagedType.VariantBool)] float Param1);
     void TestMethod_System_Single_I1([MarshalAs(UnmanagedType.I1)] float Param1);
@@ -373,6 +401,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Single_IInspectable([MarshalAs(UnmanagedType.IInspectable)] float Param1);
     void TestMethod_System_Single_HString([MarshalAs(UnmanagedType.HString)] float Param1);
     void TestMethod_System_Single_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] float Param1);
+    #endregion
+
+    #region double
     void TestMethod_System_Double_Bool([MarshalAs(UnmanagedType.Bool)] double Param1);
     void TestMethod_System_Double_VariantBool([MarshalAs(UnmanagedType.VariantBool)] double Param1);
     void TestMethod_System_Double_I1([MarshalAs(UnmanagedType.I1)] double Param1);
@@ -408,6 +439,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Double_IInspectable([MarshalAs(UnmanagedType.IInspectable)] double Param1);
     void TestMethod_System_Double_HString([MarshalAs(UnmanagedType.HString)] double Param1);
     void TestMethod_System_Double_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] double Param1);
+    #endregion
+
+    #region string
     void TestMethod_System_String_Bool([MarshalAs(UnmanagedType.Bool)] string Param1);
     void TestMethod_System_String_VariantBool([MarshalAs(UnmanagedType.VariantBool)] string Param1);
     void TestMethod_System_String_I1([MarshalAs(UnmanagedType.I1)] string Param1);
@@ -443,6 +477,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_String_IInspectable([MarshalAs(UnmanagedType.IInspectable)] string Param1);
     void TestMethod_System_String_HString([MarshalAs(UnmanagedType.HString)] string Param1);
     void TestMethod_System_String_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] string Param1);
+    #endregion
+
+    #region char
     void TestMethod_System_Char_Bool([MarshalAs(UnmanagedType.Bool)] char Param1);
     void TestMethod_System_Char_VariantBool([MarshalAs(UnmanagedType.VariantBool)] char Param1);
     void TestMethod_System_Char_I1([MarshalAs(UnmanagedType.I1)] char Param1);
@@ -478,6 +515,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Char_IInspectable([MarshalAs(UnmanagedType.IInspectable)] char Param1);
     void TestMethod_System_Char_HString([MarshalAs(UnmanagedType.HString)] char Param1);
     void TestMethod_System_Char_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] char Param1);
+    #endregion
+
+    #region object
     void TestMethod_System_Object_Bool([MarshalAs(UnmanagedType.Bool)] object Param1);
     void TestMethod_System_Object_VariantBool([MarshalAs(UnmanagedType.VariantBool)] object Param1);
     void TestMethod_System_Object_I1([MarshalAs(UnmanagedType.I1)] object Param1);
@@ -513,6 +553,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Object_IInspectable([MarshalAs(UnmanagedType.IInspectable)] object Param1);
     void TestMethod_System_Object_HString([MarshalAs(UnmanagedType.HString)] object Param1);
     void TestMethod_System_Object_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] object Param1);
+    #endregion
+
+    #region objectArray
     void TestMethod_System_Object___Bool([MarshalAs(UnmanagedType.Bool)] object[] Param1);
     void TestMethod_System_Object___VariantBool([MarshalAs(UnmanagedType.VariantBool)] object[] Param1);
     void TestMethod_System_Object___I1([MarshalAs(UnmanagedType.I1)] object[] Param1);
@@ -548,6 +591,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Object___IInspectable([MarshalAs(UnmanagedType.IInspectable)] object[] Param1);
     void TestMethod_System_Object___HString([MarshalAs(UnmanagedType.HString)] object[] Param1);
     void TestMethod_System_Object___LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] object[] Param1);
+    #endregion
+
+    #region IEnumerator
     void TestMethod_System_Collections_IEnumerator_Bool([MarshalAs(UnmanagedType.Bool)] IEnumerator Param1);
     void TestMethod_System_Collections_IEnumerator_VariantBool([MarshalAs(UnmanagedType.VariantBool)] IEnumerator Param1);
     void TestMethod_System_Collections_IEnumerator_I1([MarshalAs(UnmanagedType.I1)] IEnumerator Param1);
@@ -583,6 +629,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Collections_IEnumerator_IInspectable([MarshalAs(UnmanagedType.IInspectable)] IEnumerator Param1);
     void TestMethod_System_Collections_IEnumerator_HString([MarshalAs(UnmanagedType.HString)] IEnumerator Param1);
     void TestMethod_System_Collections_IEnumerator_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] IEnumerator Param1);
+    #endregion
+
+    #region DateTime
     void TestMethod_System_DateTime_Bool([MarshalAs(UnmanagedType.Bool)] DateTime Param1);
     void TestMethod_System_DateTime_VariantBool([MarshalAs(UnmanagedType.VariantBool)] DateTime Param1);
     void TestMethod_System_DateTime_I1([MarshalAs(UnmanagedType.I1)] DateTime Param1);
@@ -618,6 +667,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_DateTime_IInspectable([MarshalAs(UnmanagedType.IInspectable)] DateTime Param1);
     void TestMethod_System_DateTime_HString([MarshalAs(UnmanagedType.HString)] DateTime Param1);
     void TestMethod_System_DateTime_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] DateTime Param1);
+    #endregion
+
+    #region Guid
     void TestMethod_System_Guid_Bool([MarshalAs(UnmanagedType.Bool)] Guid Param1);
     void TestMethod_System_Guid_VariantBool([MarshalAs(UnmanagedType.VariantBool)] Guid Param1);
     void TestMethod_System_Guid_I1([MarshalAs(UnmanagedType.I1)] Guid Param1);
@@ -653,6 +705,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Guid_IInspectable([MarshalAs(UnmanagedType.IInspectable)] Guid Param1);
     void TestMethod_System_Guid_HString([MarshalAs(UnmanagedType.HString)] Guid Param1);
     void TestMethod_System_Guid_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] Guid Param1);
+    #endregion
+
+    #region Color
     void TestMethod_System_Drawing_Color_Bool([MarshalAs(UnmanagedType.Bool)] Color Param1);
     void TestMethod_System_Drawing_Color_VariantBool([MarshalAs(UnmanagedType.VariantBool)] Color Param1);
     void TestMethod_System_Drawing_Color_I1([MarshalAs(UnmanagedType.I1)] Color Param1);
@@ -688,6 +743,9 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Drawing_Color_IInspectable([MarshalAs(UnmanagedType.IInspectable)] Color Param1);
     void TestMethod_System_Drawing_Color_HString([MarshalAs(UnmanagedType.HString)] Color Param1);
     void TestMethod_System_Drawing_Color_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] Color Param1);
+    #endregion
+
+    #region decimal
     void TestMethod_System_Decimal_Bool([MarshalAs(UnmanagedType.Bool)] decimal Param1);
     void TestMethod_System_Decimal_VariantBool([MarshalAs(UnmanagedType.VariantBool)] decimal Param1);
     void TestMethod_System_Decimal_I1([MarshalAs(UnmanagedType.I1)] decimal Param1);
@@ -723,4 +781,50 @@ public interface IDemoInterfaceWithMarshalAs
     void TestMethod_System_Decimal_IInspectable([MarshalAs(UnmanagedType.IInspectable)] decimal Param1);
     void TestMethod_System_Decimal_HString([MarshalAs(UnmanagedType.HString)] decimal Param1);
     void TestMethod_System_Decimal_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] decimal Param1);
+    #endregion
+
+    #region Marshal the IList in return values 
+    [return: MarshalAs(UnmanagedType.IUnknown)]
+    IList TestMethod_ReturnValue_System_IList_IUnknown();
+
+    #endregion
+
+    #region IList parameter
+    void TestMethod_System_IList_Bool([MarshalAs(UnmanagedType.Bool)] IList Param1);
+    void TestMethod_System_IList_VariantBool([MarshalAs(UnmanagedType.VariantBool)] IList Param1);
+    void TestMethod_System_IList_I1([MarshalAs(UnmanagedType.I1)] IList Param1);
+    void TestMethod_System_IList_U1([MarshalAs(UnmanagedType.U1)] IList Param1);
+    void TestMethod_System_IList_I2([MarshalAs(UnmanagedType.I2)] IList Param1);
+    void TestMethod_System_IList_U2([MarshalAs(UnmanagedType.U2)] IList Param1);
+    void TestMethod_System_IList_I4([MarshalAs(UnmanagedType.I4)] IList Param1);
+    void TestMethod_System_IList_U4([MarshalAs(UnmanagedType.U4)] IList Param1);
+    void TestMethod_System_IList_I8([MarshalAs(UnmanagedType.I8)] IList Param1);
+    void TestMethod_System_IList_U8([MarshalAs(UnmanagedType.U8)] IList Param1);
+    void TestMethod_System_IList_R4([MarshalAs(UnmanagedType.R4)] IList Param1);
+    void TestMethod_System_IList_R8([MarshalAs(UnmanagedType.R8)] IList Param1);
+    void TestMethod_System_IList_Currency([MarshalAs(UnmanagedType.Currency)] IList Param1);
+    void TestMethod_System_IList_BStr([MarshalAs(UnmanagedType.BStr)] IList Param1);
+    void TestMethod_System_IList_LPStr([MarshalAs(UnmanagedType.LPStr)] IList Param1);
+    void TestMethod_System_IList_LPWStr([MarshalAs(UnmanagedType.LPWStr)] IList Param1);
+    void TestMethod_System_IList_LPTStr([MarshalAs(UnmanagedType.LPTStr)] IList Param1);
+    void TestMethod_System_IList_IUnknown([MarshalAs(UnmanagedType.IUnknown)] IList Param1);
+    void TestMethod_System_IList_IDispatch([MarshalAs(UnmanagedType.IDispatch)] IList Param1);
+    void TestMethod_System_IList_Struct([MarshalAs(UnmanagedType.Struct)] IList Param1);
+    void TestMethod_System_IList_Interface([MarshalAs(UnmanagedType.Interface)] IList Param1);
+    void TestMethod_System_IList_SafeArray([MarshalAs(UnmanagedType.SafeArray)] IList Param1);
+    void TestMethod_System_IList_SysInt([MarshalAs(UnmanagedType.SysInt)] IList Param1);
+    void TestMethod_System_IList_SysUInt([MarshalAs(UnmanagedType.SysUInt)] IList Param1);
+    void TestMethod_System_IList_VBByRefStr([MarshalAs(UnmanagedType.VBByRefStr)] IList Param1);
+    void TestMethod_System_IList_AnsiBStr([MarshalAs(UnmanagedType.AnsiBStr)] IList Param1);
+    void TestMethod_System_IList_TBStr([MarshalAs(UnmanagedType.TBStr)] IList Param1);
+    void TestMethod_System_IList_FunctionPtr([MarshalAs(UnmanagedType.FunctionPtr)] IList Param1);
+    void TestMethod_System_IList_AsAny([MarshalAs(UnmanagedType.AsAny)] IList Param1);
+    void TestMethod_System_IList_LPArray([MarshalAs(UnmanagedType.LPArray)] IList Param1);
+    void TestMethod_System_IList_LPStruct([MarshalAs(UnmanagedType.LPStruct)] IList Param1);
+    void TestMethod_System_IList_Error([MarshalAs(UnmanagedType.Error)] IList Param1);
+    void TestMethod_System_IList_IInspectable([MarshalAs(UnmanagedType.IInspectable)] IList Param1);
+    void TestMethod_System_IList_HString([MarshalAs(UnmanagedType.HString)] IList Param1);
+    void TestMethod_System_IList_LPUTF8Str([MarshalAs(UnmanagedType.LPUTF8Str)] IList Param1);
+
+    #endregion
 }

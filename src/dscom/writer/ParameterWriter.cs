@@ -181,6 +181,11 @@ internal class ParameterWriter : ElemDescBasedWriter
         {
             try
             {
+                if ((ParameterInfo.Attributes & ParameterAttributes.HasFieldMarshal) != 0)
+                {
+                    return true;
+                }
+
                 var type = ParameterInfo.ParameterType.GetUnderlayingType();
                 var notSpecialHandledValueType = !type.IsSpecialHandledValueType();
 

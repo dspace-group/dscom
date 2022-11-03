@@ -16,11 +16,14 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 internal class DynamicAssemblyBuilderResult
 {
-    public DynamicAssemblyBuilderResult(ITypeLib2 typeLib, Assembly assembly)
+    public DynamicAssemblyBuilderResult(ITypeLib2 typeLib, Assembly assembly, TypeLibExporterNotifySink typeLibExporterNotifySink)
     {
         TypeLib = typeLib;
         Assembly = assembly;
+        TypeLibExporterNotifySink = typeLibExporterNotifySink;
     }
+
+    public TypeLibExporterNotifySink TypeLibExporterNotifySink { get; }
 
     public ITypeLib2 TypeLib { get; }
 

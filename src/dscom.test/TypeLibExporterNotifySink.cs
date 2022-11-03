@@ -16,12 +16,13 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
 {
-    public TypeLibExporterNotifySink()
-    { }
+    public TypeLibExporterNotifySink() { }
+
+    public List<ReportedEvent> ReportedEvents { get; } = new List<ReportedEvent>();
 
     public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
     {
-
+        ReportedEvents.Add(new ReportedEvent() { EventKind = eventKind, EventCode = eventCode, EventMsg = eventMsg });
     }
 
     public object ResolveRef(Assembly assembly)
@@ -33,4 +34,13 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
     {
         return new string[] { "TOUPPERCASE", "tolowercase" };
     }
+}
+
+public struct ReportedEvent
+{
+    public ExporterEventKind EventKind { get; set; }
+
+    public int EventCode { get; set; }
+
+    public string EventMsg { get; set; }
 }

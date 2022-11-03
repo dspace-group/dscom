@@ -67,9 +67,10 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
         var typeLibConverter = new TypeLibConverter();
 
         var tlbFilePath = storeOnDisk ? TypeLibPath : string.Empty;
-        if (typeLibConverter.ConvertAssemblyToTypeLib(ModuleBuilder.Assembly, tlbFilePath, new TypeLibExporterNotifySink()) is not ITypeLib2 typelib)
+        var typeLibExporterNotifySink = new TypeLibExporterNotifySink();
+        if (typeLibConverter.ConvertAssemblyToTypeLib(ModuleBuilder.Assembly, tlbFilePath, typeLibExporterNotifySink) is not ITypeLib2 typelib)
         {
-            throw new COMException("Cannot create type libray for this dynamic assembly");
+            throw new COMException("Cannot create type library for this dynamic assembly");
         }
 
         if (storeOnDisk && typelib is ICreateTypeLib2 createTypeLib2)
@@ -92,7 +93,7 @@ internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
 
         AppDomain.CurrentDomain.AssemblyResolve -= ResolveEventHandler;
 
-        return new DynamicAssemblyBuilderResult(typelib, ModuleBuilder.Assembly);
+        return new DynamicAssemblyBuilderResult(typelib, ModuleBuilder.Assembly, typeLibExporterNotifySink);
     }
 
     internal DynamicTypeBuilder WithInterface(string interfaceName)
