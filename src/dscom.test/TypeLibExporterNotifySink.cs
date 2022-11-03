@@ -23,7 +23,6 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
     public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
     {
         ReportedEvents.Add(new ReportedEvent() { EventKind = eventKind, EventCode = eventCode, EventMsg = eventMsg });
-        Console.WriteLine($"{eventKind}:{eventCode}:{eventMsg}");
     }
 
     public object ResolveRef(Assembly assembly)
