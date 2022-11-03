@@ -189,16 +189,51 @@ public class MarshalAsTest : BaseTest
 
     [Theory]
     [InlineData(UnmanagedType.IUnknown, VarEnum.VT_UNKNOWN)]
-    [InlineData(UnmanagedType.Bool, VarEnum.VT_BOOL)]
+    [InlineData(UnmanagedType.Bool, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.VariantBool, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.I1, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.U1, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.I2, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.U2, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.I4, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.U4, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.I8, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.U8, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.R4, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.R8, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.Currency, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.BStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPWStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPTStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.IDispatch, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.Struct, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.Interface, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.SafeArray, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.SysInt, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.SysUInt, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.VBByRefStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.AnsiBStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.TBStr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.FunctionPtr, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.AsAny, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPArray, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPStruct, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.Error, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.IInspectable, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.HString, VarEnum.VT_UNKNOWN)]
+    [InlineData(UnmanagedType.LPUTF8Str, VarEnum.VT_UNKNOWN)]
     public void MethodWithReturnValueAndMarshalAsAttribute_NoWarning(UnmanagedType marshalType, VarEnum varEnumType)
     {
+        var type = typeof(System.Collections.IList);
+
         var result = CreateAssembly(CreateAssemblyName())
             .WithInterface("TestInterface")
                 .WithMethod("TestMethod")
-                    .WithReturnType(typeof(System.Collections.IList))
+                    .WithReturnType(type)
                     .WithReturnTypeCustomAttribute<MarshalAsAttribute>(marshalType)
                     .Build()
-               .Build()
+                .Build()
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
@@ -208,44 +243,6 @@ public class MarshalAsTest : BaseTest
         funcDesc!.Value.cParams.Should().Be(0);
 
         funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(varEnumType, $"First Parameter type of TestMethod should be {varEnumType}");
-
-        // TODO: 
-        // Check for:
-        // MarshalAs(UnmanagedType.Bool
-        // MarshalAs(UnmanagedType.VariantBool
-        // MarshalAs(UnmanagedType.I1
-        // MarshalAs(UnmanagedType.U1
-        // MarshalAs(UnmanagedType.I2
-        // MarshalAs(UnmanagedType.U2
-        // MarshalAs(UnmanagedType.I4
-        // MarshalAs(UnmanagedType.U4
-        // MarshalAs(UnmanagedType.I8
-        // MarshalAs(UnmanagedType.U8
-        // MarshalAs(UnmanagedType.R4
-        // MarshalAs(UnmanagedType.R8
-        // MarshalAs(UnmanagedType.Currency
-        // MarshalAs(UnmanagedType.BStr
-        // MarshalAs(UnmanagedType.LPStr
-        // MarshalAs(UnmanagedType.LPWStr
-        // MarshalAs(UnmanagedType.LPTStr
-        // MarshalAs(UnmanagedType.IUnknown
-        // MarshalAs(UnmanagedType.IDispatch
-        // MarshalAs(UnmanagedType.Struct
-        // MarshalAs(UnmanagedType.Interface
-        // MarshalAs(UnmanagedType.SafeArray
-        // MarshalAs(UnmanagedType.SysInt
-        // MarshalAs(UnmanagedType.SysUInt
-        // MarshalAs(UnmanagedType.VBByRefStr
-        // MarshalAs(UnmanagedType.AnsiBStr
-        // MarshalAs(UnmanagedType.TBStr
-        // MarshalAs(UnmanagedType.FunctionPtr
-        // MarshalAs(UnmanagedType.AsAny
-        // MarshalAs(UnmanagedType.LPArray
-        // MarshalAs(UnmanagedType.LPStruct
-        // MarshalAs(UnmanagedType.Error
-        // MarshalAs(UnmanagedType.IInspectable
-        // MarshalAs(UnmanagedType.HString
-        // MarshalAs(UnmanagedType.LPUTF8Str
 
         result.TypeLibExporterNotifySink.ReportedEvents.Count.Should().Be(1);
     }
