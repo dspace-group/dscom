@@ -6,22 +6,13 @@
     <TargetFrameworks>net6.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>
-    <LangVersion>10.0</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>dSPACE.Runtime.InteropServices</RootNamespace>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <AnalysisMode>Recommended</AnalysisMode>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;</NoWarn>
     <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Mathias Nissen;Mark Lechtermann</Authors>
     <Company>dSPACE GmbH</Company>
     <Product>dscom</Product>
     <Description>dSPACE COM tools</Description>
