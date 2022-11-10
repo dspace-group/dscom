@@ -44,5 +44,4 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     /// Gets or sets whether to generate missing TLB files for dependent assemblies.  
     /// </summary>
     public bool? CreateMissingDependentTLBs { get; set; } = true;
-
 }

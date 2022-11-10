@@ -234,10 +234,7 @@ public static class ConsoleApp
         {
             if (ppTLibAttr != IntPtr.Zero)
             {
-                if (typeLib != null)
-                {
-                    typeLib.ReleaseTLibAttr(ppTLibAttr);
-                }
+                typeLib?.ReleaseTLibAttr(ppTLibAttr);
             }
         }
         Console.WriteLine($"Type library {typeLibFilePath} unregistered successfully");

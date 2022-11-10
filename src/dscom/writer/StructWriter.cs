@@ -27,10 +27,7 @@ internal class StructWriter : TypeWriter
     public override void CreateTypeInfo()
     {
         base.CreateTypeInfo();
-        if (TypeInfo != null)
-        {
-            TypeInfo.SetAlignment(8);
-        }
+        TypeInfo?.SetAlignment(8);
     }
 
     public override void Create()

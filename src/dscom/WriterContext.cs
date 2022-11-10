@@ -24,9 +24,9 @@ internal sealed class WriterContext
         NameResolver = new NameResolver(notifySink is ITypeLibExporterNameProvider provider ?
             provider.GetNames() :
             Array.Empty<string>());
-        if (NotifySink is ITypeLibCacheProvider x)
+        if (NotifySink is ITypeLibCacheProvider typeLibCacheProvider)
         {
-            if (x.TypeLibCache is TypeInfoResolver typeInfoResolver)
+            if (typeLibCacheProvider.TypeLibCache is TypeInfoResolver typeInfoResolver)
             {
                 TypeInfoResolver = typeInfoResolver;
             }
@@ -46,17 +46,11 @@ internal sealed class WriterContext
 
     public void LogTypeExported(string message)
     {
-        if (NotifySink != null)
-        {
-            NotifySink.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, message);
-        }
+        NotifySink?.ReportEvent(ExporterEventKind.NOTIF_TYPECONVERTED, 0, message);
     }
 
     public void LogWarning(string message, int eventCode = 0)
     {
-        if (NotifySink != null)
-        {
-            NotifySink.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, eventCode, message);
-        }
+        NotifySink?.ReportEvent(ExporterEventKind.NOTIF_CONVERTWARNING, eventCode, message);
     }
 }
