@@ -21,7 +21,7 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class BuildTaskTest : BaseTest
 {
-    private class BuildContextStub : IBuildContext
+    private sealed class BuildContextStub : IBuildContext
     {
         public ISet<string> ExistingFiles = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -49,7 +49,7 @@ public class BuildTaskTest : BaseTest
         }
     }
 
-    private class BuildEngineStub : IBuildEngine
+    private sealed class BuildEngineStub : IBuildEngine
     {
         public bool ContinueOnError => true;
 
