@@ -33,9 +33,10 @@ internal sealed class NameResolver
 
     public string GetMappedName(string name)
     {
-        if (_names.ContainsKey(name.ToLower(CultureInfo.InvariantCulture)))
+        var lowerCaseName = name.ToLower(CultureInfo.InvariantCulture);
+        if (_names.TryGetValue(lowerCaseName, out var mappedName))
         {
-            return _names[name.ToLower(CultureInfo.InvariantCulture)];
+            return mappedName;
         }
         return name;
     }
