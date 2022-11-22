@@ -3,7 +3,7 @@
     <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;</NoWarn>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RollForward>LatestMajor</RollForward>
-    <Authors>Mathias Nissen;Mark Lechtermann;Sebastian Osterbrink</Authors>
+    <Authors>Mathias Nissen;Mark Lechtermann;Sebastian Osterbrink;Carsten Igel</Authors>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
