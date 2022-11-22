@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class StructWriter : TypeWriter
+internal sealed class StructWriter : TypeWriter
 {
     public StructWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

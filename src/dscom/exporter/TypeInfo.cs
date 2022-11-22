@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class TypeInfo : BaseInfo
+internal sealed class TypeInfo : BaseInfo
 {
     public TypeInfo(ITypeInfo2 typeInfo, BaseInfo? parent, string itemName) : base(parent, itemName)
     {

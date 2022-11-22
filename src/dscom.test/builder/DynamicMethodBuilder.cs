@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
+internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
 {
     internal record struct DefaultValue(
         object? Value

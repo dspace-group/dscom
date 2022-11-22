@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class ImplementationReferenceTypeInfo : ReferenceTypeInfo
+internal sealed class ImplementationReferenceTypeInfo : ReferenceTypeInfo
 {
     public ImplementationReferenceTypeInfo(ITypeInfo2 typeInfo, ITypeInfo2 typeInfoUsingType, int index, BaseInfo? parent, string itemName) : base(typeInfo, typeInfoUsingType, parent, itemName)
     {

@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class ImportedReferenceTypeInfo : BaseInfo
+internal sealed class ImportedReferenceTypeInfo : BaseInfo
 {
     public ImportedReferenceTypeInfo(Guid importedTypeLibGuid, Guid importedTypeGuid, string importedTypeLibName, BaseInfo? parent, string itemName) : base(parent, itemName)
     {

@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class ElementDescriptionInfo : BaseInfo
+internal sealed class ElementDescriptionInfo : BaseInfo
 {
     public ElementDescriptionInfo(ITypeInfo2 typeInfo, ELEMDESC elementDescription, string name, BaseInfo? parent, string itemName) : base(parent, itemName)
     {

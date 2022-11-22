@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicFieldBuilder : DynamicBuilder<DynamicFieldBuilder>
+internal sealed class DynamicFieldBuilder : DynamicBuilder<DynamicFieldBuilder>
 {
     public DynamicFieldBuilder(DynamicTypeBuilder dynamicTypeBuilder, string name, Type fieldType) : base(name)
     {

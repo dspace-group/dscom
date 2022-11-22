@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class EnumWriter : TypeWriter
+internal sealed class EnumWriter : TypeWriter
 {
     public EnumWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

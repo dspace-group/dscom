@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class PropertySetMethodWriter : PropertyMethodWriter
+internal sealed class PropertySetMethodWriter : PropertyMethodWriter
 {
     public PropertySetMethodWriter(InterfaceWriter interfaceWriter, MethodInfo methodInfo, WriterContext context, string methodName) : base(interfaceWriter, methodInfo, context, methodName)
     {

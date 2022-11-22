@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class LibraryWriter : BaseWriter
+internal sealed class LibraryWriter : BaseWriter
 {
     public LibraryWriter(Assembly assembly, WriterContext context) : base(context)
     {

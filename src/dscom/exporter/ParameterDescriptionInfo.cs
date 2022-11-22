@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class ParameterDescriptionInfo : BaseInfo
+internal sealed class ParameterDescriptionInfo : BaseInfo
 {
     public ParameterDescriptionInfo(ELEMDESC descunion, BaseInfo? parent, string itemName) : this(descunion.desc, parent, itemName)
     {

@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class DispInterfaceWriter : InterfaceWriter
+internal sealed class DispInterfaceWriter : InterfaceWriter
 {
     public DispInterfaceWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

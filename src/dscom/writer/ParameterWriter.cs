@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class ParameterWriter : ElemDescBasedWriter
+internal sealed class ParameterWriter : ElemDescBasedWriter
 {
     public ParameterWriter(MethodWriter methodWriter, ParameterInfo parameterInfo, WriterContext context, bool isTransformedOutParameter)
     : base(parameterInfo.ParameterType, parameterInfo, methodWriter.MethodInfo.ReflectedType!, methodWriter.InterfaceWriter.TypeInfo, context)

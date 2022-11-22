@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBuilder>
+internal sealed class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBuilder>
 {
     public DynamicPropertyBuilder(DynamicTypeBuilder dynamicTypeBuilder, string name, Type propertyType, bool isSettable = true, bool isGettable = true) : base(name)
     {

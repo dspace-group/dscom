@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class VariableDescriptionInfo : BaseInfo
+internal sealed class VariableDescriptionInfo : BaseInfo
 {
     public VariableDescriptionInfo(ITypeInfo2 typeInfo, VARDESC varDesc, BaseInfo? parent, string itemName) : base(parent, itemName)
     {

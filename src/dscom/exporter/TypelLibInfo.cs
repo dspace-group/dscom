@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class TypelLibInfo : BaseInfo
+internal sealed class TypelLibInfo : BaseInfo
 {
     public TypelLibInfo(string file) : base(null, string.Empty)
     {

@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class HResultParamInfo : ParameterInfo
+internal sealed class HResultParamInfo : ParameterInfo
 {
     public HResultParamInfo()
     {
