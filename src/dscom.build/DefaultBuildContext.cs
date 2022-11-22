@@ -61,14 +61,16 @@ internal sealed class DefaultBuildContext : IBuildContext
     {
         // Load assembly from file.
 #if NET5_0_OR_GREATER
-        var loadContext = CreateLoadContext(settings);
+        var loadContext = CreateLoadContext(settings, log);
         var assembly = LoadAssembly(settings, loadContext, log);
 #else
+        log.LogWarning("Unloading assemblies is only supported with .NET 5 or later. Please remove all remaining MsBuild processes before rebuild.");
         var assembly = LoadAssembly(settings, log);
 #endif
 
         if (assembly is null)
         {
+            log.LogWarning("Failed to load assembly {0}. Task failed.", settings.Assembly);
             return false;
         }
 
@@ -114,29 +116,23 @@ internal sealed class DefaultBuildContext : IBuildContext
 
 #if NET5_0_OR_GREATER
     /// <summary>
-    /// Creates unloadable <see cref="AssemblyLoadContext"/> that will
-    /// take care of the loading and unloading the target assemblies.
+    /// Creates an instance of <see cref="AssemblyLoadContext"/> that will
+    /// take care of the loading and unloading the target assemblies and 
+    /// can be unloaded afterwards.
     /// </summary>
     /// <param name="settings">The type library settings.</param>
-    /// <returns>An unloadable context.</returns>
-    private static AssemblyLoadContext CreateLoadContext(TypeLibConverterSettings settings)
+    /// <returns>An <see cref="AssemblyLoadContext"/> that can be unloaded.</returns>
+    private static AssemblyLoadContext CreateLoadContext(TypeLibConverterSettings settings, TaskLoggingHelper log)
     {
         var loadContext = new AssemblyLoadContext($"msbuild-load-ctx-{Guid.NewGuid()}", true);
         loadContext.Resolving += (ctx, name) =>
         {
-            var validAssemblyExtensions = new string[] { ".dll", ".exe" };
-            var fileNameWithoutExtension = name.Name ?? string.Empty;
-            foreach (var path in settings.ASMPath)
+            if (TryResolveAssemblyFromSettings(name.Name ?? string.Empty, settings, log, out var assemblyPath))
             {
-                foreach (var extension in validAssemblyExtensions)
-                {
-                    var possibleFileName = Path.Combine(path, fileNameWithoutExtension + extension);
-                    if (File.Exists(possibleFileName))
-                    {
-                        return ctx.LoadFromAssemblyPath(possibleFileName);
-                    }
-                }
+                return ctx.LoadFromAssemblyPath(assemblyPath);
             }
+
+            log.LogWarning("Failed to resolve {0} from the following files: {1}", name.Name, string.Join(", ", settings.ASMPath));
 
             return default;
         };
@@ -233,22 +229,10 @@ internal sealed class DefaultBuildContext : IBuildContext
     {
         Assembly? AssemblyResolveClosure(object? sender, ResolveEventArgs args)
         {
-            var validAssemblyExtensions = new string[] { string.Empty, ".dll", ".exe" };
-            var fileNameWithoutExtension = args.Name ?? string.Empty;
-            foreach (var path in settings.ASMPath)
+            if (TryResolveAssemblyFromSettings(args.Name ?? string.Empty, settings, log, out var assemblyPath))
             {
-                foreach (var extension in validAssemblyExtensions)
-                {
-                    var possibleFileName = Path.Combine(path, fileNameWithoutExtension + extension);
-                    if (File.Exists(possibleFileName))
-                    {
-                        var content = File.ReadAllBytes(possibleFileName);
-                        return AppDomain.CurrentDomain.Load(content);
-                    }
-                }
+                return AppDomain.CurrentDomain.Load(assemblyPath);
             }
-
-            log.LogWarning("Failed to resolve {0} in the following directories: {1}", args.Name, string.Join(", ", settings.ASMPath));
 
             return default;
         }
@@ -256,4 +240,105 @@ internal sealed class DefaultBuildContext : IBuildContext
         return AssemblyResolveClosure;
     }
 #endif
+
+    /// <summary>
+    /// Tries to resolve the managed assembly with the specified <paramref name="assemblyFileName"/> from the <paramref name="settings"/>.
+    /// If this method returns <c>true</c>, the resolved file path will be written to <paramref name="assemblyPath"/>.
+    /// </summary>
+    /// <param name="assemblyFileName">The name of the assembly file to load (without extension).</param>
+    /// <param name="settings">The settings for type conversions.</param>
+    /// <param name="log">The logging helper.</param>
+    /// <param name="assemblyPath">Path to resolved file.</param>
+    /// <returns><c>true</c>, if the assembly could be resolved; <c>false</c> otherwise.</returns>
+    private static bool TryResolveAssemblyFromSettings(string assemblyFileName, TypeLibConverterSettings settings, TaskLoggingHelper log, out string assemblyPath)
+    {
+        var validAssemblyExtensions = new string[] { ".dll", ".exe" };
+        if (TryResolveAssemblyFromReferencedFiles(assemblyFileName, settings, log, validAssemblyExtensions, out assemblyPath)
+            || TryResolveAssemblyFromAdjacentFiles(assemblyFileName, settings, log, validAssemblyExtensions, out assemblyPath))
+        {
+            return true;
+        }
+
+        log.LogWarning("Failed to resolve {0} from the following files: {1}", assemblyFileName, string.Join(", ", settings.ASMPath));
+        assemblyPath = string.Empty;
+        return false;
+    }
+
+    /// <summary>
+    /// Tries to resolve the managed assembly with the specified <paramref name="assemblyFileName"/> from the <paramref name="settings"/> 
+    /// using the <see cref="TypeLibConverterSettings.ASMPath" /> property to identify the assembly.
+    /// If this method returns <c>true</c>, the resolved file path will be written to <paramref name="assemblyPath"/>.
+    /// </summary>
+    /// <param name="assemblyFileName">The name of the assembly file to load (without extension).</param>
+    /// <param name="settings">The settings for type conversions.</param>
+    /// <param name="log">The logging helper.</param>
+    /// <param name="validAssemblyExtensions">Any extension that might be considered as valid assembly extension.</param>
+    /// <param name="assemblyPath">Path to resolved file.</param>
+    /// <returns><c>true</c>, if the assembly could be resolved; <c>false</c> otherwise.</returns>
+    private static bool TryResolveAssemblyFromReferencedFiles(string assemblyFileName, TypeLibConverterSettings settings, TaskLoggingHelper log, string[] validAssemblyExtensions, out string assemblyPath)
+    {
+        log.LogMessage(MessageImportance.Low, "Trying to resolve assembly {0} from referenced files.", assemblyFileName);
+        foreach (var path in settings.ASMPath)
+        {
+            var currentAssemblyFileName = Path.GetFileName(path) ?? string.Empty;
+            log.LogMessage(MessageImportance.Low, "Current file is {0}. Maybe it matches.", path);
+            foreach (var extension in validAssemblyExtensions)
+            {
+                var possibleFileName = assemblyFileName + extension;
+                log.LogMessage(MessageImportance.Low, "Trying to resolve assembly {0} as {1}.", assemblyFileName, possibleFileName);
+                if (StringComparer.InvariantCultureIgnoreCase.Equals(possibleFileName, currentAssemblyFileName)
+                    && File.Exists(path))
+                {
+                    log.LogMessage(MessageImportance.Low, "Assembly resolved as {0}.", path);
+                    assemblyPath = path;
+                    return true;
+                }
+            }
+        }
+
+        assemblyPath = string.Empty;
+        return false;
+    }
+
+    /// <summary>
+    /// Tries to resolve the managed assembly with the specified <paramref name="assemblyFileName"/> from the <paramref name="settings"/> 
+    /// using the <see cref="TypeLibConverterSettings.ASMPath" /> property to look up directories that might contain the file.
+    /// If this method returns <c>true</c>, the resolved file path will be written to <paramref name="assemblyPath"/>.
+    /// </summary>
+    /// <param name="assemblyFileName">The name of the assembly file to load (without extension).</param>
+    /// <param name="settings">The settings for type conversions.</param>
+    /// <param name="log">The logging helper.</param>
+    /// <param name="validAssemblyExtensions">Any extension that might be considered as valid assembly extension.</param>
+    /// <param name="assemblyPath">Path to resolved file.</param>
+    /// <returns><c>true</c>, if the assembly could be resolved; <c>false</c> otherwise.</returns>
+    private static bool TryResolveAssemblyFromAdjacentFiles(string assemblyFileName, TypeLibConverterSettings settings, TaskLoggingHelper log, string[] validAssemblyExtensions, out string assemblyPath)
+    {
+        log.LogMessage(MessageImportance.Low, "Trying to resolve assembly {0} from adjacent files.", assemblyFileName);
+        foreach (var path in settings.ASMPath)
+        {
+            var currentAssemblyFileName = Path.GetFileName(path) ?? string.Empty;
+            var assemblyDirectoryName = Path.GetDirectoryName(path) ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(assemblyDirectoryName))
+            {
+                continue;
+            }
+
+            log.LogMessage(MessageImportance.Low, "Current directory to look at is {0}. Maybe it matches.", assemblyDirectoryName);
+            foreach (var extension in validAssemblyExtensions)
+            {
+                var possibleFileName = assemblyFileName + extension;
+                var possibleAssemblyFilePath = Path.Combine(assemblyDirectoryName, possibleFileName);
+                log.LogMessage(MessageImportance.Low, "Trying to resolve assembly {0} as {1}.", assemblyFileName, possibleAssemblyFilePath);
+                if (File.Exists(possibleAssemblyFilePath))
+                {
+                    log.LogMessage(MessageImportance.Low, "Assembly resolved as {0}.", possibleAssemblyFilePath);
+                    assemblyPath = possibleAssemblyFilePath;
+                    return true;
+                }
+            }
+        }
+
+        assemblyPath = string.Empty;
+        return false;
+    }
 }

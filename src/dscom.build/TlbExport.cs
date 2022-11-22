@@ -121,8 +121,8 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
         var result = true;
         checks.VerifyFilePresent(settings.Assembly, true, ref result);
         checks.VerifyFilesPresent(settings.TLBReference, false, ref result);
-        checks.VerifyDirectoriesPresent(settings.TLBRefpath, false, ref result);
-        checks.VerifyDirectoriesPresent(settings.ASMPath, false, ref result);
+        checks.VerifyFilesPresent(settings.TLBRefpath, false, ref result);
+        checks.VerifyFilesPresent(settings.ASMPath, false, ref result);
 
         // run conversion, if result has been successful.
         result = result && _context.ConvertAssemblyToTypeLib(settings, Log);
