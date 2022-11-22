@@ -53,7 +53,7 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
 
     /// <summary>
     /// Gets or sets the name of the resulting COM type library file (tlb).
-    /// This value must be set for this task to work and cannot be left emptry.
+    /// This value must be set for this task to work and cannot be left empty.
     /// Existing files will be overridden.
     /// </summary>
     [Required]
@@ -98,15 +98,15 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        // Create type library converter settings from task paramters
+        // Create type library converter settings from task parameters
         var settings = new TypeLibConverterSettings()
         {
             Out = TargetFile,
             Assembly = SourceAssemblyFile,
             OverrideTlbId = tlbOverriddenId,
-            TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences),
-            TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths),
-            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths)
+            TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences, false),
+            TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths, false),
+            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths, true)
         };
 
         // Issue a warning, if the type library is about to be overridden.
@@ -136,9 +136,28 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// and interprets them as file system entry and hence a file or directory path.
     /// </summary>
     /// <param name="items">The items to interpret a file system entries.</param>
+    /// <param name="canContainHintPaths">If set to <c>true</c>, the <paramref name="items"/> can 
+    /// contain the Metadata value 'HintPath'. Hence the data will be scanned for this.
+    /// If not, it is assumed, that the <paramref name="items"/> property 
+    /// <see cref="ITaskItem.ItemSpec"/> contains the file system path.</param>
     /// <returns>The converted item-spec values.</returns>
-    private static string[] ConvertTaskItemToFsPath(IReadOnlyCollection<ITaskItem> items)
+    private static string[] ConvertTaskItemToFsPath(IReadOnlyCollection<ITaskItem> items, bool canContainHintPaths)
     {
-        return items.Where(item => item != null).Select(item => item.ItemSpec).ToArray();
+        const string HintPath = nameof(HintPath);
+
+        var itemsWithHintPath = Enumerable.Empty<ITaskItem>();
+        if (canContainHintPaths)
+        {
+            itemsWithHintPath = items
+                .Where(item => item != null)
+                .Where(item => !string.IsNullOrWhiteSpace(item.GetMetadata(HintPath)));
+        }
+
+        var remainingItems = items.Except(itemsWithHintPath);
+
+        return itemsWithHintPath
+            .Select(item => item.GetMetadata(HintPath))
+            .Union(remainingItems.Where(item => item != null)
+                .Select(item => item.ItemSpec)).ToArray();
     }
 }

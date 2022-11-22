@@ -20,12 +20,19 @@
   </PropertyGroup>
   <!-- Default settings for input and output -->
   <PropertyGroup>
+    <!-- File extension for TLB -->
     <_DsComTlbExt>.tlb</_DsComTlbExt>
   </PropertyGroup>
   <!-- Conversion settings -->
   <PropertyGroup>
+    <!-- Do not override Type library -->
     <DsComTypeLibraryUniqueId>00000000-0000-0000-0000-000000000000</DsComTypeLibraryUniqueId>
+    <!-- Do not register TLBs after build -->
     <DsComRegisterTypeLibrariesAfterBuild>false</DsComRegisterTypeLibrariesAfterBuild>
+    <!-- Automatically add references to export -->
+    <DsComTlbExportAutoAddReferences>true</DsComTlbExportAutoAddReferences>
+    <!-- Do not add references, if HintPath Property is not set -->
+    <DsComTlbExportIncludeReferencesWithoutHintPath>false</DsComTlbExportIncludeReferencesWithoutHintPath>
   </PropertyGroup>
 
   <!-- Clear properties -->

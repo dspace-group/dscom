@@ -21,16 +21,27 @@
 
   <!-- Export settings. -->
   <PropertyGroup>
+    <!-- Find DsCom Build Tasks -->
     <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
+    <!-- Set file path of target file -->
     <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
+    <!-- Set file path of source file -->
     <_DsComExportTypeLibraryAssemblyFile>$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Use target directory as reference path for assembly resolving during build -->
-    <DsComTlbExportAssemblyPaths Include="$(TargetDir)" />
-    <!-- Use source directory of reference files for assembly resolving during build -->
-    <DsComTlbExportAssemblyPaths Include="%(Reference.Root)%(Reference.Directory)" />
+    <!-- Add all items with hintpath -->
+    <_DsComFromReferencesWithoutHintPath Include="@(References)" Exclude="@(References->HasMetadata('HintPath'))"/>
+    <!-- Add all items with empty hintpath (Reference might be restored other way) -->
+    <_DsComFromReferencesWithEmptyHintPath Include="@(References->HasMetadata('HintPath')->WithMetadata('HintPath', ''))"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DsComTlbExportAutoAddReferences)' == 'true'">
+    <!-- Automatically include all referenced assembly files without a hint path -->
+    <_DsComReferences Include="@(_DsComFromReferencesWithEmptyHintPath)" Condition="'$(DsComTlbExportIncludeReferencesWithoutHintPath)' == 'true'" />
+    <!-- Automatically include all referenced assembly files providing a hint path -->
+    <_DsComReferences Include="@(_DsComFromReferencesWithoutHintPath)" />
+    <DsComTlbExportAssemblyPaths Include="@(_DsComReferences)"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +61,7 @@
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
           Condition="'$(Platform)' == 'x64'">
+    <!-- Export Type library on build -->
     <TlbExport 
       TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
       TargetFile="$(_DsComExportTypeLibraryTargetFile)"
@@ -64,6 +76,7 @@
       DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
       AfterTargets="AfterBuild"
       Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'" >
+      <!-- Call task wrapping regasm -->
       <RegisterAssembly Assemblies="$(TargetPath)" />
   </Target>
 
@@ -71,11 +84,13 @@
   <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
       Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'"
       BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
+      <!-- Call task wrapping regasm -->
       <UnregisterAssembly Assemblies="$(TargetPath)" />
   </Target>
 
   <!-- Remove type library on clean -->
   <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" DependsOnTargets="DsComExportTypeLibraryUnregisterAssembly">
+    <!-- Remove previously built TLB -->
     <Delete 
           Files="$(DsComExportTypeLibraryTargetFile)" 
           Condition="Exists('$(DsComExportTypeLibraryTargetFile)')" />
