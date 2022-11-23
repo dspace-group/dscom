@@ -16,7 +16,7 @@ using System.Globalization;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicEnumBuilder : DynamicBuilder<DynamicEnumBuilder>
+internal sealed class DynamicEnumBuilder : DynamicBuilder<DynamicEnumBuilder>
 {
     public DynamicEnumBuilder(DynamicAssemblyBuilder dynamicTypeLibBuilder, string name, Type enumType) : base(name)
     {

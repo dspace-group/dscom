@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class ClassWriter : TypeWriter
+internal sealed class ClassWriter : TypeWriter
 {
     public ClassWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

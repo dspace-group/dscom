@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class ClassInterfaceWriter : DualInterfaceWriter
+internal sealed class ClassInterfaceWriter : DualInterfaceWriter
 {
     public ClassInterfaceWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

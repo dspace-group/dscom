@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
-internal class IUnknownInterfaceWriter : InterfaceWriter
+internal sealed class IUnknownInterfaceWriter : InterfaceWriter
 {
     public IUnknownInterfaceWriter(Type sourceType, LibraryWriter libraryWriter, WriterContext context) : base(sourceType, libraryWriter, context)
     {

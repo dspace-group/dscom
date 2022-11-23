@@ -37,7 +37,7 @@ public struct VARIANT
     internal ulong longValue;
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct Record
+    private readonly struct Record
     {
         private readonly IntPtr _record;
 

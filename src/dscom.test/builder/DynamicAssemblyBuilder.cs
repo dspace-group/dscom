@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
+internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
 {
     public DynamicAssemblyBuilder(string name, AssemblyBuilder assemblyBuilder, string path) : base(name)
     {

@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-internal class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
+internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
 {
     public DynamicTypeBuilder(DynamicAssemblyBuilder dynamicTypeBuilder, string name, TypeAttributes typeAttributes, string[]? addInterfaceImplementation = null, Type? parentType = null) : base(name)
     {

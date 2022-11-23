@@ -18,7 +18,7 @@ using dSPACE.Runtime.InteropServices.Writer;
 
 namespace dSPACE.Runtime.InteropServices;
 
-internal class DispatchIdCreator
+internal sealed class DispatchIdCreator
 {
     private readonly List<IDInfo> _dispIds = new();
 
@@ -120,7 +120,7 @@ internal class DispatchIdCreator
         }
     }
 
-    public class IDInfo
+    public sealed class IDInfo
     {
         public IDInfo(uint generatedId, uint? explicitId, MemberInfo memberInfo)
         {

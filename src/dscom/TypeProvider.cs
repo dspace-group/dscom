@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices;
 
-internal class TypeProvider
+internal sealed class TypeProvider
 {
     public TypeProvider(WriterContext context, ICustomAttributeProvider customAttributeProvider, bool isMethod = true)
     {

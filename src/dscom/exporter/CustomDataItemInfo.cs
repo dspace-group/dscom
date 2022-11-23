@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Exporter;
 
-internal class CustomDataItemInfo : BaseInfo
+internal sealed class CustomDataItemInfo : BaseInfo
 {
     private static readonly Dictionary<Guid, string> _guids = new();
 
