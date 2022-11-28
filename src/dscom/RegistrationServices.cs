@@ -53,7 +53,15 @@ public class RegistrationServices
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
     public int RegisterTypeForComClients(Type type, ComTypes.RegistrationClassContext classContext, ComTypes.RegistrationConnectionType flags)
     {
-        var guid = new Guid(type.GetCustomAttributes<GuidAttribute>().First().Value);
+        var value = type.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value
+                    ?? type.Assembly.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value;
+        if (value == null)
+        {
+            // ToDo: We have to decide which Exception should be thrown here 
+            throw new InvalidComObjectException($"The given type {type} does not have a valid GUID attribute and cannot be registered.");
+        }
+
+        var guid = new Guid(value);
 
         var genericClassFactory = typeof(ClassFactory<>);
         Type[] typeArgs = { type };
