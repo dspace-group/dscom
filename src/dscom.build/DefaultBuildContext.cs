@@ -234,6 +234,7 @@ internal sealed class DefaultBuildContext : IBuildContext
                 return AppDomain.CurrentDomain.Load(assemblyPath);
             }
 
+            log.LogWarning("Failed to resolve assembly: {0}", args.Name);
             return default;
         }
 
