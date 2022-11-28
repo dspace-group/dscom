@@ -49,7 +49,7 @@ public class RegistrationServices
     /// <param name="classContext">One of the <see cref="T:dSPACE.Runtime.InteropServices.ComTypes.RegistrationClassContext" /> values that indicates the context in which the executable code will be run.</param>
     /// <param name="flags">One of the <see cref="T:dSPACE.Runtime.InteropServices.ComTypes.RegistrationConnectionType" /> values that specifies how connections are made to the class object.</param>
     /// <returns>An integer that represents a cookie value.</returns>
-    /// <exception cref="T:System.ArgumentException">The <paramref name="type" /> parameter is <see langword="null" />.</exception>
+    /// <exception cref="T:System.ArgumentException">The <paramref name="type" /> parameter is <see langword="null" /> or not a valid type.</exception>
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
     public int RegisterTypeForComClients(Type type, ComTypes.RegistrationClassContext classContext, ComTypes.RegistrationConnectionType flags)
     {
@@ -57,8 +57,7 @@ public class RegistrationServices
                     ?? type.Assembly.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value;
         if (value == null)
         {
-            // ToDo: We have to decide which Exception should be thrown here 
-            throw new InvalidComObjectException($"The given type {type} does not have a valid GUID attribute and cannot be registered.");
+            throw new ArgumentException($"The given type {type} does not have a valid GUID attribute.");
         }
 
         var guid = new Guid(value);
