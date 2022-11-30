@@ -82,6 +82,45 @@ internal sealed class FileSystemChecks
     }
 
     /// <summary>
+    /// Verifies, that the specified <paramref name="fileSystemReference" /> is a valid directory.
+    /// If a non-existing file shall be treated as an error, the corresponding parameter <paramref name="treatAsError" />
+    /// must be set to <c>true</c> and the check will fail. The result of the check will be stored in the <paramref name="checkResult" />
+    /// parameter.
+    /// </summary>
+    /// <param name="fileSystemReference">The directory to check.</param>
+    /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if the directory does not exist.</param>
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
+    /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
+    internal void VerifyDirectoryPresent(string fileSystemReference, bool treatAsError, ref bool checkResult)
+    {
+        checkResult = checkResult && LogCheckIfFileSystemEntryIsMissing(
+            _context.EnsureDirectoryExists,
+            fileSystemReference,
+            treatAsError,
+            "The following file is required, but does not exist: {0}",
+            fileSystemReference);
+    }
+
+    /// <summary>
+    /// Verifies, that the specified <paramref name="fileSystemReferences" /> are valid directories.
+    /// If a non-existing file shall be treated as an error, the corresponding parameter <paramref name="treatAsError" />
+    /// must be set to <c>true</c> and the check will fail. The result of the check will be stored in the <paramref name="checkResult" />
+    /// parameter.
+    /// </summary>
+    /// <param name="fileSystemReferences">The directories to check.</param>
+    /// <param name="treatAsError">If set to <c>true</c>, the check will fail, if at least one directory does not exist.</param>
+    /// <param name="checkResult">The result of any previous check. If <c>true</c> is supplied,
+    /// the result can remain <c>true</c>. Otherwise the result will always be <c>false</c>, even, if the check succeeds.</param>
+    internal void VerifyDirectoriesPresent(IReadOnlyCollection<string> fileSystemReferences, bool treatAsError, ref bool checkResult)
+    {
+        foreach (var possibleFileSystemEntry in fileSystemReferences)
+        {
+            VerifyDirectoryPresent(possibleFileSystemEntry, treatAsError, ref checkResult);
+        }
+    }
+
+
+    /// <summary>
     /// Performs the specified <paramref name="performCheck" /> method using the <paramref name="fileSystemEntry" />.
     /// If the check fails, the specified <paramref name="message" /> will be issued to the log.
     /// If no error is issued, the method will return <c>true</c>.
