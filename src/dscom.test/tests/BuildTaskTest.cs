@@ -27,6 +27,8 @@ public class BuildTaskTest : BaseTest
     {
         public ISet<string> ExistingFiles = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
+        public ISet<string> ExistingDirectories = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
         public bool ShouldSucceed { get; set; } = true;
 
         public bool IsRunningOnWindows { get; set; } = true;
@@ -41,6 +43,11 @@ public class BuildTaskTest : BaseTest
         public bool EnsureFileExists(string? fileNameAndPath)
         {
             return !ExistingFiles.Any() || ExistingFiles.Contains(fileNameAndPath ?? string.Empty);
+        }
+
+        public bool EnsureDirectoryExists(string? directoryNameAndPath)
+        {
+            return !ExistingDirectories.Any() || ExistingDirectories.Contains(directoryNameAndPath ?? string.Empty);
         }
     }
 
@@ -100,6 +107,7 @@ public class BuildTaskTest : BaseTest
 
             var hintPath = path ?? itemSpec;
 
+            taskItemMock.Setup(inst => inst.GetMetadata(It.IsNotIn(new string[] { HintPath }, StringComparer.InvariantCulture))).Returns(string.Empty);
             taskItemMock.Setup(inst => inst.GetMetadata(It.Is(HintPath, StringComparer.InvariantCulture))).Returns(hintPath);
 
             taskItemMock.SetupGet(inst => inst.MetadataCount).Returns(1);
@@ -107,11 +115,11 @@ public class BuildTaskTest : BaseTest
         }
         else
         {
+            taskItemMock.Setup(inst => inst.GetMetadata(It.IsAny<string>())).Returns(string.Empty);
+
             taskItemMock.SetupGet(inst => inst.MetadataCount).Returns(0);
             taskItemMock.SetupGet(inst => inst.MetadataNames).Returns(Array.Empty<string>());
         }
-
-        taskItemMock.Setup(inst => inst.GetMetadata(It.IsAny<string>())).Returns(string.Empty);
 
         return taskItemMock.Object;
     }
@@ -236,6 +244,8 @@ public class BuildTaskTest : BaseTest
             context.ExistingFiles.Add(filePath);
         }
 
+        task.AssemblyPaths = taskItems.ToArray();
+
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
         task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(0, "No warning should be present");
@@ -263,8 +273,9 @@ public class BuildTaskTest : BaseTest
             {
                 context.ExistingFiles.Add(filePath);
             }
-
         }
+
+        task.AssemblyPaths = taskItems.ToArray();
 
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
@@ -289,6 +300,8 @@ public class BuildTaskTest : BaseTest
             taskItems.Add(taskItem);
             context.ExistingFiles.Add(filePath);
         }
+
+        task.AssemblyPaths = taskItems.ToArray();
 
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
@@ -319,6 +332,8 @@ public class BuildTaskTest : BaseTest
             }
         }
 
+        task.AssemblyPaths = taskItems.ToArray();
+
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
         task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
@@ -344,6 +359,8 @@ public class BuildTaskTest : BaseTest
             taskItems.Add(taskItem);
             context.ExistingFiles.Add(filePath);
         }
+
+        task.AssemblyPaths = taskItems.ToArray();
 
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
@@ -375,6 +392,358 @@ public class BuildTaskTest : BaseTest
                 context.ExistingFiles.Add(filePath);
             }
         }
+
+        task.AssemblyPaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencesItemSpecCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var taskItem = GetTaskItem(filePath);
+            taskItems.Add(taskItem);
+            context.ExistingFiles.Add(filePath);
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(0, "No warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencesItemSpecCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var taskItem = GetTaskItem(filePath);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingFiles.Add(filePath);
+            }
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencesHintPathCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var taskItem = GetTaskItem(fileName, filePath, true);
+            taskItems.Add(taskItem);
+            context.ExistingFiles.Add(filePath);
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(5, "Five warnings should be present, since TLBs cannot be referenced using HintPath");
+    }
+
+    [Fact]
+    public void TestypeLibraryReferencesHintPathCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var taskItem = GetTaskItem(fileName, filePath, true);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingFiles.Add(filePath);
+            }
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestypeLibraryReferencesHybridCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var arg = (i % 2 == 0) ? ((ValueTuple<string, string?>)(fileName, filePath)) : ((ValueTuple<string, string?>)(filePath, null));
+            var (fn, fp) = arg;
+            var taskItem = GetTaskItem(fn, fp!, i % 2 == 0);
+            taskItems.Add(taskItem);
+            context.ExistingFiles.Add(filePath);
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(2, "Five warnings should be present, since TLBs cannot be referenced using HintPath");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencesHybridCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var fileName = $"TypeLibrary{i}.tlb";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
+            var arg = (i % 2 == 0) ? ((ValueTuple<string, string?>)(fileName, filePath)) : ((ValueTuple<string, string?>)(filePath, null));
+            var (fn, fp) = arg;
+            var taskItem = GetTaskItem(fn, fp!, i % 2 == 0);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingFiles.Add(filePath);
+            }
+        }
+
+        task.TypeLibraryReferences = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencePathsItemSpecCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var taskItem = GetTaskItem(dirPath);
+            taskItems.Add(taskItem);
+            context.ExistingDirectories.Add(dirPath);
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(0, "No warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencePathsItemSpecCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var taskItem = GetTaskItem(dirPath);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingDirectories.Add(dirPath);
+            }
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencePathsHintPathCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var taskItem = GetTaskItem(dirName, dirPath, true);
+            taskItems.Add(taskItem);
+            context.ExistingDirectories.Add(dirPath);
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(5, "Five warnings should be present, since TLBs cannot be referenced using HintPath");
+    }
+
+    [Fact]
+    public void TestypeLibraryReferencePathsHintPathCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var taskItem = GetTaskItem(dirName, dirPath, true);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingDirectories.Add(dirPath);
+            }
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().Should().NotBe(0, "At least one warning should be present");
+    }
+
+    [Fact]
+    public void TestypeLibraryReferencePathsHybridCheckSuccess()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var arg = (i % 2 == 0) ? ((ValueTuple<string, string?>)(dirName, dirPath)) : ((ValueTuple<string, string?>)(dirPath, null));
+            var (dn, dp) = arg;
+            var taskItem = GetTaskItem(dn, dp!, i % 2 == 0);
+            taskItems.Add(taskItem);
+            context.ExistingDirectories.Add(dirPath);
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+        task.BuildEngine.As<BuildEngineStub>().NumberOfWarningLogEvents.Should().Be(2, "Five warnings should be present, since TLBs cannot be referenced using HintPath");
+    }
+
+    [Fact]
+    public void TestTypeLibraryReferencePathsHybridCheckFail()
+    {
+        var task = GetBuildTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        task.SourceAssemblyFile = assemblyFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+
+        var notFoundByRandom = new Random().Next(5) + 1;
+
+        var taskItems = new List<ITaskItem>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var dirName = $"TypeLibrarySearchFolder{i}";
+            var dirPath = Path.Combine(Path.GetTempPath(), dirName);
+            var arg = (i % 2 == 0) ? ((ValueTuple<string, string?>)(dirName, dirPath)) : ((ValueTuple<string, string?>)(dirPath, null));
+            var (dn, dp) = arg;
+            var taskItem = GetTaskItem(dn, dp!, i % 2 == 0);
+            taskItems.Add(taskItem);
+            if (i != notFoundByRandom)
+            {
+                context.ExistingDirectories.Add(dirPath);
+            }
+        }
+
+        task.TypeLibraryReferencePaths = taskItems.ToArray();
 
         task.Execute().Should().BeTrue();
         task.Log.HasLoggedErrors.Should().BeFalse();
