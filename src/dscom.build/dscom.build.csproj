@@ -60,4 +60,23 @@
     <ProjectReference Include="..\dscom\dscom.csproj" />
   </ItemGroup>
 
+  <!--
+    Bundle dependent library. See https://github.com/dotnet/msbuild/issues/1755 for details.
+
+    As referred to by https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/
+  -->
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <!--
+    The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
+    -->
+    <ItemGroup>
+      <_PackageFiles Include="$(MsBuildThisFileDirectory)\bin\$(Configuration)\*\dSPACE.Runtime.InteropServices.dll">
+        <PackagePath>build\_dscom%(RecursiveDir)</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
 </Project>
