@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if NET5_0_OR_GREATER
+using System.Runtime.Loader;
+#else
+using System.Reflection;
+#endif
+
 using Microsoft.Build.Framework;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
@@ -84,6 +90,47 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
 
     /// <inheritdoc cref="Task.Execute()" />
     public override bool Execute()
+    {
+        var targetAssemblyFile = GetTargetRuntimeAssembly();
+
+        // if the assembly is found next to this assembly
+        if (File.Exists(targetAssemblyFile))
+        {
+#if NET5_0_OR_GREATER
+            // Load the assembly from a context
+            var loadContext = new AssemblyLoadContext($"msbuild-preload-ctx-{Guid.NewGuid()}", true);
+
+            try
+            {
+                _ = loadContext.LoadFromAssemblyPath(targetAssemblyFile);
+
+                // Execute the task with the resolved assembly.
+                return ExecuteTask();
+            }
+            finally
+            {
+                // unload the assembly
+                loadContext.Unload();
+            }
+#else
+            _ = Assembly.LoadFrom(targetAssemblyFile);
+
+            return ExecuteTask();
+#endif        
+        }
+        else
+        {
+            // Make .NET Runtime resolve the file itself
+            return ExecuteTask();
+        }
+    }
+
+    /// <summary>
+    /// Performs the real task execution with the maybe temporarily loaded
+    /// Interop Assembly.
+    /// </summary>
+    /// <returns>The result of the task.</returns>
+    private bool ExecuteTask()
     {
         if (!_context.IsRunningOnWindows)
         {
@@ -160,4 +207,31 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
             .Union(remainingItems.Where(item => item != null)
                 .Select(item => item.ItemSpec)).ToArray();
     }
+
+
+    /// <summary>
+    /// Gets the path to the path to the <code>dSPACE.Runtime.InteropServices.dll</code>
+    /// next to this assembly.
+    /// </summary>
+    /// <returns>The assembly file path.</returns>
+    private static string GetTargetRuntimeAssembly()
+    {
+        var assemblyPath = typeof(TlbExport).Assembly.Location;
+        var extension = Path.GetExtension(assemblyPath);
+        var fileBaseName = typeof(TlbExport).Namespace;
+        fileBaseName = Path.GetFileNameWithoutExtension(fileBaseName);
+        var fileName = fileBaseName + extension;
+        var assemblyDir = Path.GetDirectoryName(assemblyPath);
+
+        var targetAssemblyFile = fileName;
+
+        if (!string.IsNullOrWhiteSpace(assemblyDir))
+        {
+            targetAssemblyFile = Path.Combine(assemblyDir, fileName);
+        }
+
+        return targetAssemblyFile;
+    }
+
+
 }
