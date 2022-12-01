@@ -79,4 +79,30 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="PackTool" BeforeTargets="GenerateNuSpec" DependsOnTargets="BuildTool">
+    
+  </Target>
+
+  <Target Name="BuildTool">
+    <PropertyGroup>
+      <DsComClientDir>$(MsBuildThisFileDirectory)..\dscom.client\</DsComClientDir>
+      <DsComBuildParameters>PublishSingleFile=true;SelfContained=false;Configuration=Release;TargetFrameworks=$(TargetFrameworks);OutputDirectory=$(TargetDir)\tools\x64</DsComBuildParameters>
+    </PropertyGroup>
+
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Restore;Build;Publish"
+      Properties="RuntimeIdentifier=win-x64;Platform=x64;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Restore;Build;Publish"
+      Properties="RuntimeIdentifier=win-x86;Platform=x86;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
 </Project>
