@@ -22,6 +22,8 @@
   <PropertyGroup>
     <!-- File extension for TLB -->
     <_DsComTlbExt>.tlb</_DsComTlbExt>
+    <!-- Do not enforce usage of tool -->
+    <_DsComForceToolUsage>false</_DsComForceToolUsage>
   </PropertyGroup>
   <!-- Conversion settings -->
   <PropertyGroup>
