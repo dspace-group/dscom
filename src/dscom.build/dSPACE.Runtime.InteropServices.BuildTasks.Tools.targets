@@ -51,6 +51,7 @@
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComExportTypeLibraryAssemblyFile)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) --out $(_DsComExportTypeLibraryTargetFile)</_DsComArguments>
     </PropertyGroup>
     
     <Message Importance="High" Text="Calling dscom.exe to export type library" />
@@ -62,5 +63,7 @@
           StdOutEncoding="UTF-8"
           IgnoreExitCode="false"
           WorkingDirectory="$(OutputPath)" />
+
+    <Warning Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
   </Target>
 </Project>
