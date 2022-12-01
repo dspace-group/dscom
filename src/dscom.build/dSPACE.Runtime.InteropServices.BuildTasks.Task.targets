@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Project>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Find DsCom Build Tasks -->
+    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
+  </PropertyGroup>
+ 
+  <!-- Embed task -->
+  <UsingTask AssemblyFile="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
+
+  <!-- 
+      Create a target to be called after the build has taken place. (Target assembly must exist).
+      Call target only if target file has changed or resulting type library is missing.
+  -->
+  <Target Name="DsComExportTypeLibraryAfterBuild" 
+          AfterTargets="AfterBuild" 
+          Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
+          Outputs="$(_DsComExportTypeLibraryTargetFile)"
+          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
+    <!-- Export Type library on build -->
+    <TlbExport 
+      TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
+      TargetFile="$(_DsComExportTypeLibraryTargetFile)"
+      SourceAssemblyFile="$(_DsComExportTypeLibraryAssemblyFile)"
+      TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
+      TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
+      AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
+  </Target>
+</Project>

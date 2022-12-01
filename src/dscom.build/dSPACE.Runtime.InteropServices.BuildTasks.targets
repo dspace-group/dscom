@@ -19,10 +19,13 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <_DsComExporterTargetsFile>$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Task.targets</_DsComExporterTargetsFile>
+    <_DsComExporterTargetsFile Condition="'$(TargetFramework)' == 'netstandard2.0' OR ('$(TargetFrameworks)' != '' AND $(TargetFrameworks.Contains('netstandard2.0'))) OR 'Platform' == 'x86' OR ('Platform' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86')">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
+  </PropertyGroup>
+
   <!-- Export settings. -->
   <PropertyGroup>
-    <!-- Find DsCom Build Tasks -->
-    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
     <!-- Set file path of target file -->
     <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
     <!-- Set file path of source file -->
@@ -49,27 +52,7 @@
     <DsComTlbExportTlbReferences Include="@(COMFileReference)" />
   </ItemGroup>
 
-  <!-- Embed task -->
-  <UsingTask AssemblyFile="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
-
-  <!-- 
-      Create a target to be called after the build has taken place. (Target assembly must exist).
-      Call target only if target file has changed or resulting type library is missing.
-  -->
-  <Target Name="DsComExportTypeLibraryAfterBuild" 
-          AfterTargets="AfterBuild" 
-          Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
-          Outputs="$(_DsComExportTypeLibraryTargetFile)"
-          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
-    <!-- Export Type library on build -->
-    <TlbExport 
-      TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
-      TargetFile="$(_DsComExportTypeLibraryTargetFile)"
-      SourceAssemblyFile="$(_DsComExportTypeLibraryAssemblyFile)"
-      TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
-      TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
-      AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
-  </Target>
+  <Import Project="$(_DsComExporterTargetsFile)" />
 
   <!-- Target to optionally register type library -->
   <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
