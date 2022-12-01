@@ -24,9 +24,6 @@ jobs:
       - name: Build
         run: dotnet build -c Release
 
-      - name: Check code format (editorconfig)
-        run: dotnet format --verify-no-changes
-
       - name: Nuget pack library
         run: dotnet pack -c Release src/dscom/dscom.csproj
 
