@@ -27,9 +27,6 @@ jobs:
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
 
-      - name: Test (Release)
-        run: dotnet test -c Release --no-build --verbosity normal
-
       - name: Nuget pack library
         run: dotnet pack -c Release src/dscom/dscom.csproj
 
