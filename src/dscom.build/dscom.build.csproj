@@ -55,62 +55,13 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="*.props" Pack="true" PackagePath="build" />
     <None Include="*.targets" Pack="true" PackagePath="build" />
+    <None Remove="DsComPackaging.targets" />
+    <None Include="DsComPackaging.targets" Pack="false" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\dscom\dscom.csproj" />
   </ItemGroup>
 
-  <!--
-    Bundle dependent library. See https://github.com/dotnet/msbuild/issues/1755 for details.
-
-    As referred to by https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/
-  -->
-  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
-    <!--
-    The include needs to happen after output has been copied to build output folder
-    but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
-    -->
-    <ItemGroup>
-      <_PackageFiles Include="$(MsBuildThisFileDirectory)\bin\$(Configuration)\*\dSPACE.Runtime.InteropServices.dll">
-        <PackagePath>build\_dscom%(RecursiveDir)</PackagePath>
-        <Visible>false</Visible>
-        <BuildAction>Content</BuildAction>
-      </_PackageFiles>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="PackTool" BeforeTargets="GenerateNuSpec" DependsOnTargets="BuildTool">
-    
-  </Target>
-
-  <Target Name="UpdateTargetFrameworks" BeforeTargets="GenerateNuSpec" AfterTargets="_GetTargetFrameworksOutput">
-    <ItemGroup>
-      <!-- Explicitly mark this as netstandard2.0 compliant -->
-      <_TargetFrameworks Include="netstandard2.0" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="BuildTool">
-    <PropertyGroup>
-      <DsComClientDir>$(MsBuildThisFileDirectory)..\dscom.client\</DsComClientDir>
-      <DsComBuildParameters>PublishSingleFile=true;SelfContained=false;Configuration=Release;TargetFrameworks=$(TargetFrameworks);OutputDirectory=$(TargetDir)\tools\x64</DsComBuildParameters>
-    </PropertyGroup>
-
-    <MSBuild 
-      BuildInParallel="true" 
-      ContinueOnError="false"
-      StopOnFirstFailure="true"
-      Targets="Restore;Build;Publish"
-      Properties="RuntimeIdentifier=win-x64;Platform=x64;$(DsComBuildParameters)"
-      Projects="$(DsComClientDir)dscom.client.csproj" />
-    <MSBuild 
-      BuildInParallel="true" 
-      ContinueOnError="false"
-      StopOnFirstFailure="true"
-      Targets="Restore;Build;Publish"
-      Properties="RuntimeIdentifier=win-x86;Platform=x86;$(DsComBuildParameters)"
-      Projects="$(DsComClientDir)dscom.client.csproj" />
-  </Target>
-
+  <Import Project="$(MsBuildThisFileDirectory)DsComPackaging.targets" />
 </Project>

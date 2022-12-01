@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+
+  <PropertyGroup>
+    <DsComClientDir>$(MsBuildThisFileDirectory)..\dscom.client\</DsComClientDir>
+    <DsComClientToolsTargetDir>$(MsBuildThisFileDirectory)obj\tools\</DsComClientToolsTargetDir>
+    <DsComBuildParameters>PackForBuildTaskTools=true;PublishSingleFile=true;SelfContained=false;Configuration=Release;TargetFramework=$(DsComBuildTargetFrameWork)</DsComBuildParameters>
+  </PropertyGroup>
+
+  <!--
+    Bundle dependent library. See https://github.com/dotnet/msbuild/issues/1755 for details.
+
+    As referred to by https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/
+  -->
+  <Target Name="DsComBuildPackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <!--
+    The include needs to happen after output has been copied to build output folder
+    but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
+    -->
+    <ItemGroup>
+      <_PackageFiles Include="$(MsBuildThisFileDirectory)\bin\$(Configuration)\*\dSPACE.Runtime.InteropServices.dll">
+        <PackagePath>build\_dscom%(RecursiveDir)</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Bundle Tool. Required for NetStandard 2.0 and x86 Builds
+  -->
+  <Target Name="DsComBuildPackTool" BeforeTargets="GenerateNuSpec" DependsOnTargets="DsComBuildPublishTool">
+    <ItemGroup>
+      <_PackageFiles Include="$(DsComClientToolsTargetDir)\x64\dscom.exe">
+        <PackagePath>tools\x64\</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+      <_PackageFiles Include="$(DsComClientToolsTargetDir)\x86\dscom.exe">
+        <PackagePath>tools\x86\</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="DsComBuildUpdateTargetFrameworks" BeforeTargets="GenerateNuSpec" AfterTargets="_GetTargetFrameworksOutput">
+    <ItemGroup>
+      <!-- Explicitly mark this as netstandard2.0 compliant -->
+      <_TargetFrameworks Include="netstandard2.0" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Meta Targets -->
+  <Target Name="DsComBuildPublishTool" DependsOnTargets="DsComBuildPublishToolX64;DsComBuildPublishToolX86" />
+
+  <Target Name="DsComBuildPublishToolX64" DependsOnTargets="DsComBuildPublishToolRestoreX64;DsComBuildPublishToolBuildX64;DsComBuildPublishToolPublishX64" />
+  <Target Name="DsComBuildPublishToolX86" DependsOnTargets="DsComBuildPublishToolRestoreX86;DsComBuildPublishToolBuildX86;DsComBuildPublishToolPublishX86" />
+  
+  <!-- Build and restore tool -->
+
+  <Target Name="DsComBuildPublishToolRestoreX64">
+    <Message Importance="Normal" Text="Restoring DsCOM Client tool in x64 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Restore"
+      Properties="Platform=x64;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
+  <Target Name="DsComBuildPublishToolRestoreX86">
+    <Message Importance="Normal" Text="Restoring DsCOM Client tool in x86 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Restore"
+      Properties="RuntimeIdentifier=win-x86;Platform=x86;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
+  <Target Name="DsComBuildPublishToolBuildX64" DependsOnTargets="DsComBuildPublishToolRestoreX64">
+    <Message Importance="Normal" Text="Building DsCOM Client tool in x64 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Build"
+      Properties="Platform=x64;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
+  <Target Name="DsComBuildPublishToolBuildX86" DependsOnTargets="DsComBuildPublishToolRestoreX86">
+    <Message Importance="Normal" Text="Building DsCOM Client tool in x86 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Build"
+      Properties="RuntimeIdentifier=win-x86;Platform=x86;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
+  <Target Name="DsComBuildPublishToolPublishX64" DependsOnTargets="DsComBuildPublishToolBuildX64">
+    <Message Importance="Normal" Text="Building DsCOM Client tool in x64 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Publish"
+      Properties="PublishDir=$(DsComClientToolsTargetDir)\x64;RuntimeIdentifier=win-x64;Platform=x64;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+
+  <Target Name="DsComBuildPublishToolPublishX86" DependsOnTargets="DsComBuildPublishToolBuildX86">
+    <Message Importance="Normal" Text="Publishing DsCOM Client tool in x86 for packing" />
+    <MSBuild 
+      BuildInParallel="true" 
+      ContinueOnError="false"
+      StopOnFirstFailure="true"
+      Targets="Publish"
+      Properties="PublishDir=$(DsComClientToolsTargetDir)\x86;RuntimeIdentifier=win-x86;Platform=x86;$(DsComBuildParameters)"
+      Projects="$(DsComClientDir)dscom.client.csproj" />
+  </Target>
+</Project>
