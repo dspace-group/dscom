@@ -92,6 +92,11 @@ internal sealed class DefaultBuildContext : IBuildContext
                 log.LogMessage(MessageImportance.High, "Finished generation of the following type library: {0}", settings.Out);
             }
 
+            if (!File.Exists(settings.Out))
+            {
+                log.LogWarning("Could not find the type library at the following location: {0}", settings.Out);
+            }
+
             return tlb != null;
         }
         catch (COMException e)
