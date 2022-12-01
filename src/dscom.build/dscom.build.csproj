@@ -55,6 +55,8 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="*.props" Pack="true" PackagePath="build" />
     <None Include="*.targets" Pack="true" PackagePath="build" />
+    <None Include="netstandard2.0\*.props" Pack="true" PackagePath="build\netstandard2.0" />
+    <None Include="netstandard2.0\*.targets" Pack="true" PackagePath="build\netstandard2.0" />
     <None Remove="DsComPackaging.targets" />
     <None Include="DsComPackaging.targets" Pack="false" />
   </ItemGroup>
