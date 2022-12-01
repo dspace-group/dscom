@@ -1,13 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <SkipManualTlbExport>false</SkipManualTlbExport>
+    <SkipManualTlbExport Condition="'$(PerformAcceptanceTest)' != ''">true</SkipManualTlbExport>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework Condition="'$(PerformAcceptanceTest)' == '' OR '$(PerformAcceptanceTest)' != 'Runtime'">netstandard2.0</TargetFramework>
+    <TargetFrameworks Condition="'$(PerformAcceptanceTest)' == 'Runtime'">net6.0-windows;net48</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+    <WarningsAsErrors>$(WarningsAsErrors);DSCOM001</WarningsAsErrors>
   </PropertyGroup>
 
-  <Target Name="tlb" AfterTargets="CoreBuild">
+  <Target Name="tlb" AfterTargets="CoreBuild" Condition="'$(SkipManualTlbExport)' != 'true'">
     <Exec Command="dscom tlbexport $(TargetPath) /out:$(ProjectDir)$(TargetName).tlb" />
     <Exec Command="dscom tlbdump $(ProjectDir)$(TargetName).tlb /out:$(ProjectDir)$(TargetName).yaml" />
   </Target>
@@ -15,4 +22,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'NetStandard'">
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
+    <_DsComForceToolUsage>true</_DsComForceToolUsage>
+  </PropertyGroup>
+
 </Project>
