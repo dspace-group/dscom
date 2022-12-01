@@ -1,0 +1,29 @@
+name: Acceptance Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.300
+
+      - name: Run OutProc Acceptance test
+        run: msbuild-acceptance-test.cmd
+        working-directory: .\examples\outproc\scripts
+        continue-on-error: false
+
+      - name: Run 32 Bit Acceptance test
+        run: msbuild-acceptance-test.cmd
+        working-directory: .\examples\32bit\scripts
+        continue-on-error: false
