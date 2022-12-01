@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <DsComBuildTargetFrameWork>net6.0</DsComBuildTargetFrameWork>
     <AssemblyName>dSPACE.Runtime.InteropServices.BuildTasks</AssemblyName>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>$(DsComBuildTargetFrameWork);net48</TargetFrameworks>
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -81,6 +82,13 @@
 
   <Target Name="PackTool" BeforeTargets="GenerateNuSpec" DependsOnTargets="BuildTool">
     
+  </Target>
+
+  <Target Name="UpdateTargetFrameworks" BeforeTargets="GenerateNuSpec" AfterTargets="_GetTargetFrameworksOutput">
+    <ItemGroup>
+      <!-- Explicitly mark this as netstandard2.0 compliant -->
+      <_TargetFrameworks Include="netstandard2.0" />
+    </ItemGroup>
   </Target>
 
   <Target Name="BuildTool">
