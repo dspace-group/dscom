@@ -94,7 +94,16 @@ internal sealed class DefaultBuildContext : IBuildContext
 
             if (!File.Exists(settings.Out))
             {
-                log.LogWarning("Could not find the type library at the following location: {0}", settings.Out);
+                log.LogWarning(
+                    null,
+                    "DSCOM001",
+                    null,
+                    null,
+                    0,
+                    0,
+                    0,
+                    0,
+                    "Could not find the type library at the following location: {0}", settings.Out);
             }
 
             return tlb != null;

@@ -64,6 +64,6 @@
           IgnoreExitCode="false"
           WorkingDirectory="$(OutputPath)" />
 
-    <Warning Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
+    <Warning Code="DSCOM001" Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
   </Target>
 </Project>
