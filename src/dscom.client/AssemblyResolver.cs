@@ -54,7 +54,7 @@ internal sealed class AssemblyResolver : IDisposable
         return null;
     }
 
-    protected void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
