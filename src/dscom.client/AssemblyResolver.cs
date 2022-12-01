@@ -19,7 +19,7 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// Uses the "ASMPath" option to handle the AppDomain.CurrentDomain.AssemblyResolve event and try to load the specified assemblies.
 /// </summary>
-internal class AssemblyResolver : IDisposable
+internal sealed class AssemblyResolver : IDisposable
 {
     private bool _disposedValue;
 
@@ -54,7 +54,7 @@ internal class AssemblyResolver : IDisposable
         return null;
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
