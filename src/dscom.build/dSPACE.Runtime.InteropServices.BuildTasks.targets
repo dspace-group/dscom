@@ -60,7 +60,7 @@
           AfterTargets="AfterBuild" 
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
-          Condition="'$(Platform)' == 'x64'">
+          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
     <!-- Export Type library on build -->
     <TlbExport 
       TlbOverriddenId="$(DsComTypeLibraryUniqueId)"
