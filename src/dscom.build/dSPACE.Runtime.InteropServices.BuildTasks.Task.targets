@@ -20,8 +20,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <_DsComTargetFramework>net6.0</_DsComTargetFramework>
+    <_DsComTargetFramework Condition="'$(TargetFramework)' == 'net48'">$(TargetFramework)</_DsComTargetFramework>
     <!-- Find DsCom Build Tasks -->
-    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(TargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
+    <_DsComTaskAssemblyFile>$(MsBuildThisFileDirectory)_dscom\$(_DsComTargetFramework)\dSPACE.Runtime.InteropServices.BuildTasks.dll</_DsComTaskAssemblyFile>
   </PropertyGroup>
  
   <!-- Embed task -->
