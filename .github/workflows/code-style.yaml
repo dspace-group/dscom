@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  check-code-style:
     runs-on: windows-2022
 
     steps:

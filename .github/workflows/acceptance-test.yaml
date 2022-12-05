@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  acceptance-test-msbuild:
     runs-on: windows-2022
 
     steps:
