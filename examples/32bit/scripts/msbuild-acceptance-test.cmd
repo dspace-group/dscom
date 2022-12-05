@@ -4,6 +4,7 @@ SET root=%~dp0\..\..\..\
 
 PUSHD %root%
 
+dotnet clean
 dotnet pack -p:Configuration=Release
 
 IF NOT EXIST %root%\_packages MKDIR _packages
