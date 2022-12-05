@@ -1,1 +1,0 @@
--p:SolutionConfiguration=Release -p:Configuration=Release -p:TargetFramework='net6.0' -p:RuntimeIdentifiers='win-x64%3Bwin-86' -p:Platform='Any CPU' -p:SolutionPlatform='Any CPU'
