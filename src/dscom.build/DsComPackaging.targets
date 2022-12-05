@@ -82,7 +82,7 @@
       ContinueOnError="false"
       StopOnFirstFailure="true"
       Targets="Restore"
-      Properties="Platform=x64;$(DsComBuildParameters)"
+      Properties="RuntimeIdentifier=win-x64;Platform=x64;$(DsComBuildParameters)"
       Projects="$(DsComClientDir)dscom.client.csproj" />
   </Target>
 
