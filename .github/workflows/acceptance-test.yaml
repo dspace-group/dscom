@@ -26,6 +26,12 @@ jobs:
         with:
           dotnet-version: 6.0.300
 
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release
+
       - name: Run ${{ matrix.test_suite.Name }} Acceptance test
         run: .\msbuild-acceptance-test.cmd
         working-directory: .\examples\${{ matrix.test_suite.path }}\scripts
