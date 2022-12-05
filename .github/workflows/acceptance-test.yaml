@@ -19,11 +19,11 @@ jobs:
           dotnet-version: 6.0.300
 
       - name: Run OutProc Acceptance test
-        run: msbuild-acceptance-test.cmd
+        run: .\msbuild-acceptance-test.cmd
         working-directory: .\examples\outproc\scripts
         continue-on-error: false
 
       - name: Run 32 Bit Acceptance test
-        run: msbuild-acceptance-test.cmd
+        run: .\msbuild-acceptance-test.cmd
         working-directory: .\examples\32bit\scripts
         continue-on-error: false
