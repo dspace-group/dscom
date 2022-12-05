@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ComHostTypeLibrary Condition="Exists('comtestdotnet.tlb')" Include="comtestdotnet.tlb" Id="1" />
+    <Using Remove="System.Net.Http" Condition="'$(PerformAcceptanceTest)' == 'Runtime'" />
   </ItemGroup>
 
   <Target Name="tlb" AfterTargets="CoreBuild" Condition="'$(SkipManualTlbExport)' != 'true'">
@@ -27,6 +28,5 @@
 
   <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
     <_DsComForceToolUsage>false</_DsComForceToolUsage>
-    <Using Remove="System.Net.Http" />
   </PropertyGroup>
 </Project>
