@@ -18,6 +18,8 @@ PUSHD %~dp0\..\comtestdotnet
 
 dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
 
+dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
+
 dotnet add comtestdotnet.csproj package --prerelease -s %root%\_packages dSPACE.Runtime.InteropServices.BuildTasks
 
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net48 -p:PerformAcceptanceTest=Runtime

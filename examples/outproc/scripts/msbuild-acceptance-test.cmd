@@ -18,6 +18,8 @@ PUSHD %~dp0\..
 
 dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
 
+dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
+
 dotnet add server\common\contract.csproj package --prerelease -s %root%\_packages dSPACE.Runtime.InteropServices.BuildTasks
 
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
