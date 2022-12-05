@@ -21,6 +21,10 @@
     <Using Remove="System.Net.Http" Condition="'$(PerformAcceptanceTest)' == 'Runtime'" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
+    <_DsComForceToolUsage>true</_DsComForceToolUsage>
+  </PropertyGroup>
+
   <Target Name="tlb" AfterTargets="CoreBuild" Condition="'$(SkipManualTlbExport)' != 'true'">
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbexport $(TargetPath) /out:$(ProjectDir)$(TargetName).tlb" />
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbdump $(ProjectDir)$(TargetName).tlb /out:$(ProjectDir)$(TargetName).yaml" />
