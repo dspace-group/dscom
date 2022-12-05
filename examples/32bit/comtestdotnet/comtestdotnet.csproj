@@ -25,8 +25,4 @@
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbexport $(TargetPath) /out:$(ProjectDir)$(TargetName).tlb" />
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbdump $(ProjectDir)$(TargetName).tlb /out:$(ProjectDir)$(TargetName).yaml" />
   </Target>
-
-  <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
-    <_DsComForceToolUsage>false</_DsComForceToolUsage>
-  </PropertyGroup>
 </Project>
