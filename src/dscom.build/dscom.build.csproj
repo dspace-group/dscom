@@ -31,7 +31,7 @@
     <Description>dSPACE COM tools - MsBuild Tasks</Description>
     <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>
     <IsPackable>true</IsPackable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
     <PackageIcon>packageIcon.png</PackageIcon>
     <PackageId>dSPACE.Runtime.InteropServices.BuildTasks</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -52,7 +52,7 @@
     </PackageReference>
     <None Include="..\dscom\packageIcon.png" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="ReadMe.md" Pack="true" PackagePath="\" />
     <None Include="*.props" Pack="true" PackagePath="build" />
     <None Include="*.targets" Pack="true" PackagePath="build" />
     <None Include="netstandard2.0\*.props" Pack="true" PackagePath="build\netstandard2.0" />
