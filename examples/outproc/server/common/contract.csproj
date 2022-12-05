@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+    <Using Remove="System.Net.Http" Condition="'$(PerformAcceptanceTest)' == 'Runtime'" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'NetStandard'">

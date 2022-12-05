@@ -27,5 +27,6 @@
 
   <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
     <_DsComForceToolUsage>false</_DsComForceToolUsage>
+    <Using Remove="System.Net.Http" />
   </PropertyGroup>
 </Project>
