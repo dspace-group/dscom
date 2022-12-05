@@ -22,8 +22,8 @@
   <PropertyGroup>
     <!-- File extension for TLB -->
     <_DsComTlbExt>.tlb</_DsComTlbExt>
-    <!-- Do not enforce usage of tool -->
-    <_DsComForceToolUsage>false</_DsComForceToolUsage>
+    <!-- Enforce usage of tool (due to issue with COM TLB EXP in dotnet msbuild) -->
+    <_DsComForceToolUsage>true</_DsComForceToolUsage>
   </PropertyGroup>
   <!-- Conversion settings -->
   <PropertyGroup>

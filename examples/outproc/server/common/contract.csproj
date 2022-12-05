@@ -27,9 +27,4 @@
   <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'NetStandard'">
     <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(PerformAcceptanceTest)' == 'Runtime'">
-    <_DsComForceToolUsage>true</_DsComForceToolUsage>
-  </PropertyGroup>
-
 </Project>
