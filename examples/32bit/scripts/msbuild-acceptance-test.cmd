@@ -5,8 +5,8 @@ SET root=%~dp0\..\..\..\
 PUSHD %root%
 
 dotnet clean
-dotnet restore
-dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release
+dotnet msbuild -nodeReuse:False -t:Restore @~dp0\msbuild.rsp
+dotnet msbuild -nodeReuse:False -t:Build @~dp0\msbuild.rsp
 dotnet msbuild -nodeReuse:False -t:Pack -p:Configuration=Release
 
 IF NOT EXIST %root%\_packages MKDIR _packages
