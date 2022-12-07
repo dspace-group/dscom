@@ -54,7 +54,9 @@ alt result true
     	destroy AssemblyLoadContext
     end
     deactivate IBuildContext
-    return result && Log.HasNoErrors
+
+    TlbExport -> MsBuild: return result && Log.HasNoErrors
+
 else result false
 	TlbExport -> Log: Error
     return false
