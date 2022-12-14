@@ -5,14 +5,7 @@
     <AssemblyName>dSPACE.Runtime.InteropServices.BuildTasks</AssemblyName>
     <TargetFrameworks>$(DsComBuildTargetFrameWork);net48</TargetFrameworks>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>10.0</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>dSPACE.Runtime.InteropServices.BuildTasks</RootNamespace>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <AnalysisMode>Recommended</AnalysisMode>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
+    <RootNamespace>dSPACE.Runtime.InteropServices.BuildTasks</RootNamespace>    <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     <BuildOutputTargetFolder>build\_dscom\</BuildOutputTargetFolder>
@@ -25,7 +18,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Carsten Igel</Authors>
     <Company>dSPACE GmbH</Company>
     <Product>dSPACE.Runtime.InteropServices.BuildTasks</Product>
     <Description>dSPACE COM tools - MsBuild Tasks</Description>
