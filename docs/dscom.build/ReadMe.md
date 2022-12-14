@@ -181,12 +181,49 @@ The examples [32-bit](../../examples/32bit/) and [outproc](../../examples/outpro
 
 ## Packaging
 
-TODO
+The packaging will contain the executable file for [dscom CLI](../../src/dscom.client/dscom.client.csproj) for both platforms, x64 and x86. The configuration is Release. The executable will be published in Release as a framework dependent deployment using a [single file](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview?tabs=cli), which means that [dSPACE.Runtime.InteropServices](../../src/dscom/dscom.csproj) and [System.CommandLine](https://packages.nuget.org/packages/System.CommandLine/) are bundled, but no AOT takes place and no framework files will be part of the bundle.
+
+The packaging takes place in [DsComPackaging.targets](../../src/dscom.build/DsComPackaging.targets) which is imported by [dscom.build.csproj](../../src/dscom.build/dscom.build.csproj). The targets file hooks into the packaging procedure by enforcing to be run before the `GenerateNuspec` target of the NuGet Client which is part of the packaging process by the MsBuild dotnet sdk in the [NuGet.Build.Tasks.Pack.targets](https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.Build.Tasks.Pack/NuGet.Build.Tasks.Pack.targets) and exposes the `GenerateNuspecDependsOn` array variable. Two targets must be executed before generating the NuSpec file:
+
+**DsComBuildPackTaskDependencies**:
+    This task packs the [dSPACE.Runtime.InteropServices](../../src/dscom/dscom.csproj) and [System.CommandLine](https://packages.nuget.org/packages/System.CommandLine/) assembly into the package. This will enable the [TlbExport](../../src/dscom.build/TlbExport.cs) task to load the assembly. Due to a [bug in MsBuild](https://github.com/dotnet/msbuild/issues/1755) and another [issue with NuGet](https://github.com/NuGet/Home/issues/4704), MsBuild does not add assemblies from dependent package to the resolve handler. Hence the dependent assembly must be bundled with the NuGet package. Refer to a [blog article](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) for details.
+
+**DsComBuildPackTool**:
+    The MsBuild process is hosted using the target framework, i.e. .NET FullFramework 4.8 or .NET 6.0 using an x64 based process environment. In order to enable the build using the 32bit builder and other target frameworks, the executables will be added to the NuGet package. This approach has been inspired by [Grpc.Tools](https://github.com/grpc/grpc/blob/master/src/csharp/Grpc.Tools/build/native/Grpc.Tools.props) NuGet package which bundles the `protoc.exe` and `grpc_cpp_plugin.exe` executables.
+    In order to get the matching binaries without interfering with the regular MsBuild and NuGet packaging, the task calls the [MsBuild](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-task) task for the [dscom.client.csproj](../../src/dscom.client/dscom.client.csproj) using the targets `Restore`, `Build` and `Pack` targets for both platforms, x86 and x64 using a different output directory.
 
 ## Targets and Properties
 
-TODO
+The package containing the build task comes with [props and targets for MsBuild](https://learn.microsoft.com/en-us/nuget/concepts/msbuild-props-and-targets). These files are automatically included to the build using the naming convention. There is also a folder for .NET Standard 2.0 which will only include the general files.
+
+**[dSPACE.Runtime.InteropServices.BuildTasks.props](../../src/dscom.build/dSPACE.Runtime.InteropServices.BuildTasks.props)**:
+  This property file contains the general properties for the integration of the build task.
+
+**[dSPACE.Runtime.InteropServices.BuildTasks.targets](../../src/dscom.build/dSPACE.Runtime.InteropServices.BuildTasks.targets)**:
+  This target file includes the general tasks and targets. It will also create the properties and item groups based on the data provided by the project being build. Depending on the enforced usage of the tools or task, it will include the tool or task specific targets fill.
+
+**[dSPACE.Runtime.InteropServices.BuildTasks.Task.targets](../../src/dscom.build/dSPACE.Runtime.InteropServices.BuildTasks.Task.targets)**:
+  This target file includes the targets and tasks which invoke the TLB export as MsBuild task.
+
+**[dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets](../../src/dscom.build/dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets)**:
+  This target file includes the targets and tasks which invoke the TLB export a call to the bundled executables.
+
+The general approach is designed by the MsBuild SDK based projects. The props file will be included in the beginning of the project file _automatically_, i.e. before the project file is read. The targets file will be in included at the end of the project file _automatically_, i.e. after the project file has been read. Hence project specific settings are only available in the targets file.
 
 ## Limitations
 
-TODO
+### InProc Export
+
+The [LibraryWriter](../../src/dscom/writer/LibraryWriter.cs) currently refuses to write the type library file (TLB), if the file is hosted within the MsBuild Process. The reason is currently unknown. Therefore it is not recommended to set `_DsComForceToolUsage` to `false`.
+
+### .NET Standard 2.0 compliant NuGet package
+
+The `Pack` target currently does not create a .NET Standard 2.0 compliant NuGet package. Therefore, when adding the `dSPACE.Runtime.InteropServices.Build` package to a .NET Standard 2.0 targeting project, the warning [NU1701](https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu1701) will be issued. This warning can be explicitly disabled for the package using the package meta data:
+
+```xml
+<ItemGroup>
+  ...
+  <PackageReference Include="dspace.runtime.interopservices.build" Version="..." NoWarn="NU1701" />
+  ...
+</ItemGroup>
+```
