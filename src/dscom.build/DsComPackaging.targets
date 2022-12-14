@@ -15,12 +15,17 @@
   limitations under the License.
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-
   <PropertyGroup>
     <DsComClientDir>$(MsBuildThisFileDirectory)..\dscom.client\</DsComClientDir>
     <DsComClientToolsTargetDir>$(MsBuildThisFileDirectory)obj\tools\</DsComClientToolsTargetDir>
     <DsComBuildParameters>PackForBuildTaskTools=true;PublishSingleFile=true;SelfContained=false;Configuration=Release;TargetFramework=$(DsComBuildTargetFrameWork)</DsComBuildParameters>
+  </PropertyGroup>
+
+  <!-- 
+   Hook into the generate NuSpec generation target of NuGet.Build.Tasks.Pack.targets
+   -->
+  <PropertyGroup>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);DsComBuildPackTaskDependencies;DsComBuildPackTool</GenerateNuspecDependsOn>
   </PropertyGroup>
 
   <!--
@@ -28,7 +33,7 @@
 
     As referred to by https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/
   -->
-  <Target Name="DsComBuildPackTaskDependencies" BeforeTargets="GenerateNuspec">
+  <Target Name="DsComBuildPackTaskDependencies">
     <!--
     The include needs to happen after output has been copied to build output folder
     but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
@@ -45,7 +50,7 @@
   <!--
     Bundle Tool. Required for NetStandard 2.0 and x86 Builds
   -->
-  <Target Name="DsComBuildPackTool" BeforeTargets="GenerateNuSpec" DependsOnTargets="DsComBuildPublishTool">
+  <Target Name="DsComBuildPackTool" DependsOnTargets="DsComBuildPublishTool">
     <ItemGroup>
       <_PackageFiles Include="$(DsComClientToolsTargetDir)\x64\dscom.exe">
         <PackagePath>tools\x64\</PackagePath>
