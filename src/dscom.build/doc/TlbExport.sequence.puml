@@ -1,0 +1,64 @@
+@startuml "TlbExport"
+Participant BuildEngine as MsBuild
+
+MsBuild -> TlbExport: Execute
+activate TlbExport
+
+TlbExport -> IBuildContext: IsRunningOnWindows()
+alt result true
+	TlbExport -> TlbExport: ConvertTaskItemToFsPath(TypeLibraryReferences, SupportHintPath=False)
+    TlbExport -> TlbExport: ConvertTaskItemToFsPath(TypeLibraryReferencePaths, SupportHintPath=False)
+    TlbExport -> TlbExport: ConvertTaskItemToFsPath(AssemblyPaths, SupportHintPath=True)
+    
+    create TypeLibConverterSettings
+    
+    TlbExport -> TypeLibConverterSettings: set_TLBReference(conversionResult[TypeLibraryReferences])
+    TlbExport -> TypeLibConverterSettings: set_TLBRefpath(conversionResult[TypeLibraryReferencePaths])
+    TlbExport -> TypeLibConverterSettings: set_ASMPath(conversionResult[AssemblyPaths])
+    
+    create FileSystemChecks
+    TlbExport -> FileSystemChecks: VerifyFilesPresent(Assembly, ReportAsError=True)
+    FileSystemChecks -> IBuildContext: VerifyFilesPresent(files)
+    TlbExport -> FileSystemChecks: VerifyFilesPresent(TypeLibraryReferences, AssemblyPaths, ReportAsError=False)
+    FileSystemChecks -> IBuildContext: VerifyFilesPresent(files)
+    TlbExport -> FileSystemChecks: VerifyDirectoriesPresent(TypeLibraryReferencePaths, ReportAsError=False)
+    FileSystemChecks -> IBuildContext: VerifyDirectoriesPresent(files)
+    
+    TlbExport -> IBuildContext: ConvertAssemblyToTypeLib
+    activate IBuildContext
+    alt IsNet50OrLater
+    	create AssemblyLoadContext
+    	IBuildContext -> AssemblyLoadContext: add_Resolving(ResolveAssemblyFromSettings)
+    else IsNetFx
+    	IBuildContext -> AppDomain.Current: add_AssemblyResolve(ResolveAssemblyFromSettings)
+    end
+    
+    IBuildContext -> Assembly: Load(TypeLibExportSettings.SourceAssembly)
+    note right: Load Assemblies recursive
+    
+    create LoggingTypeLibExporterSink
+    IBuildContext -> LoggingTypeLibExporterSink: set_Logger(log)
+    
+    create TypeLibConverter
+    IBuildContext -> TypeLibConverter: ConvertAssemblyToTypeLib(Assembly, TypeLibConverterSettings, LoggingTypeLibExporterSink)
+    alt result is null
+    	IBuildContext -> Log: Error
+    end
+    
+    alt TLB Not Existing
+    	IBuildContext -> Log: Warning(DSCOM001)
+    end
+    
+    alt IsNet50OrLater
+    	TlbExport -> AssemblyLoadContext: Unload
+    	destroy AssemblyLoadContext
+    end
+    deactivate IBuildContext
+
+    TlbExport -> MsBuild: return result && Log.HasNoErrors
+
+else result false
+	TlbExport -> Log: Error
+    return false
+end
+@enduml

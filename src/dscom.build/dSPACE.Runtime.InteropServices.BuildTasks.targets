@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_DsComExporterTargetsFile>$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Task.targets</_DsComExporterTargetsFile>
+    <_DsComExporterTargetsFile Condition="'$(TargetFramework)' == 'netstandard2.0' OR ('$(TargetFrameworks)' != '' AND $(TargetFrameworks.Contains('netstandard2.0'))) OR 'Platform' == 'x86' OR ('Platform' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86')">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
+    <_DsComExporterTargetsFile Condition="'$(_DsComForceToolUsage)' == 'true'">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
+  </PropertyGroup>
+
+  <!-- Export settings. -->
+  <PropertyGroup>
+    <!-- Set file path of target file -->
+    <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
+    <!-- Set file path of source file -->
+    <_DsComExportTypeLibraryAssemblyFile>$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Add all items with hintpath -->
+    <_DsComFromReferencesWithoutHintPath Include="@(References)" Exclude="@(References->HasMetadata('HintPath'))"/>
+    <!-- Add all items with empty hintpath (Reference might be restored other way) -->
+    <_DsComFromReferencesWithEmptyHintPath Include="@(References->HasMetadata('HintPath')->WithMetadata('HintPath', ''))"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DsComTlbExportAutoAddReferences)' == 'true'">
+    <!-- Automatically include all referenced assembly files without a hint path -->
+    <_DsComReferences Include="@(_DsComFromReferencesWithEmptyHintPath)" Condition="'$(DsComTlbExportIncludeReferencesWithoutHintPath)' == 'true'" />
+    <!-- Automatically include all referenced assembly files providing a hint path -->
+    <_DsComReferences Include="@(_DsComFromReferencesWithoutHintPath)" />
+    <DsComTlbExportAssemblyPaths Include="@(_DsComReferences)"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Copy COMFileReferences to list -->
+    <DsComTlbExportTlbReferences Include="@(COMFileReference)" />
+  </ItemGroup>
+
+  <Import Project="$(_DsComExporterTargetsFile)" />
+
+  <!-- Target to optionally register type library -->
+  <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
+      DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
+      AfterTargets="AfterBuild"
+      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'" >
+      <!-- Call task wrapping regasm -->
+      <RegisterAssembly Assemblies="$(TargetPath)" />
+  </Target>
+
+  <!-- Target to optionally unregister type library. Should be called before removing. -->
+  <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
+      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'"
+      BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
+      <!-- Call task wrapping regasm -->
+      <UnregisterAssembly Assemblies="$(TargetPath)" />
+  </Target>
+
+  <!-- Remove type library on clean -->
+  <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" DependsOnTargets="DsComExportTypeLibraryUnregisterAssembly">
+    <!-- Remove previously built TLB -->
+    <Delete 
+          Files="$(DsComExportTypeLibraryTargetFile)" 
+          Condition="Exists('$(DsComExportTypeLibraryTargetFile)')" />
+  </Target>
+</Project>

@@ -6,6 +6,7 @@
     <TargetFrameworks>net6.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>
+    <RuntimeIdentifiers Condition="'$(PackForBuildTaskTools)' == 'true'">win-x64;win-x86</RuntimeIdentifiers>
     <RootNamespace>dSPACE.Runtime.InteropServices</RootNamespace>
     <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
     <MinVerTagPrefix>v</MinVerTagPrefix>

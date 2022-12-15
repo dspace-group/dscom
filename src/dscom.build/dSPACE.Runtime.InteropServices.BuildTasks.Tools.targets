@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Copyright 2022 dSPACE GmbH, Carsten Igel and Contributors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+ 
+  <PropertyGroup>
+    <_DsComToolsFileDir>$(MsBuildThisFileDirectory)..\tools\x64\</_DsComToolsFileDir>
+    <_DsComToolsFileDir Condition="'$(Platform)' == 'x86' OR ('$(Platform)' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86')">$(MsBuildThisFileDirectory)..\tools\x86\</_DsComToolsFileDir>
+  </PropertyGroup>
+
+  <!-- 
+      Create a target to be called after the build has taken place. (Target assembly must exist).
+      Call target only if target file has changed or resulting type library is missing.
+  -->
+  <Target Name="DsComExportTypeLibraryAfterBuild" 
+          AfterTargets="AfterBuild" 
+          Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
+          Outputs="$(_DsComExportTypeLibraryTargetFile)"
+          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
+    <ItemGroup>
+      <_DsComTlbExportAssemblyPathsWithHintPath Include="@(DsComTlbExportAssemblyPaths->HasMetadata('HintPath'))" />
+      <_DsComTlbExportAssemblyPathsWithoutHintPath Include="@(DsComTlbExportAssemblyPaths)" />
+      <_DsComTlbExportAssemblyPathsWithoutHintPath Remove="@(_DsComTlbExportAssemblyPathsWithHintPath)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_DsComTypeLibraryReferences Condition="@(DsComTlbExportTlbReferences->Count()) &gt; 0">--tlbreference "@(DsComTlbExportTlbReferences, '" --tlbreference "')"</_DsComTypeLibraryReferences>
+      <_DsComTypeLibraryReferencePaths Condition="@(DsComTlbExportReferencePaths->Count()) &gt; 0">--tlbrefpath "@(DsComTlbExportReferencePaths, '"--tlbrefpath "')"</_DsComTypeLibraryReferencePaths>
+      <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithoutHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithoutHintPath, '"--asmpath "')"</_DsComAssemblyReferences>
+      <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithHintPath->GetMetadata('HintPath'), '"--asmpath "')"</_DsComAssemblyReferences>
+      <_DsComArguments>tlbexport</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComTypeLibraryUniqueId)' != '' AND '$(DsComTypeLibraryUniqueId)' != '$([System.Guid]::Empty.ToString())'">$(_DsComArguments) --overridetlbid "$(DsComTypeLibraryUniqueId)"</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComToolVerbose)' == 'true'"> $(_DsComArguments) --verbose</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) $(_DsComAssemblyReferences)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) $(_DsComExportTypeLibraryAssemblyFile)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) --out $(_DsComExportTypeLibraryTargetFile)</_DsComArguments>
+    </PropertyGroup>
+    
+    <Message Importance="High" Text="Calling dscom.exe to export type library" />
+    <Message Importance="Low" Text="Using arguments '$(_DsComArguments)' to call dscom" />
+    
+    <Exec Command="$(_DsComToolsFileDir)dscom.exe $(_DsComArguments)"
+          ConsoleToMsBuild="true" 
+          StdErrEncoding="UTF-8"
+          StdOutEncoding="UTF-8"
+          IgnoreExitCode="false"
+          WorkingDirectory="$(OutputPath)" />
+
+    <Warning Code="DSCOM001" Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
+  </Target>
+</Project>

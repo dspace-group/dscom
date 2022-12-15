@@ -25,7 +25,7 @@ public class RegistryHelper
             exePath +=".exe";
         }
         string progId = $"{versionIndependentProgId}.{version}";
-        GuidAttribute guid = (GuidAttribute)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
+        GuidAttribute? guid = (GuidAttribute?)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
         if (guid == null)
         {
             throw new ArgumentException("Coclass guid not set!");
@@ -93,7 +93,7 @@ public class RegistryHelper
 
     public static void UnregisterOutProcServer<T>(string versionIndependentProgId, string version)
     {
-        GuidAttribute guid = (GuidAttribute)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
+        GuidAttribute? guid = (GuidAttribute?)typeof(T).GetCustomAttributes<GuidAttribute>().FirstOrDefault();
         if (guid == null)
         {
             throw new ArgumentException("Coclass guid not set!");

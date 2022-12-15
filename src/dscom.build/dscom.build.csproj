@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DsComBuildTargetFrameWork>net6.0</DsComBuildTargetFrameWork>
+    <AssemblyName>dSPACE.Runtime.InteropServices.BuildTasks</AssemblyName>
+    <TargetFrameworks>$(DsComBuildTargetFrameWork);net48</TargetFrameworks>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>dSPACE.Runtime.InteropServices.BuildTasks</RootNamespace>    <MinVerVerbosity Condition="'$(Configuration)' == 'Debug'">normal</MinVerVerbosity>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <BuildOutputTargetFolder>build\_dscom\</BuildOutputTargetFolder>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Company>dSPACE GmbH</Company>
+    <Product>dSPACE.Runtime.InteropServices.BuildTasks</Product>
+    <Description>dSPACE COM tools - MsBuild Tasks</Description>
+    <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>
+    <IsPackable>true</IsPackable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageId>dSPACE.Runtime.InteropServices.BuildTasks</PackageId>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dspace-group/dscom</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageTags>com;tlb;ole;idl;tlbexp;interop;typelib;ConvertAssemblyToTypeLib;TypeLibConverter;MsBuild</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="microsoft.build.tasks.core" Version="17.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.Github" Version="1.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MinVer" Version="2.5.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <None Include="..\dscom\packageIcon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="*.props" Pack="true" PackagePath="build" />
+    <None Include="*.targets" Pack="true" PackagePath="build" />
+    <None Include="netstandard2.0\*.props" Pack="true" PackagePath="build\netstandard2.0" />
+    <None Include="netstandard2.0\*.targets" Pack="true" PackagePath="build\netstandard2.0" />
+    <None Remove="DsComPackaging.targets" />
+    <None Include="DsComPackaging.targets" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dscom\dscom.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MsBuildThisFileDirectory)DsComPackaging.targets" />
+</Project>

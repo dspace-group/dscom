@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <SkipManualTlbExport>false</SkipManualTlbExport>
+    <SkipManualTlbExport Condition="'$(PerformAcceptanceTest)' != ''">true</SkipManualTlbExport>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
     <LangVersion>10.0</LangVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -8,15 +13,16 @@
     <ImplicitUsings>disabled</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnableComHosting>true</EnableComHosting>
+    <WarningsAsErrors>$(WarningsAsErrors);DSCOM001</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
     <ComHostTypeLibrary Condition="Exists('comtestdotnet.tlb')" Include="comtestdotnet.tlb" Id="1" />
+    <Using Remove="System.Net.Http" Condition="'$(PerformAcceptanceTest)' == 'Runtime'" />
   </ItemGroup>
 
-  <Target Name="tlb" AfterTargets="CoreBuild">
+  <Target Name="tlb" AfterTargets="CoreBuild" Condition="'$(SkipManualTlbExport)' != 'true'">
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbexport $(TargetPath) /out:$(ProjectDir)$(TargetName).tlb" />
     <Exec Command="$(ProjectDir)/../bin/dscom32.exe tlbdump $(ProjectDir)$(TargetName).tlb /out:$(ProjectDir)$(TargetName).yaml" />
   </Target>
-
 </Project>
