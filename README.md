@@ -28,8 +28,6 @@ _Happy IUnknowing and IDispatching ;-)_
     - [Installation](#installation)
     - [32Bit support](#32bit-support)
     - [Usage](#usage)
-  - [Library](#library)
-    - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
   - [Build Tasks](#build-tasks)
     - [Preface](#preface)
     - [Build task usage](#build-task-usage)
@@ -38,6 +36,8 @@ _Happy IUnknowing and IDispatching ;-)_
       - [Enforcing the usage of the CLI](#enforcing-the-usage-of-the-cli)
       - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
     - [Parameters](#parameters)
+  - [Library](#library)
+    - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
     - [RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients](#registrationservicesregistertypeforcomclients-and-registrationservicesunregistertypeforcomclients)
   - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
@@ -103,74 +103,6 @@ Commands:
   tlbdump <TypeLibrary>        Dump a type library
   tlbregister <TypeLibrary>    Register a type library
   tlbunregister <TypeLibrary>  Unregister a type library
-```
-
-
-## Library
-
-Usage:  
-```bash
-dotnet add package dSPACE.Runtime.InteropServices
-```
-
-dSPACE.Runtime.InteropServices supports the following methods and classes:  
-
-* TypeLibConverter
-  * ConvertAssemblyToTypeLib
-* RegistrationServices
-  * RegisterTypeForComClients
-  * UnregisterTypeForComClients
-
-
-### TypeLibConverter.ConvertAssemblyToTypeLib
-
-If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
-This method should behave compatible to the `.NET Framework` method.
-
-```csharp
-public object? ConvertAssemblyToTypeLib(
-  Assembly assembly,
-  string tlbFilePath,
-  ITypeLibExporterNotifySink? notifySink)
-```
-
-<https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/>
-
-Example:
-
-```csharp
-using dSPACE.Runtime.InteropServices;
-
-// The assembly to convert
-var assembly = typeof(Program).Assembly;
-
-// Convert to assembly
-var typeLibConverter = new TypeLibConverter();
-var callback = new TypeLibConverterCallback();
-var result = typeLibConverter.ConvertAssemblyToTypeLib(assembly, "MyTypeLib.tlb", callback);
-
-// Get the name of the type library
-var typeLib2 = result as System.Runtime.InteropServices.ComTypes.ITypeLib2;
-if (typeLib2 != null)
-{
-    typeLib2.GetDocumentation(-1, out string name, out _, out _, out _);
-    Console.WriteLine($"TypeLib name: {name}");
-}
-
-// The callback to load additional type libraries, if necessary
-public class TypeLibConverterCallback : ITypeLibExporterNotifySink
-{
-    public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
-    {
-        Console.WriteLine($"{eventCode}: {eventMsg}");
-    }
-
-    public object? ResolveRef(System.Reflection.Assembly assembly)
-    {
-        // Returns additional type libraries
-        return null;
-    }
-}
 ```
 
 ## Build Tasks
@@ -254,6 +186,72 @@ The build task consumes the following items:
 | DsComTlbExportTlbReferences  | Referenced type library files.                           |
 | DsComTlbExportReferencePaths | Directories containing type libraries to use for export. |
 | DsComTlbExportAssemblyPaths  | Assemblies to add for the export.                        |
+
+## Library
+
+Usage:  
+```bash
+dotnet add package dSPACE.Runtime.InteropServices
+```
+
+dSPACE.Runtime.InteropServices supports the following methods and classes:  
+
+* TypeLibConverter
+  * ConvertAssemblyToTypeLib
+* RegistrationServices
+  * RegisterTypeForComClients
+  * UnregisterTypeForComClients
+
+### TypeLibConverter.ConvertAssemblyToTypeLib
+
+If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
+This method should behave compatible to the `.NET Framework` method.
+
+```csharp
+public object? ConvertAssemblyToTypeLib(
+  Assembly assembly,
+  string tlbFilePath,
+  ITypeLibExporterNotifySink? notifySink)
+```
+
+<https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/>
+
+Example:
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+// The assembly to convert
+var assembly = typeof(Program).Assembly;
+
+// Convert to assembly
+var typeLibConverter = new TypeLibConverter();
+var callback = new TypeLibConverterCallback();
+var result = typeLibConverter.ConvertAssemblyToTypeLib(assembly, "MyTypeLib.tlb", callback);
+
+// Get the name of the type library
+var typeLib2 = result as System.Runtime.InteropServices.ComTypes.ITypeLib2;
+if (typeLib2 != null)
+{
+    typeLib2.GetDocumentation(-1, out string name, out _, out _, out _);
+    Console.WriteLine($"TypeLib name: {name}");
+}
+
+// The callback to load additional type libraries, if necessary
+public class TypeLibConverterCallback : ITypeLibExporterNotifySink
+{
+    public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
+    {
+        Console.WriteLine($"{eventCode}: {eventMsg}");
+    }
+
+    public object? ResolveRef(System.Reflection.Assembly assembly)
+    {
+        // Returns additional type libraries
+        return null;
+    }
+}
+```
 
 ### RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients
 
