@@ -1,11 +1,16 @@
 # dSPACE COM tools
 
-[![Nuget:Cli](https://img.shields.io/nuget/v/dscom?label=dotnet%20tool&style=flat)](https://www.nuget.org/packages/dscom/)
-[![Nuget:Lib](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=nuget&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/)
-[![Build](https://img.shields.io/github/workflow/status/dspace-group/dscom/Build?style=flat)](https://github.com/dspace-group/dscom/actions/workflows/build.yaml)
+[![Nuget:Cli](https://img.shields.io/nuget/v/dscom?label=dscom&style=flat)](https://www.nuget.org/packages/dscom/)  
+[![Nuget:Lib](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=dSPACE.Runtime.InteropServices&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/)  
+[![Nuget:LibBuildTask](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=dSPACE.Runtime.InteropServices.BuildTasks&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices.BuildTasks/)  
+
 [![Release](https://img.shields.io/github/v/release/dspace-group/dscom?label=release)](https://github.com/dspace-group/dscom/releases)
 ![License](https://img.shields.io/github/license/dspace-group/dscom)
 [![dSPACE](https://img.shields.io/badge/-OpenSource%20powered%20by%20dSPACE-blue)](https://www.dspace.com/)
+
+[![Unit Tests](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml)
+[![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
+[![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
 
 > This is an unstable prerelease. Anything may change at any time!
 
