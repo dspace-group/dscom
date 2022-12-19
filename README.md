@@ -10,7 +10,7 @@
 
 [![Unit Tests](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml)
 [![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
-[![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
+[![Code Style Check](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml)
 
 > This is an unstable prerelease. Anything may change at any time!
 
