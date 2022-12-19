@@ -1,4 +1,4 @@
-name: Run Unit Tests
+name: Unit Tests
 
 on:
   workflow_dispatch:
@@ -9,12 +9,12 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.300
 
@@ -23,6 +23,15 @@ jobs:
 
       - name: Build
         run: dotnet build -c Release
+
+      - name: Nuget pack library
+        run: dotnet pack -c Release src/dscom/dscom.csproj
+
+      - name: Nuget pack tool
+        run: dotnet pack -c Release src/dscom.client/dscom.client.csproj
+
+      - name: Nuget pack build tools
+        run: dotnet pack -c Release src/dscom.build/dscom.build.csproj
 
       - name: Unit test
         run: dotnet test --no-build -c Release
