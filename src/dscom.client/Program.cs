@@ -186,6 +186,9 @@ public static class ConsoleApp
             throw new PlatformNotSupportedException();
         }
 
+        // Use absolute path
+        typeLibFilePath = Path.GetFullPath(typeLibFilePath);
+
         if (!File.Exists(typeLibFilePath))
         {
             throw new ArgumentException($"File {typeLibFilePath} not found");
@@ -209,6 +212,9 @@ public static class ConsoleApp
         {
             throw new PlatformNotSupportedException();
         }
+
+        // Use absolute path
+        typeLibFilePath = Path.GetFullPath(typeLibFilePath);
 
         if (!File.Exists(typeLibFilePath))
         {

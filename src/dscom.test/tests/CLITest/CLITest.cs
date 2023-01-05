@@ -128,7 +128,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
         result.ExitCode.Should().Be(1);
-        result.StdErr.Trim().Should().Contain("File abc not found");
+        result.StdErr.Trim().Should().Contain("not found");
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
         result.ExitCode.Should().Be(1);
-        result.StdErr.Trim().Should().Contain("File abc not found");
+        result.StdErr.Trim().Should().Contain("not found");
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
         result.ExitCode.Should().Be(1);
-        result.StdErr.Trim().Should().Contain("File abc not found");
+        result.StdErr.Trim().Should().Contain("not found");
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
         result.ExitCode.Should().Be(1);
-        result.StdErr.Trim().Should().Contain("File abc not found");
+        result.StdErr.Trim().Should().Contain("not found");
     }
 
     [Fact]
