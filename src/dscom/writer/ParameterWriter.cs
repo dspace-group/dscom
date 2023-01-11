@@ -119,14 +119,14 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
             {
                 _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
             }
-            else
+            else if (ParameterInfo.Member != null
+                     && (_paramFlags & PARAMFLAG.PARAMFLAG_FOUT) == 0
+                     && !ParameterInfo.Member.Name.StartsWith("get_", StringComparison.Ordinal)
+                     && !ParameterInfo.Member.Name.StartsWith("set_", StringComparison.Ordinal))
             {
                 // The case of non-optional parameters with defaultValue "null" as described in #93 
-                // Auto-generated Get methods will also have a default value for which there should not be a parameter flag 
-                if (ParameterInfo.Member != null && !(ParameterInfo.Member.Name.Contains("get_") || ParameterInfo.Member.Name.Contains("set_")))
-                {
-                    _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
-                }
+                // Auto-generated Get and Set methods and out parameters will also have a default value for which there should not be a parameter flag 
+                _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
             }
         }
     }
