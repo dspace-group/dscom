@@ -33,6 +33,10 @@ public class InterfaceTest : BaseTest
         using var attributes = typeInfo!.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
         attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+
     }
 
     [Fact]
@@ -50,6 +54,9 @@ public class InterfaceTest : BaseTest
         using var attributes = typeInfo!.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
         attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -66,6 +73,9 @@ public class InterfaceTest : BaseTest
         using var attributes = typeInfo!.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
         attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -83,6 +93,8 @@ public class InterfaceTest : BaseTest
         strDocString.Should().NotBeNull();
         strDocString.Should().BeEquivalentTo("Description");
 
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -100,6 +112,9 @@ public class InterfaceTest : BaseTest
         using var attributes = typeInfo!.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
         attributes!.Value.wTypeFlags.Should().Be(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -117,6 +132,9 @@ public class InterfaceTest : BaseTest
         using var attributes = typeInfo!.GetTypeInfoAttributes();
         attributes.Should().NotBeNull();
         attributes!.Value.wTypeFlags.Should().Be(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE | TYPEFLAGS.TYPEFLAG_FDUAL);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -151,6 +169,9 @@ public class InterfaceTest : BaseTest
         ppTI.GetDocumentation(-1, out var refTypeName, out _, out _, out _);
 
         refTypeName.Should().Be(expectedTypeString);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -169,5 +190,8 @@ public class InterfaceTest : BaseTest
         result.TypeLib.GetTypeInfoByName("Namespace2_TestInterface").Should().NotBeNull();
 
         result.TypeLib.GetTypeInfoByName("TestInterface").Should().BeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 }

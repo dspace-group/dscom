@@ -32,6 +32,9 @@ public class PropertyTest : BaseTest
         releasableFuncDesc.Should().NotBeNull();
         releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_PROPERTYGET);
         releasableFuncDesc!.Value.memid.Should().Be(0);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]

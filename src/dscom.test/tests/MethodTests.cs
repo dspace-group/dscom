@@ -35,6 +35,9 @@ public class MethodTest : BaseTest
         releasableFuncDesc.Should().NotBeNull();
         releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_FUNC);
         releasableFuncDesc!.Value.memid.Should().Be(-4);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -58,6 +61,9 @@ public class MethodTest : BaseTest
 
         // Search for method
         typeInfo!.ContainsFuncDescByName("TestMethod").Should().Be(true);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -91,6 +97,10 @@ public class MethodTest : BaseTest
 
         // Check if return type if void
         funcDesc!.Value.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_VOID);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+
     }
 
     [Theory]
@@ -150,6 +160,9 @@ public class MethodTest : BaseTest
         // Ptr type should be the final typ
         var value = Marshal.PtrToStructure<TYPEDESC>(ptr.lpValue);
         value.GetVarEnum().Should().Be(returnType.GetVarEnum());
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -196,6 +209,9 @@ public class MethodTest : BaseTest
         var funcDesc = funcDescByName!.Value;
 
         funcDesc.elemdescFunc.tdesc.vt.Should().Be(returnType.GetShortVarEnum());
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -244,6 +260,9 @@ public class MethodTest : BaseTest
         var funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
         funcDesc.elemdescFunc.tdesc.vt.Should().Be(returnType.GetShortVarEnum());
         funcDesc.cParams.Should().Be(0);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -269,6 +288,9 @@ public class MethodTest : BaseTest
         typeInfo!.GetDocumentation(funcDesc.memid, out var methodString, out var docString, out var helpContext, out var helpFile);
         docString.Should().NotBeNull();
         docString.Should().BeEquivalentTo("Description");
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -316,6 +338,9 @@ public class MethodTest : BaseTest
             defaultValue!.GetType().Should().Be(acceptedReturnType);
             defaultValue!.Should().Be(Convert.ChangeType(value, acceptedReturnType, CultureInfo.InvariantCulture));
         }
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -357,6 +382,9 @@ public class MethodTest : BaseTest
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
         typeAttr.Should().NotBeNull();
         typeAttr.typekind.Should().Be(TYPEKIND.TKIND_ENUM);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -403,6 +431,9 @@ public class MethodTest : BaseTest
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
         typeAttr.Should().NotBeNull();
         typeAttr.typekind.Should().Be(TYPEKIND.TKIND_ENUM);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -443,6 +474,9 @@ public class MethodTest : BaseTest
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
         typeAttr.Should().NotBeNull();
         typeAttr.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -489,6 +523,9 @@ public class MethodTest : BaseTest
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
         typeAttr.Should().NotBeNull();
         typeAttr.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -519,6 +556,9 @@ public class MethodTest : BaseTest
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(funcDesc.elemdescFunc.tdesc.lpValue);
         typeDesc.vt.Should().Be(typeof(string).GetShortVarEnum());
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -554,6 +594,9 @@ public class MethodTest : BaseTest
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
         typeDesc.GetVarEnum().Should().Be(typeof(string).GetVarEnum());
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -582,6 +625,9 @@ public class MethodTest : BaseTest
         funcDesc.Should().NotBeNull();
 
         funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -615,6 +661,9 @@ public class MethodTest : BaseTest
 
         using var method3 = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod_3");
         method1.Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -643,6 +692,9 @@ public class MethodTest : BaseTest
 
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT | PARAMFLAG.PARAMFLAG_FIN);
         parameter!.Value.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -689,6 +741,9 @@ public class MethodTest : BaseTest
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
         typeInfoName.Should().Be("TestInterfaceUsedInParameter");
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
 
@@ -737,6 +792,9 @@ public class MethodTest : BaseTest
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
         typeInfoName.Should().Be("TestInterfaceReturnValue");
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -782,6 +840,9 @@ public class MethodTest : BaseTest
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
         typeInfoName.Should().Be("TestInterfaceUsedInParameter");
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -817,6 +878,9 @@ public class MethodTest : BaseTest
 
         //First parameter should be VT_UNKNOWN
         parameter.tdesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().ContainSingle(x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
     }
 
     [Fact]
@@ -851,6 +915,9 @@ public class MethodTest : BaseTest
         parameter.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
         var childTypeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
         childTypeDesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().ContainSingle(x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
     }
 
     [Theory]
@@ -909,6 +976,9 @@ public class MethodTest : BaseTest
 
         parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -967,6 +1037,9 @@ public class MethodTest : BaseTest
 
         parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1025,6 +1098,9 @@ public class MethodTest : BaseTest
 
         parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1074,6 +1150,9 @@ public class MethodTest : BaseTest
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
         parameter.Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1123,6 +1202,9 @@ public class MethodTest : BaseTest
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
         parameter.Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1172,6 +1254,9 @@ public class MethodTest : BaseTest
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
         parameter.Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1207,6 +1292,9 @@ public class MethodTest : BaseTest
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
         parameter.Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1267,6 +1355,9 @@ public class MethodTest : BaseTest
             var subsubtypeDesc = Marshal.PtrToStructure<TYPEDESC>(subtypeDesc.lpValue);
             subsubtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED);
         }
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -1290,6 +1381,9 @@ public class MethodTest : BaseTest
         type.Should().NotBeNull();
 
         type!.GetFuncDescByName("TestMethod").Should().NotBeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Fact]
@@ -1309,6 +1403,9 @@ public class MethodTest : BaseTest
         type!.GetFuncDescByName("AddRef").Should().NotBeNull();
         type!.GetFuncDescByName("AddRef_2").Should().NotBeNull();
         type!.GetFuncDescByName("AddRef_3").Should().BeNull();
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1356,6 +1453,9 @@ public class MethodTest : BaseTest
         typeDesc.GetVarEnum().Should().Be(parameterType.GetVarEnum());
 
         parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FHASDEFAULT);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 
     [Theory]
@@ -1406,5 +1506,8 @@ public class MethodTest : BaseTest
         parameter.Should().NotBeNull();
 
         parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FIN);
+
+        // Check that no unexpected warnings occurred 
+        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
     }
 }
