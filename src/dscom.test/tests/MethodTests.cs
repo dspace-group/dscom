@@ -1321,6 +1321,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(ulong), 1)]
     [InlineData(typeof(long), 1)]
     [InlineData(typeof(string), "Test")]
+    [InlineData(typeof(string), null)]
     [InlineData(typeof(bool), true)]
     public void MethodWithDefaultParameterValueAttribute_DefaultValueIsUsed(Type parameterType, object defaultValue)
     {
