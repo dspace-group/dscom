@@ -24,7 +24,7 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
     {
         _isTransformedOutParameter = isTransformedOutParameter;
         ParameterInfo = parameterInfo;
-        TypeProvider = new TypeProvider(context, parameterInfo, true);
+        TypeProvider = new TypeProvider(context, parameterInfo);
     }
 
     private readonly bool _isTransformedOutParameter;
@@ -111,15 +111,23 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
         if (ParameterInfo.IsOptional)
         {
             _paramFlags |= PARAMFLAG.PARAMFLAG_FOPT;
-            if (ParameterInfo.HasDefaultValue)
+        }
+
+        if (ParameterInfo.HasDefaultValue)
+        {
+            if (ParameterInfo.IsOptional || ParameterInfo.DefaultValue != null)
             {
                 _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
             }
-        }
-
-        if (ParameterInfo.HasDefaultValue && ParameterInfo.DefaultValue != null)
-        {
-            _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
+            else if (ParameterInfo.Member != null
+                     && (_paramFlags & PARAMFLAG.PARAMFLAG_FOUT) == 0
+                     && !ParameterInfo.Member.Name.StartsWith("get_", StringComparison.Ordinal)
+                     && !ParameterInfo.Member.Name.StartsWith("set_", StringComparison.Ordinal))
+            {
+                // The case of non-optional parameters with defaultValue "null" as described in #93 
+                // Auto-generated Get and Set methods and out parameters will also have a default value for which there should not be a parameter flag 
+                _paramFlags |= PARAMFLAG.PARAMFLAG_FHASDEFAULT;
+            }
         }
     }
 
@@ -151,8 +159,7 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
 
         _elementDescription.desc.idldesc.wIDLFlags = IDLFlags;
         _elementDescription.desc.paramdesc.wParamFlags = _paramFlags;
-        if ((ParameterInfo.IsOptional && ParameterInfo.HasDefaultValue) ||
-            (ParameterInfo.HasDefaultValue && ParameterInfo.DefaultValue != null))
+        if ((_paramFlags & PARAMFLAG.PARAMFLAG_FHASDEFAULT) != 0)
         {
             _elementDescription.desc.paramdesc.lpVarValue = GetDefaultValuePtr();
         }
