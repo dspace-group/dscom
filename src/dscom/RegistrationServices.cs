@@ -183,6 +183,52 @@ public class RegistrationServices
         return typesToRegister.Count > 0;
     }
 
+    /// <summary>
+    /// Unregisters the classes in a managed assembly to enable creation from COM.
+    /// </summary>
+    /// <param name="assembly">The assembly to unregister.</param>
+    /// <returns><c>true</c>, if all types from the registry have been unregistered.</returns>
+    public bool UnregisterAssembly(Assembly assembly)
+    {
+        if (assembly is null)
+        {
+            throw new ArgumentNullException(nameof(assembly));
+        }
+
+        if (assembly.ReflectionOnly || assembly.IsDynamic)
+        {
+            throw new ArgumentException("Cannot unregister a ReflectionOnly or dynamic assembly");
+        }
+
+        var typesNotRemoved = new List<Type>();
+
+        var typesToUnregister = GetComRegistratableTypes(assembly);
+
+        // Should be the same as RuntimeAssembly.GetVersion()
+        var assemblyVersion = assembly.GetCustomAttribute<AssemblyVersionAttribute>()?.Version ?? new Version().ToString();
+
+        foreach (var type in typesToUnregister)
+        {
+            // Skip: Custom unregister function
+            if (IsComRegistratableValueType(type) && !UnregisterValueType(type, assemblyVersion))
+            {
+                typesNotRemoved.Add(type);
+            }
+            else if (IsComType(type) && !UnregisterImportedComType(type, assemblyVersion))
+            {
+                typesNotRemoved.Add(type);
+            }
+            else if (!UnregisterManagedType(type, assemblyVersion))
+            {
+                typesNotRemoved.Add(type);
+            }
+        }
+
+        // Skip: PIA
+
+        return typesNotRemoved.Count == 0;
+    }
+
     private static IReadOnlyCollection<Type> GetComRegistratableTypes(Assembly assembly)
     {
         static bool TypeMustBeRegistered(Type type)
@@ -270,6 +316,42 @@ public class RegistrationServices
         }
     }
 
+    private static bool UnregisterValueType(Type type, string assemblyVersion)
+    {
+        var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
+
+        using var recordRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Record, true);
+        using var recordKey = recordRootKey?.CreateSubKey(recordId, true);
+        using var recordVersionKey = recordKey?.CreateSubKey(assemblyVersion, true);
+
+        recordVersionKey?.DeleteValue(RegistryKeys.Class, false);
+
+        recordVersionKey?.DeleteValue(RegistryKeys.Assembly, false);
+
+        recordVersionKey?.DeleteValue(RegistryKeys.RuntimeVersion, false);
+
+        recordVersionKey?.DeleteValue(RegistryKeys.CodeBase, false);
+
+        if (IsEmptyRegistryKey(recordVersionKey))
+        {
+            recordKey?.DeleteSubKey(assemblyVersion);
+        }
+
+        var allVersionsGone = (recordKey?.SubKeyCount ?? 0) == 0;
+
+        if (IsEmptyRegistryKey(recordKey))
+        {
+            recordRootKey?.DeleteSubKey(recordId);
+        }
+
+        if (IsEmptyRegistryKey(recordRootKey))
+        {
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.Record);
+        }
+
+        return allVersionsGone;
+    }
+
     private static void RegisterManagedType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion)
     {
         if (type.FullName is null)
@@ -311,13 +393,13 @@ public class RegistrationServices
         }
 
         using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
-            versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
-            versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
-            versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-            if (codeBase is not null)
-            {
-                versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
-            }
+        versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
+        versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
+        versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+        if (codeBase is not null)
+        {
+            versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
+        }
 
         if (!string.IsNullOrWhiteSpace(progId))
         {
@@ -355,6 +437,109 @@ public class RegistrationServices
         }
     }
 
+    private static bool UnregisterManagedType(Type type, string assemblyVersion)
+    {
+        var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+        var progId = Marshal.GenerateProgIdForType(type);
+
+        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID);
+
+        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId);
+
+        clsIdKey?.DeleteValue(string.Empty, false);
+
+        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32);
+
+        using var versionSubKey = inProcServerKey?.CreateSubKey(assemblyVersion);
+
+        versionSubKey?.DeleteValue(RegistryKeys.Class, false);
+        versionSubKey?.DeleteValue(RegistryKeys.Assembly, false);
+        versionSubKey?.DeleteValue(RegistryKeys.RuntimeVersion, false);
+        versionSubKey?.DeleteValue(RegistryKeys.CodeBase, false);
+
+        if (IsEmptyRegistryKey(versionSubKey))
+        {
+            inProcServerKey?.DeleteSubKey(assemblyVersion);
+        }
+
+        var allVersionsGone = (inProcServerKey?.SubKeyCount ?? 0) == 0;
+
+        if (allVersionsGone)
+        {
+            inProcServerKey?.DeleteValue(string.Empty, false);
+            inProcServerKey?.DeleteValue(RegistryKeys.ThreadingModel, false);
+        }
+
+        inProcServerKey?.DeleteValue(RegistryKeys.Class, false);
+        inProcServerKey?.DeleteValue(RegistryKeys.Assembly, false);
+        inProcServerKey?.DeleteValue(RegistryKeys.RuntimeVersion, false);
+        inProcServerKey?.DeleteValue(RegistryKeys.CodeBase, false);
+
+        if (IsEmptyRegistryKey(inProcServerKey))
+        {
+            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32);
+        }
+
+        if (allVersionsGone && !string.IsNullOrWhiteSpace(progId))
+        {
+            using var progIdKey = clsIdKey?.OpenSubKey(RegistryKeys.ProgId);
+
+            progIdKey?.DeleteValue(string.Empty, false);
+
+            if (IsEmptyRegistryKey(progIdKey))
+            {
+                clsIdKey?.DeleteSubKey(RegistryKeys.ProgId);
+            }
+        }
+
+        using var implementedCategoryKey = clsIdKey?.OpenSubKey(RegistryKeys.ImplementedCategories);
+
+        using var managedCategoryKey = implementedCategoryKey?.OpenSubKey(RegistryKeys.ManagedCategoryGuid);
+
+        if (IsEmptyRegistryKey(managedCategoryKey))
+        {
+            implementedCategoryKey?.DeleteSubKey(RegistryKeys.ManagedCategoryGuid);
+        }
+
+        if (IsEmptyRegistryKey(implementedCategoryKey))
+        {
+            clsIdKey?.DeleteSubKey(RegistryKeys.ImplementedCategories);
+        }
+
+        if (IsEmptyRegistryKey(clsIdKey))
+        {
+            clsIdRootKey?.DeleteSubKey(clsId);
+        }
+
+        if (IsEmptyRegistryKey(clsIdRootKey))
+        {
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID);
+        }
+
+        if (allVersionsGone && !string.IsNullOrWhiteSpace(progId))
+        {
+            using var typeNameKey = Registry.ClassesRoot.OpenSubKey(progId!);
+
+            typeNameKey?.DeleteValue(string.Empty, false);
+
+            using var progIdClsIdKey = typeNameKey?.OpenSubKey(RegistryKeys.CLSID);
+
+            progIdClsIdKey?.DeleteValue(string.Empty, false);
+
+            if (IsEmptyRegistryKey(progIdClsIdKey))
+            {
+                typeNameKey?.DeleteSubKeyTree(RegistryKeys.CLSID);
+            }
+
+            if (IsEmptyRegistryKey(typeNameKey))
+            {
+                Registry.ClassesRoot.DeleteSubKey(progId!);
+            }
+        }
+
+        return allVersionsGone;
+    }
+
     private static void RegisterImportedComType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion)
     {
         if (type.FullName is null)
@@ -376,7 +561,6 @@ public class RegistrationServices
 
         inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
 
-
         if (codeBase is not null)
         {
             inProcServerKey.SetValue(RegistryKeys.CodeBase, codeBase!);
@@ -391,5 +575,60 @@ public class RegistrationServices
         {
             versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
         }
+    }
+
+    private static bool UnregisterImportedComType(Type type, string assemblyVersion)
+    {
+        var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+
+        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID);
+
+        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId);
+
+        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32);
+
+        inProcServerKey?.DeleteValue(RegistryKeys.Class, false);
+
+        inProcServerKey?.DeleteValue(RegistryKeys.Assembly, false);
+
+        inProcServerKey?.DeleteValue(RegistryKeys.RuntimeVersion, false);
+
+        inProcServerKey?.DeleteValue(RegistryKeys.CodeBase, false);
+
+        using var versionSubKey = inProcServerKey?.OpenSubKey(assemblyVersion);
+
+        versionSubKey?.DeleteValue(RegistryKeys.Class, false);
+        versionSubKey?.DeleteValue(RegistryKeys.Assembly, false);
+        versionSubKey?.DeleteValue(RegistryKeys.RuntimeVersion, false);
+        versionSubKey?.DeleteValue(RegistryKeys.CodeBase, false);
+
+        if (IsEmptyRegistryKey(versionSubKey))
+        {
+            inProcServerKey?.DeleteSubKey(assemblyVersion);
+        }
+
+        var allVersionsGone = (inProcServerKey?.SubKeyCount ?? 0) == 0;
+
+        if (IsEmptyRegistryKey(inProcServerKey))
+        {
+            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32);
+        }
+
+        if (IsEmptyRegistryKey(clsIdRootKey))
+        {
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID);
+        }
+
+        return allVersionsGone;
+    }
+
+    private static bool IsEmptyRegistryKey(RegistryKey? key)
+    {
+        if (key is null)
+        {
+            return true;
+        }
+
+        return key!.SubKeyCount == 0 && key!.ValueCount == 0;
     }
 }
