@@ -311,7 +311,6 @@ public class RegistrationServices
         }
 
         using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
-        {
             versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
             versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
             versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
@@ -319,7 +318,6 @@ public class RegistrationServices
             {
                 versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
             }
-        }
 
         if (!string.IsNullOrWhiteSpace(progId))
         {
