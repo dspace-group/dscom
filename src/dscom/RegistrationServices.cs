@@ -300,7 +300,7 @@ public class RegistrationServices
 
         using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
 
-        
+        inProcServerKey.SetValue(string.Empty, "mscoree.dll"); // TODO NET 6 does not provide mscoree - which assembly must be set here
         inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
         inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
         inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
