@@ -382,7 +382,11 @@ public class RegistrationServices
 
         using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
 
-        inProcServerKey.SetValue(string.Empty, "mscoree.dll"); // TODO NET 6 does not provide mscoree - which assembly must be set here
+        // This should be the entry point for COM CoCreateInstance()
+        // Currently, there is no entry point for modern .NET 6 assemblies.
+        // This must be implemented in .NET 6 afterwards, if required.
+        // For .NET FX this would be mscoree.dll.
+        inProcServerKey.SetValue(string.Empty, string.Empty);
         inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
         inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
         inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
