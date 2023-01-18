@@ -386,23 +386,29 @@ public class RegistrationServices
         // Currently, there is no entry point for modern .NET 6 assemblies.
         // This must be implemented in .NET 6 afterwards, if required.
         // For .NET FX this would be mscoree.dll.
-        inProcServerKey.SetValue(string.Empty, string.Empty);
-        inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
-        inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
-        inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
-        inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-        if (codeBase is not null)
+        // According to https://learn.microsoft.com/en-us/dotnet/core/native-interop/expose-components-to-com,
+        // this might be the XYZ.comhost.dll
+        var comHostFile = GetComHost(codeBase);
+        if (null != comHostFile)
         {
-            inProcServerKey.SetValue(RegistryKeys.CodeBase, codeBase!);
-        }
+            inProcServerKey.SetValue(string.Empty, string.Empty);
+            inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
+            inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
+            inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
+            inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+            if (codeBase is not null)
+            {
+                inProcServerKey.SetValue(RegistryKeys.CodeBase, codeBase!);
+            }
 
-        using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
-        versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
-        versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
-        versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-        if (codeBase is not null)
-        {
-            versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
+            using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
+            versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
+            versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
+            versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+            if (codeBase is not null)
+            {
+                versionSubKey.SetValue(RegistryKeys.CodeBase, codeBase!);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(progId))
@@ -439,6 +445,34 @@ public class RegistrationServices
         {
             managedCategoryKey.SetValue(key0, RegistryValues.ManagedCategoryDescription);
         }
+    }
+
+    private static string? GetComHost(string? codeBase)
+    {
+        if (null == codeBase)
+        {
+            return null;
+        }
+
+        string comhost = nameof(comhost);
+
+        var extension = Path.GetExtension(codeBase);
+        var fileName = Path.GetFileNameWithoutExtension(codeBase);
+        var fileLocation = Path.GetDirectoryName(codeBase);
+
+        var comHostFileName = $"{fileName}.{comhost}{extension}";
+        var comHostFileLocation = comHostFileName;
+        if (!string.IsNullOrWhiteSpace(fileLocation))
+        {
+            comHostFileLocation = Path.Combine(fileLocation, comHostFileName);
+        }
+
+        if (File.Exists(comHostFileLocation))
+        {
+            return comHostFileLocation;
+        }
+
+        return null;
     }
 
     private static bool UnregisterManagedType(Type type, string assemblyVersion)
