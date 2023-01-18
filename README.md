@@ -12,10 +12,36 @@
 [![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
 [![Code Style Check](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml)
 
+The command line client `dscom` is a replacement for `tlbexp.exe` and creates and registers TLBs from .NET assemblies.  
+The `dSPACE.Runtime.InteropServices` library contains various classes and methods for COM.  
+It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
+The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
+
 > This is an unstable prerelease. Anything may change at any time!
 
-dscom generates a type library that describes the types defined in a common language runtime assembly and is a replacement for `tlbexp.exe` and `TypeLibConverter.ConvertAssemblyToTypeLib`.  
-The tool consists of a library and a command line tool. The library can be used in `net5+` or in `net48` projects.
+- [dSPACE COM tools](#dspace-com-tools)
+  - [Introducing](#introducing)
+  - [Command Line Client](#command-line-client)
+    - [Installation](#installation)
+    - [Usage](#usage)
+  - [Library](#library)
+    - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
+    - [RegistrationServices.RegisterTypeForComClients](#registrationservicesregistertypeforcomclients)
+    - [RegistrationServices.RegisterAssembly](#registrationservicesregisterassembly)
+  - [Build Tasks](#build-tasks)
+    - [Build task usage](#build-task-usage)
+      - [Using the native build task](#using-the-native-build-task)
+      - [Using the CLI based task](#using-the-cli-based-task)
+      - [Enforcing the usage of the CLI](#enforcing-the-usage-of-the-cli)
+      - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
+    - [Parameters](#parameters)
+  - [32Bit support](#32bit-support)
+  - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
+    - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
+  - [Limitations](#limitations)
+    - [RegisterAssembly](#registerassembly)
+
+## Introducing
 
 Fortunately, .NET still supports COM, but there is no support for generating TLBs.  
 From the Microsoft documentation:
@@ -26,27 +52,8 @@ From the Microsoft documentation:
 
 One main goal is to make `dscom` behave like `tlbexp.exe`.
 
-_Happy IUnknowing and IDispatching ;-)_
-
-- [dSPACE COM tools](#dspace-com-tools)
-  - [Command Line Client](#command-line-client)
-    - [Installation](#installation)
-    - [32Bit support](#32bit-support)
-    - [Usage](#usage)
-  - [Build Tasks](#build-tasks)
-    - [Preface](#preface)
-    - [Build task usage](#build-task-usage)
-      - [Using the native build task](#using-the-native-build-task)
-      - [Using the CLI based task](#using-the-cli-based-task)
-      - [Enforcing the usage of the CLI](#enforcing-the-usage-of-the-cli)
-      - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
-    - [Parameters](#parameters)
-  - [Library](#library)
-    - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
-    - [RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients](#registrationservicesregistertypeforcomclients-and-registrationservicesunregistertypeforcomclients)
-  - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
-    - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
-  - [Limitations](#limitations)
+Also, some classes are missing in .NET 5+ that were available in the full framework.
+This is where `dSPACE.Runtime.InteropServices` may be able to help.
 
 ## Command Line Client
 
@@ -73,20 +80,6 @@ Here you can find all available versions:
 Alternatively you can download dscom.exe from the relase page.  
 <https://github.com/dspace-group/dscom/releases>
 
-### 32Bit support
-
-`dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies and can only generate a 64bit TLB.
-Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the [release page](https://github.com/dspace-group/dscom/releases).
-
-* **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
-* **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
-
-> Warning!  
-> If your assembly is an AnyCPU assembly, then an yourassemblyname.comhost.dll is created as a 64 bit dll.  
-> Therefore after calling regserv32.exe a 64 bit dll is registred.  
-> To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as an AnyCPU assembly.  
-> see: <https://github.com/dotnet/runtime/issues/32493>
-
 ### Usage
 
 Use `dscom --help` to get further information.  
@@ -110,13 +103,119 @@ Commands:
   tlbunregister <TypeLibrary>  Unregister a type library
 ```
 
+## Library
+
+Usage:  
+
+```bash
+dotnet add package dSPACE.Runtime.InteropServices
+```
+
+dSPACE.Runtime.InteropServices supports the following methods and classes:  
+
+- TypeLibConverter
+  - ConvertAssemblyToTypeLib
+- RegistrationServices
+  - RegisterTypeForComClients
+  - UnregisterTypeForComClients
+  - RegisterAssembly
+  - UnregisterAssembly
+
+### TypeLibConverter.ConvertAssemblyToTypeLib
+
+If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
+This method should behave compatible to the `.NET Framework` method.
+
+```csharp
+public object? ConvertAssemblyToTypeLib(
+  Assembly assembly,
+  string tlbFilePath,
+  ITypeLibExporterNotifySink? notifySink)
+```
+
+<https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/>
+
+Example:
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+// The assembly to convert
+var assembly = typeof(Program).Assembly;
+
+// Convert to assembly
+var typeLibConverter = new TypeLibConverter();
+var callback = new TypeLibConverterCallback();
+var result = typeLibConverter.ConvertAssemblyToTypeLib(assembly, "MyTypeLib.tlb", callback);
+
+// Get the name of the type library
+var typeLib2 = result as System.Runtime.InteropServices.ComTypes.ITypeLib2;
+if (typeLib2 != null)
+{
+    typeLib2.GetDocumentation(-1, out string name, out _, out _, out _);
+    Console.WriteLine($"TypeLib name: {name}");
+}
+
+// The callback to load additional type libraries, if necessary
+public class TypeLibConverterCallback : ITypeLibExporterNotifySink
+{
+    public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
+    {
+        Console.WriteLine($"{eventCode}: {eventMsg}");
+    }
+
+    public object? ResolveRef(System.Reflection.Assembly assembly)
+    {
+        // Returns additional type libraries
+        return null;
+    }
+}
+```
+
+### RegistrationServices.RegisterTypeForComClients
+
+The `dSPACE.Runtime.InteropServices.RegistrationServices` provides a set of services for registering and unregistering managed assemblies for use from COM.
+
+This method is equivalent to calling CoRegisterClassObject in COM.  
+You can register a .NET class so that other applications can connect to it (For example as INPROC_SERVER or as a LOCAL_SERVER).  
+
+A outproc demo application is available here: [examples\outproc](https://github.com/dspace-group/dscom/tree/main/examples/outproc)
+
+Example:  
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+var registration = new RegistrationServices();
+var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), 
+  RegistrationClassContext.LocalServer, 
+  RegistrationConnectionType.MultipleUse);
+
+Console.WriteLine($"Press enter to stop the server");
+Console.ReadLine();
+
+registration.UnregisterTypeForComClients(cookie);
+```
+
+### RegistrationServices.RegisterAssembly
+
+Registers the classes in a managed assembly to enable creation from COM.  
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+var registration = new RegistrationServices();
+
+// Register MyAssembly
+registration.RegisterAssembly(typeof(MyAssembly), true);
+
+// Unregister MyAssembly
+registration.UnregisterAssembly(typeof(MyAssembly), true);
+```
+
 ## Build Tasks
 
-### Preface
-
-The `dSPACE.Runtime.InteropServices.BuildTasks` assembly and NuGet package provide the ability to create type libraries for a certain assembly at runtime.
-
-For details on the implementation refer to the [documentation](/src/dscom.build/docs/ReadMe.md) section of the repository.
+The `dSPACE.Runtime.InteropServices.BuildTasks` assembly and NuGet package provide the ability to create type libraries for a certain assembly at compile time.
 
 ### Build task usage
 
@@ -192,95 +291,19 @@ The build task consumes the following items:
 | DsComTlbExportReferencePaths | Directories containing type libraries to use for export. |
 | DsComTlbExportAssemblyPaths  | Assemblies to add for the export.                        |
 
-## Library
+## 32Bit support
 
-Usage:  
-```bash
-dotnet add package dSPACE.Runtime.InteropServices
-```
+`dscom` installed by `dotnet tool install` can only handle AnyCPU or 64Bit assemblies and can only generate a 64bit TLB.
+Depending on whether you want to process 32bit or 64bit assemblies, you need to download different executables from the [release page](https://github.com/dspace-group/dscom/releases).
 
-dSPACE.Runtime.InteropServices supports the following methods and classes:  
+- **dscom.exe** to create a 64Bit TLB from a AnyCPU or a 64Bit assembly
+- **dscom32.exe** to create a 32Bit TLB from a AnyCPU or a 32Bit assembly
 
-* TypeLibConverter
-  * ConvertAssemblyToTypeLib
-* RegistrationServices
-  * RegisterTypeForComClients
-  * UnregisterTypeForComClients
-
-### TypeLibConverter.ConvertAssemblyToTypeLib
-
-If you miss the `TypeLibConverter` class and the `ConvertAssemblyToTypeLib` method in `.NET`, then the `dSPACE.Runtime.InteropServices` might help you.
-This method should behave compatible to the `.NET Framework` method.
-
-```csharp
-public object? ConvertAssemblyToTypeLib(
-  Assembly assembly,
-  string tlbFilePath,
-  ITypeLibExporterNotifySink? notifySink)
-```
-
-<https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/>
-
-Example:
-
-```csharp
-using dSPACE.Runtime.InteropServices;
-
-// The assembly to convert
-var assembly = typeof(Program).Assembly;
-
-// Convert to assembly
-var typeLibConverter = new TypeLibConverter();
-var callback = new TypeLibConverterCallback();
-var result = typeLibConverter.ConvertAssemblyToTypeLib(assembly, "MyTypeLib.tlb", callback);
-
-// Get the name of the type library
-var typeLib2 = result as System.Runtime.InteropServices.ComTypes.ITypeLib2;
-if (typeLib2 != null)
-{
-    typeLib2.GetDocumentation(-1, out string name, out _, out _, out _);
-    Console.WriteLine($"TypeLib name: {name}");
-}
-
-// The callback to load additional type libraries, if necessary
-public class TypeLibConverterCallback : ITypeLibExporterNotifySink
-{
-    public void ReportEvent(ExporterEventKind eventKind, int eventCode, string eventMsg)
-    {
-        Console.WriteLine($"{eventCode}: {eventMsg}");
-    }
-
-    public object? ResolveRef(System.Reflection.Assembly assembly)
-    {
-        // Returns additional type libraries
-        return null;
-    }
-}
-```
-
-### RegistrationServices.RegisterTypeForComClients and RegistrationServices.UnregisterTypeForComClients
-
-The `dSPACE.Runtime.InteropServices.RegistrationServices` provides a set of services for registering and unregistering managed assemblies for use from COM.  
-This method is equivalent to calling CoRegisterClassObject in COM.  
-You can register a .NET class so that other applications can connect to it (For example as INPROC_SERVER or as a LOCAL_SERVER).  
-
-A outproc demo application is available here: [examples\outproc](https://github.com/dspace-group/dscom/tree/main/examples/outproc)
-
-Example:  
-
-```csharp
-using dSPACE.Runtime.InteropServices;
-
-var registration = new RegistrationServices();
-var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), 
-  RegistrationClassContext.LocalServer, 
-  RegistrationConnectionType.MultipleUse);
-
-Console.WriteLine($"Press enter to stop the server");
-Console.ReadLine();
-
-registration.UnregisterTypeForComClients(cookie);
-```
+> Warning!  
+> If your assembly is an AnyCPU assembly, then an yourassemblyname.comhost.dll is created as a 64 bit dll.  
+> Therefore after calling regserv32.exe a 64 bit dll is registred.  
+> To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as an AnyCPU assembly.  
+> see: <https://github.com/dotnet/runtime/issues/32493>
 
 ## Migration notes (mscorelib vs System.Private.CoreLib)
 
@@ -351,3 +374,9 @@ classextern forwarder System.Exception
 - Color is converted to `OLE_COLOR`(stdole)
 - No support for `UnmanagedType.CustomMarshaler`
 - No support for .NET Framework assemblies with `AssemblyMetadataAttribute` value ".NETFrameworkAssembly"
+
+### RegisterAssembly
+
+- InProc Registration only will take place, if a comhost assembly is present.
+- No CustomRegisterFunction Or CustomUnRegisterFunction Attribute support
+- No PrimaryInteropAssembly Support
