@@ -14,7 +14,7 @@
 
 The command line client `dscom` is a replacement for `tlbexp.exe` and creates and registers TLBs from .NET assemblies.  
 The `dSPACE.Runtime.InteropServices` library contains various classes and methods for COM.  
-It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.
+It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
 The library `dSPACE.Runtime.InteropServices.BuildTasks` provides build tasks which can be used to automatically generate TLBs at compile time.
 
 > This is an unstable prerelease. Anything may change at any time!
