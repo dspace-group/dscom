@@ -233,9 +233,9 @@ public class RegistrationServices
     {
         static bool TypeMustBeRegistered(Type type)
         {
-            if (type.IsClass || type.IsValueType)
+            if (type.IsGenericType)
             {
-                return true;
+                return false;
             }
 
             if (type.IsAbstract)
@@ -247,6 +247,11 @@ public class RegistrationServices
             if (!type.IsValueType && publicParameterlessCtor is null)
             {
                 return false;
+            }
+
+            if (type.IsClass || type.IsValueType)
+            {
+                return true;
             }
 
             return Marshal.IsTypeVisibleFromCom(type);
