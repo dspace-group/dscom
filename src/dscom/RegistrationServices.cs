@@ -326,8 +326,8 @@ public class RegistrationServices
         var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
 
         using var recordRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Record, true);
-        using var recordKey = recordRootKey?.CreateSubKey(recordId, true);
-        using var recordVersionKey = recordKey?.CreateSubKey(assemblyVersion, true);
+        using var recordKey = recordRootKey?.OpenSubKey(recordId, true);
+        using var recordVersionKey = recordKey?.OpenSubKey(assemblyVersion, true);
 
         recordVersionKey?.DeleteValue(RegistryKeys.Class, false);
 
@@ -339,19 +339,19 @@ public class RegistrationServices
 
         if (IsEmptyRegistryKey(recordVersionKey))
         {
-            recordKey?.DeleteSubKey(assemblyVersion);
+            recordKey?.DeleteSubKey(assemblyVersion, false);
         }
 
         var allVersionsGone = (recordKey?.SubKeyCount ?? 0) == 0;
 
         if (IsEmptyRegistryKey(recordKey))
         {
-            recordRootKey?.DeleteSubKey(recordId);
+            recordRootKey?.DeleteSubKey(recordId, false);
         }
 
         if (IsEmptyRegistryKey(recordRootKey))
         {
-            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.Record);
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.Record, false);
         }
 
         return allVersionsGone;
@@ -435,7 +435,7 @@ public class RegistrationServices
         var value = managedCategoryKey.GetValue(key0);
         if (value is not null && value.GetType() != typeof(string))
         {
-            managedCategoryKey.DeleteValue(key0);
+            managedCategoryKey.DeleteValue(key0, false);
             managedCategoryKey.SetValue(key0, RegistryValues.ManagedCategoryDescription);
         }
         else if (value is not null)
@@ -485,15 +485,15 @@ public class RegistrationServices
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
         var progId = Marshal.GenerateProgIdForType(type);
 
-        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID);
+        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID, true);
 
-        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId);
+        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId, true);
 
         clsIdKey?.DeleteValue(string.Empty, false);
 
-        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32);
+        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32, true);
 
-        using var versionSubKey = inProcServerKey?.CreateSubKey(assemblyVersion);
+        using var versionSubKey = inProcServerKey?.OpenSubKey(assemblyVersion, true);
 
         versionSubKey?.DeleteValue(RegistryKeys.Class, false);
         versionSubKey?.DeleteValue(RegistryKeys.Assembly, false);
@@ -502,7 +502,7 @@ public class RegistrationServices
 
         if (IsEmptyRegistryKey(versionSubKey))
         {
-            inProcServerKey?.DeleteSubKey(assemblyVersion);
+            inProcServerKey?.DeleteSubKey(assemblyVersion, false);
         }
 
         var allVersionsGone = (inProcServerKey?.SubKeyCount ?? 0) == 0;
@@ -520,63 +520,63 @@ public class RegistrationServices
 
         if (IsEmptyRegistryKey(inProcServerKey))
         {
-            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32);
+            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32, false);
         }
 
         if (allVersionsGone && !string.IsNullOrWhiteSpace(progId))
         {
-            using var progIdKey = clsIdKey?.OpenSubKey(RegistryKeys.ProgId);
+            using var progIdKey = clsIdKey?.OpenSubKey(RegistryKeys.ProgId, true);
 
             progIdKey?.DeleteValue(string.Empty, false);
 
             if (IsEmptyRegistryKey(progIdKey))
             {
-                clsIdKey?.DeleteSubKey(RegistryKeys.ProgId);
+                clsIdKey?.DeleteSubKey(RegistryKeys.ProgId, false);
             }
         }
 
-        using var implementedCategoryKey = clsIdKey?.OpenSubKey(RegistryKeys.ImplementedCategories);
+        using var implementedCategoryKey = clsIdKey?.OpenSubKey(RegistryKeys.ImplementedCategories, true);
 
-        using var managedCategoryKey = implementedCategoryKey?.OpenSubKey(RegistryKeys.ManagedCategoryGuid);
+        using var managedCategoryKey = implementedCategoryKey?.OpenSubKey(RegistryKeys.ManagedCategoryGuid, true);
 
         if (IsEmptyRegistryKey(managedCategoryKey))
         {
-            implementedCategoryKey?.DeleteSubKey(RegistryKeys.ManagedCategoryGuid);
+            implementedCategoryKey?.DeleteSubKey(RegistryKeys.ManagedCategoryGuid, false);
         }
 
         if (IsEmptyRegistryKey(implementedCategoryKey))
         {
-            clsIdKey?.DeleteSubKey(RegistryKeys.ImplementedCategories);
+            clsIdKey?.DeleteSubKey(RegistryKeys.ImplementedCategories, false);
         }
 
         if (IsEmptyRegistryKey(clsIdKey))
         {
-            clsIdRootKey?.DeleteSubKey(clsId);
+            clsIdRootKey?.DeleteSubKey(clsId, false);
         }
 
         if (IsEmptyRegistryKey(clsIdRootKey))
         {
-            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID);
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID, false);
         }
 
         if (allVersionsGone && !string.IsNullOrWhiteSpace(progId))
         {
-            using var typeNameKey = Registry.ClassesRoot.OpenSubKey(progId!);
+            using var typeNameKey = Registry.ClassesRoot.OpenSubKey(progId!, true);
 
             typeNameKey?.DeleteValue(string.Empty, false);
 
-            using var progIdClsIdKey = typeNameKey?.OpenSubKey(RegistryKeys.CLSID);
+            using var progIdClsIdKey = typeNameKey?.OpenSubKey(RegistryKeys.CLSID, true);
 
             progIdClsIdKey?.DeleteValue(string.Empty, false);
 
             if (IsEmptyRegistryKey(progIdClsIdKey))
             {
-                typeNameKey?.DeleteSubKeyTree(RegistryKeys.CLSID);
+                typeNameKey?.DeleteSubKey(RegistryKeys.CLSID, false);
             }
 
             if (IsEmptyRegistryKey(typeNameKey))
             {
-                Registry.ClassesRoot.DeleteSubKey(progId!);
+                Registry.ClassesRoot.DeleteSubKey(progId!, false);
             }
         }
 
@@ -624,11 +624,11 @@ public class RegistrationServices
     {
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
 
-        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID);
+        using var clsIdRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.CLSID, true);
 
-        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId);
+        using var clsIdKey = clsIdRootKey?.OpenSubKey(clsId, true);
 
-        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32);
+        using var inProcServerKey = clsIdKey?.OpenSubKey(RegistryKeys.InprocServer32, true);
 
         inProcServerKey?.DeleteValue(RegistryKeys.Class, false);
 
@@ -638,7 +638,7 @@ public class RegistrationServices
 
         inProcServerKey?.DeleteValue(RegistryKeys.CodeBase, false);
 
-        using var versionSubKey = inProcServerKey?.OpenSubKey(assemblyVersion);
+        using var versionSubKey = inProcServerKey?.OpenSubKey(assemblyVersion, true);
 
         versionSubKey?.DeleteValue(RegistryKeys.Class, false);
         versionSubKey?.DeleteValue(RegistryKeys.Assembly, false);
@@ -647,19 +647,19 @@ public class RegistrationServices
 
         if (IsEmptyRegistryKey(versionSubKey))
         {
-            inProcServerKey?.DeleteSubKey(assemblyVersion);
+            inProcServerKey?.DeleteSubKey(assemblyVersion, false);
         }
 
         var allVersionsGone = (inProcServerKey?.SubKeyCount ?? 0) == 0;
 
         if (IsEmptyRegistryKey(inProcServerKey))
         {
-            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32);
+            clsIdKey?.DeleteSubKey(RegistryKeys.InprocServer32, false);
         }
 
         if (IsEmptyRegistryKey(clsIdRootKey))
         {
-            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID);
+            Registry.ClassesRoot.DeleteSubKey(RegistryKeys.CLSID, false);
         }
 
         return allVersionsGone;
