@@ -268,28 +268,43 @@ This way the build stops, if the type library is not exported.
 
 ### Parameters
 
-The build task can be parameterized with the following properties:
+The build task can be parameterized with the following [properties](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-properties?view=vs-2022):
 
-| **Name**                                       | **Description**                                                                                | **Default**                                   |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| _DsComTlbExt                                   | Extension of the resulting type library.                                                       | .tlb                                          |
-| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB                                                          | false                                         |
-| DsComTypeLibraryUniqueId                       | Overwrite the library UUID                                                                     | Empty Guid                                    |
-| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build                       | false                                         |
-| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries                                      | true                                          |
-| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. | false                                         |
-| _DsComExportTypeLibraryTargetFile              | Path to the resulting file.                                                                    | `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
-| _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file.                                                              | `$(TargetPath)` *                             |
+| **Name**                                       | **Description**                                                                                |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                                                                          |
+| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                                                         | false                                         |
+| DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                    |
+| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false`                                         |
+| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`                                          |
+| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false`                                         |
+| _DsComExportTypeLibraryTargetFile              | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
+| _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                             |
 
 *) This value cannot be overridden.
 
-The build task consumes the following items:
+The build task consumes the following [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):
 
 | **Name**                     | **Description**                                          |
 | ---------------------------- | -------------------------------------------------------- |
 | DsComTlbExportTlbReferences  | Referenced type library files.                           |
 | DsComTlbExportReferencePaths | Directories containing type libraries to use for export. |
 | DsComTlbExportAssemblyPaths  | Assemblies to add for the export.                        |
+
+### Example
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <DsComTypeLibraryUniqueId>f74a0889-2959-4e7b-9a1b-f41c54f31d74</DsComTypeLibraryUniqueId>
+   </PropertyGroup>
+   <ItemGroup>
+    <DsComTlbExportTlbReferences Include="C:\Path\To\My.tlb" />
+    <DsComTlbExportAssemblyPaths Include="C:\Path\To\Assemblies\Dependency.dll" />
+    <DsComTlbExportReferencePaths Include="C:\Path\To\Additional\TypeLibraries\" />
+   </ItemGroup>
+</Project>
+```
 
 ## 32Bit support
 
