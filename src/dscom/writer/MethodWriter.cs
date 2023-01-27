@@ -14,6 +14,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using FUNCFLAGS = System.Runtime.InteropServices.ComTypes.FUNCFLAGS;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
@@ -147,6 +148,16 @@ internal class MethodWriter : BaseWriter
         string[] names;
         try
         {
+            FUNCFLAGS flags = 0;
+            var flagsAttrs = MethodInfo.GetCustomAttributes<Attributes.FuncFlagsAttribute>();
+            if (flagsAttrs != null && flagsAttrs.Any())
+            {
+                foreach (var flagAttr in flagsAttrs)
+                {
+                    flags = flagAttr.UpdateFlags(flags);
+                }
+            }
+
             FUNCDESC? funcDesc = new FUNCDESC
             {
                 callconv = CALLCONV.CC_STDCALL,
@@ -160,7 +171,7 @@ internal class MethodWriter : BaseWriter
                 lprgscode = IntPtr.Zero,
                 memid = memidCreated,
                 oVft = (short)vTableOffset,
-                wFuncFlags = 0
+                wFuncFlags = (short)flags
             };
 
             //Check if method still enabled. If a parameter is not enabled, the method should not be created.
