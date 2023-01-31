@@ -91,6 +91,15 @@ internal abstract class TypeWriter : BaseWriter
             TypeInfo.SetCustData(new Guid(Guids.GUID_ManagedName), SourceType.ToString())
                 .ThrowIfFailed($"Failed to set custom data for {Name}.");
 
+            var flagsAttrs = SourceType.GetCustomAttributes<Attributes.TypeFlagsAttribute>();
+            if (flagsAttrs != null && flagsAttrs.Any())
+            {
+                foreach (var flagAttr in flagsAttrs)
+                {
+                    TypeFlags = flagAttr.UpdateFlags(TypeFlags);
+                }
+            }
+
             TypeInfo.SetTypeFlags((uint)TypeFlags)
                 .ThrowIfFailed($"Failed to set type flags for {Name}.");
 
