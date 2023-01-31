@@ -20,7 +20,7 @@ namespace dSPACE.Runtime.InteropServices;
 public interface ITypeLibExporterNameProvider
 {
     /// <summary>
-    /// Returns a list of names that can be used to specify the casing of type library elements.
+    /// Returns a name resolver to be used for aliasing the types in the type library.
     /// </summary>
-    string[] GetNames();
+    INameResolver GetNameResolver();
 }

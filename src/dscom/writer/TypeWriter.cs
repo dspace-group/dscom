@@ -75,7 +75,7 @@ internal abstract class TypeWriter : BaseWriter
 
         if (typeLib != null)
         {
-            typeLib.CreateTypeInfo(Context.NameResolver.GetMappedName(Name), TypeKind, out var createTypeInfo)
+            typeLib.CreateTypeInfo(Context.NameResolver.GetMappedName(SourceType, Name), TypeKind, out var createTypeInfo)
                     .ThrowIfFailed($"Failed to create type info for {Name}.");
 
             _createTypeInfo2 = (ICreateTypeInfo2)createTypeInfo;

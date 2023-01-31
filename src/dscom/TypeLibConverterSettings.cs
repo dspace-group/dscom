@@ -48,4 +48,10 @@ public class TypeLibConverterSettings
     /// Gets or sets the type library GUID.
     /// </summary>
     public Guid OverrideTlbId { get; set; } = Guid.Empty;
+
+    /// <summary>
+    /// Gets or sets an array if names that should be used.
+    /// </summary>
+    public string[] Names { get; set; } = Array.Empty<string>();
+
 }

@@ -22,21 +22,29 @@ namespace dSPACE.Runtime.InteropServices.BuildTasks;
 /// Implementation of the a <see cref="ITypeLibExporterNotifySink" />
 /// forwarding all messages to the MsBuild log.
 /// </summary>
-internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink
+internal sealed class LoggingTypeLibExporterSink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
 {
     /// <summary>
     /// The logging sink.
     /// </summary>
     private readonly TaskLoggingHelper _log;
 
+    private readonly INameResolver _nameResolver;
+
     /// <summary>
     /// Creates a new instance of the <see cref="LoggingTypeLibExporterSink" />
     /// using the specified <paramref name="log" /> as logging target.
     /// </summary>
     /// <param name="log">The log to write to.</param>
-    internal LoggingTypeLibExporterSink(TaskLoggingHelper log)
+    internal LoggingTypeLibExporterSink(TaskLoggingHelper log, INameResolver nameResolver)
     {
         _log = log;
+        _nameResolver = nameResolver;
+    }
+
+    public INameResolver GetNameResolver()
+    {
+        return _nameResolver;
     }
 
     /// <inheritdoc cref="ITypeLibExporterNotifySink.ReportEvent" />

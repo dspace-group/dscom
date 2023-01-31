@@ -80,7 +80,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             var converter = new TypeLibConverter();
 
             // Create event handler.
-            var sink = new LoggingTypeLibExporterSink(log);
+            var sink = new LoggingTypeLibExporterSink(log, NameResolver.Create(assembly));
             // create conversion.
             var tlb = converter.ConvertAssemblyToTypeLib(assembly, settings, sink);
             if (tlb == null)

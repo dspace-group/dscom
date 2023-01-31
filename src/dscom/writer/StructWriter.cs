@@ -60,7 +60,7 @@ internal sealed class StructWriter : TypeWriter
                 };
 
                 TypeInfo.AddVarDesc(index, varDesc).ThrowIfFailed($"Error adding {item.Name} to {SourceType.Name}.");
-                TypeInfo.SetVarName(index, Context.NameResolver.GetMappedName(item.Name)).ThrowIfFailed($"Error setting name {item.Name} for {item.FieldType} in {SourceType.Name}.");
+                TypeInfo.SetVarName(index, Context.NameResolver.GetMappedName(SourceType, item.Name)).ThrowIfFailed($"Error setting name {item.Name} for {item.FieldType} in {SourceType.Name}.");
             }
             index++;
         }

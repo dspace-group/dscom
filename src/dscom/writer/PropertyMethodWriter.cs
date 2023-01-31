@@ -19,10 +19,11 @@ namespace dSPACE.Runtime.InteropServices.Writer;
 
 internal class PropertyMethodWriter : MethodWriter
 {
+    private readonly PropertyInfo? _propertyInfo;
     public PropertyMethodWriter(InterfaceWriter interfaceWriter, MethodInfo methodInfo, WriterContext context, string methodName) : base(interfaceWriter, methodInfo, context, methodName)
     {
-        var propertyInfo = methodInfo.DeclaringType!.GetProperty(GetPropertyName());
-        MemberInfo = propertyInfo!;
+        _propertyInfo = methodInfo.DeclaringType!.GetProperty(GetPropertyName());
+        MemberInfo = _propertyInfo!;
     }
 
     protected override bool IsComVisible
@@ -38,17 +39,17 @@ internal class PropertyMethodWriter : MethodWriter
     {
         var names = new List<string>();
         var propertyName = GetPropertyName();
-        propertyName = Context.NameResolver.GetMappedName(propertyName);
-        names.Add(propertyName);
+        propertyName = _propertyInfo != null ? Context.NameResolver.GetMappedName(_propertyInfo, propertyName) : null;
+        names.Add(propertyName!);
 
         if (InvokeKind == INVOKEKIND.INVOKE_PROPERTYGET)
         {
-            MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p.Name ?? string.Empty)));
+            MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
 
         if (InvokeKind == INVOKEKIND.INVOKE_PROPERTYPUTREF)
         {
-            MethodInfo.GetParameters().Where(p => !string.IsNullOrEmpty(p.Name)).ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p.Name ?? string.Empty)));
+            MethodInfo.GetParameters().Where(p => !string.IsNullOrEmpty(p.Name)).ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
 
         if (UseHResultAsReturnValue && InvokeKind == INVOKEKIND.INVOKE_PROPERTYGET)

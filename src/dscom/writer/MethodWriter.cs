@@ -212,10 +212,10 @@ internal class MethodWriter : BaseWriter
     protected virtual List<string> GetNamesForParameters()
     {
         var names = new List<string>();
-        var methodName = Context.NameResolver.GetMappedName(MethodName);
+        var methodName = Context.NameResolver.GetMappedName(MethodInfo, MethodName);
         names.Add(methodName);
 
-        MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p.Name ?? string.Empty)));
+        MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
 
         if (UseHResultAsReturnValue && MethodInfo.ReturnType != typeof(void))
         {

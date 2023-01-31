@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using dSPACE.Runtime.InteropServices.Attributes;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
@@ -47,6 +48,68 @@ public class NamesTest : BaseTest
         typeLibInfo.Should().NotBeNull();
         kv = typeLibInfo!.GetAllEnumValues();
         kv.Should().OnlyContain(z => z.Key.StartsWith("tolowercase"));
+    }
+
+    [Fact]
+    public void EnumWithAlias_IsChanged()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithCustomAttribute<ComAliasAttribute>("froofroo")
+                .WithLiteral("A", 1)
+                .WithLiteral("B", 20)
+                .WithLiteral("C", 50)
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key.StartsWith("froofroo"));
+    }
+
+    [Fact]
+    public void EnumWithAliasBothLevels_AreIndependent()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithCustomAttribute<ComAliasAttribute>("froofroo")
+                .WithLiteralAndAttribute("A", 1, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizz" })
+                .WithLiteralAndAttribute("B", 20, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "buzz" })
+                .WithLiteralAndAttribute("C", 50, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizzbuzz" })
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
+    }
+
+    [Fact]
+    public void EnumWithMemberAlias_IsChanged()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithLiteralAndAttribute("A", 1, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizz" })
+                .WithLiteralAndAttribute("B", 20, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "buzz" })
+                .WithLiteralAndAttribute("C", 50, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizzbuzz" })
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
     }
 
     [Fact]
