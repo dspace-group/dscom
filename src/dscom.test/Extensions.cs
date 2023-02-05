@@ -288,4 +288,33 @@ public static class Extensions
                 return VarEnum.VT_USERDEFINED;
         }
     }
+
+    [StructLayout(LayoutKind.Explicit)]
+    private struct IntPtrUnion
+    {
+        [FieldOffset(0)]
+        public IntPtr Ptr;
+
+        [FieldOffset(0)]
+        public int Low;
+
+        [FieldOffset(4)]
+        public int High;
+    }
+
+    public static int GetUpperBits(this IntPtr ptr)
+    {
+        return new IntPtrUnion
+        {
+            Ptr = ptr
+        }.High;
+    }
+
+    public static int GetLowerBits(this IntPtr ptr)
+    {
+        return new IntPtrUnion
+        {
+            Ptr = ptr
+        }.Low;
+    }
 }

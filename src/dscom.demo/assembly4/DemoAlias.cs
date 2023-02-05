@@ -12,17 +12,3 @@ public interface IFoo
     [ComAlias("DOFOO")]
     void DoFoo();
 }
-
-[
-    ComVisible(true),
-    ComAlias("FrooFroo")
-]
-public enum Fruits
-{
-    [ComAlias("frApple")]
-    Apple,
-    [ComAlias("frBanana")]
-    Banana,
-    [ComAlias("frCherry")]
-    Cherry
-}

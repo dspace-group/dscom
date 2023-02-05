@@ -12,6 +12,7 @@
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <Platforms>AnyCPU;x86</Platforms>
+    <EnableComHosting>true</EnableComHosting>
   </PropertyGroup>
 
   <ItemGroup>
