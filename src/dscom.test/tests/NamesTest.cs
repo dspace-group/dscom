@@ -128,10 +128,10 @@ public class NamesTest : BaseTest
         var varValue = Marshal.GetObjectForNativeVariant(paramDesc.lpVarValue + sizeof(ulong));
         varValue.Should().Be(20);
 
-        typeLibInfo!.GetRefTypeInfo(funcDesc.elemdescFunc.tdesc.lpValue.GetLowerBits(), out var returnType);
+        typeLibInfo!.GetRefTypeInfo(funcDesc.elemdescFunc.tdesc.lpValue.ExtractInt32(), out var returnType);
         returnType.GetName().Should().Be("froofroo");
 
-        typeLibInfo.GetRefTypeInfo(elemDescParam.tdesc.lpValue.GetLowerBits(), out var paramType);
+        typeLibInfo.GetRefTypeInfo(elemDescParam.tdesc.lpValue.ExtractInt32(), out var paramType);
         paramType.GetName().Should().Be("froofroo");
     }
 
