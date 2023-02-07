@@ -37,7 +37,7 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
     public INameResolver GetNameResolver()
     {
         return _assembly == null
-            ? NameResolver.CreateFromList(new string[] { "TOUPPERCASE", "tolowercase" }) 
+            ? NameResolver.CreateFromList(new string[] { "TOUPPERCASE", "tolowercase" })
             : NameResolver.Create(_assembly);
     }
 }

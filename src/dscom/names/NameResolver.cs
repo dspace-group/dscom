@@ -1,4 +1,4 @@
-﻿// Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
+// Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using dSPACE.Runtime.InteropServices.Attributes;
 using System.Reflection;
+using dSPACE.Runtime.InteropServices.Attributes;
 
 namespace dSPACE.Runtime.InteropServices;
 

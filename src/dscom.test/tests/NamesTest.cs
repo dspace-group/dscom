@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using dSPACE.Runtime.InteropServices.Attributes;
 using System.Runtime.InteropServices;
+using dSPACE.Runtime.InteropServices.Attributes;
 using static dSPACE.Runtime.InteropServices.Tests.DynamicMethodBuilder;
 
 namespace dSPACE.Runtime.InteropServices.Tests;

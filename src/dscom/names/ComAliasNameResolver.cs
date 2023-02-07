@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using dSPACE.Runtime.InteropServices.Attributes;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using dSPACE.Runtime.InteropServices.Attributes;
 
 namespace dSPACE.Runtime.InteropServices;
 
 internal sealed class ComAliasNameResolver : INameResolver
 {
-    private readonly Dictionary<object, string> _names = new Dictionary<object, string>();
+    private readonly Dictionary<object, string> _names = new();
 
     public ComAliasNameResolver(Assembly assembly)
     {
@@ -29,7 +29,7 @@ internal sealed class ComAliasNameResolver : INameResolver
             .Where(t => t.GetCustomAttribute<ComAliasAttribute>() != null)
             .ToDictionary(t => t as object, t => t.GetCustomAttribute<ComAliasAttribute>()?.Alias ?? string.Empty)
         ;
-        foreach(var kv in types)
+        foreach (var kv in types)
         {
             _names.Add(kv.Key, kv.Value);
         }
