@@ -79,8 +79,14 @@ internal sealed class DefaultBuildContext : IBuildContext
             // Create type library converter.
             var converter = new TypeLibConverter();
 
+            // Choose appropriate name resolver based on inputs with the Com Alias as the fallback.
+            var nameResolver = settings.Names != null && settings.Names.Any()
+                ? NameResolver.Create(settings.Names)
+                : NameResolver.Create(assembly);
+
             // Create event handler.
-            var sink = new LoggingTypeLibExporterSink(log, NameResolver.Create(assembly));
+            var sink = new LoggingTypeLibExporterSink(log, nameResolver);
+
             // create conversion.
             var tlb = converter.ConvertAssemblyToTypeLib(assembly, settings, sink);
             if (tlb == null)
