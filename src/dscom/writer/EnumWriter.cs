@@ -29,14 +29,15 @@ internal sealed class EnumWriter : TypeWriter
         ((ITypeInfo)TypeInfo).GetDocumentation(-1, out var name, out var docString, out var helpContext, out var helpFile);
 
         uint index = 0;
-        var enumNames = SourceType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-            .OrderBy(field => field.MetadataToken).Select(fieldInfo => fieldInfo.Name);
-        foreach (var item in enumNames)
+        var fields =
+            SourceType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .OrderBy(field => field.MetadataToken);
+        foreach (var field in fields)
         {
             var varDesc = new VARDESC();
             var varDescSymbConst = new VARIANT();
 
-            var enumValue = Enum.Parse(SourceType, item.ToString());
+            var enumValue = Enum.Parse(SourceType, field.Name.ToString());
             var enumLongValue = (long)Convert.ChangeType(enumValue, typeof(long), CultureInfo.InvariantCulture);
             varDescSymbConst.byref = new IntPtr(enumLongValue);
             varDescSymbConst.vt = VarEnum.VT_I4;
@@ -54,7 +55,7 @@ internal sealed class EnumWriter : TypeWriter
 
             TypeInfo.AddVarDesc(index, varDesc)
                 .ThrowIfFailed($"Failed to add variable description for enum {Name}.");
-            TypeInfo.SetVarName(index, $"{Context.NameResolver.GetMappedName(Name)}_{item}")
+            TypeInfo.SetVarName(index, Context.NameResolver.GetMappedName(field, $"{Name}_{field.Name}"))
                 .ThrowIfFailed($"Failed to set variable name for enum {Name}.");
             index++;
         }

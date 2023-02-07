@@ -162,7 +162,8 @@ public static class ConsoleApp
 
                 var assembly = Assembly.LoadFrom(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
-                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options));
+                var nameResolver = options.Names.Any() ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
+                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options, nameResolver));
 
                 if (typeLib is ICreateTypeLib2 createTypeLib2)
                 {

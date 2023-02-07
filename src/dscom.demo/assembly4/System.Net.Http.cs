@@ -12,15 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices;
-
-/// <summary>
-/// Provides a list of names that can be used to specify the casing of type library elements.
-/// </summary>
-public interface ITypeLibExporterNameProvider
-{
-    /// <summary>
-    /// Returns a name resolver to be used for aliasing the types in the type library.
-    /// </summary>
-    INameResolver GetNameResolver();
-}
+namespace System.Net.Http;

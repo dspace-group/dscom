@@ -33,12 +33,38 @@ internal sealed class DynamicEnumBuilder : DynamicBuilder<DynamicEnumBuilder>
     public string Namespace { get; private set; } = "dSPACE.Test";
 
     public Dictionary<string, object?> EnumValues { get; } = new();
+    public Dictionary<string, CustomAttributeBuilder> EnumMemberAttributes { get; } = new();
 
     protected override AttributeTargets AttributeTarget => AttributeTargets.Enum;
 
     public DynamicEnumBuilder WithLiteral(string name, object? value)
     {
         EnumValues[name] = value;
+        return this;
+    }
+
+    public DynamicEnumBuilder WithLiteralAndAttribute(string name, object? value, Type type, Type[]? constructorParamTypes, object[]? values)
+    {
+        WithLiteral(name, value);
+
+        var attributeConstructor = type.GetConstructor(constructorParamTypes ?? Array.Empty<Type>());
+        if (attributeConstructor == null)
+        {
+            throw new ArgumentException($"Constructor for {type} not found");
+        }
+
+        var attributeUsageAttribute = type.GetCustomAttribute<AttributeUsageAttribute>();
+        if (attributeUsageAttribute != null)
+        {
+            if (!attributeUsageAttribute.ValidOn.HasFlag(AttributeTarget))
+            {
+                throw new ArgumentException($"Attribute {type.Name} not allowed here.");
+            }
+        }
+
+        var attributeBuilder = new CustomAttributeBuilder(attributeConstructor!, values ?? Array.Empty<object>());
+        EnumMemberAttributes.Add(name, attributeBuilder);
+
         return this;
     }
 
@@ -54,7 +80,12 @@ internal sealed class DynamicEnumBuilder : DynamicBuilder<DynamicEnumBuilder>
         foreach (var kv in EnumValues)
         {
             var enumValue = Convert.ChangeType(kv.Value, EnumBuilder.UnderlyingSystemType, CultureInfo.InvariantCulture);
-            EnumBuilder.DefineLiteral(kv.Key, enumValue);
+            var member = EnumBuilder.DefineLiteral(kv.Key, enumValue);
+
+            if (EnumMemberAttributes.TryGetValue(kv.Key, out var attributeBuilder))
+            {
+                member.SetCustomAttribute(attributeBuilder);
+            }
         }
 
         createdType = EnumBuilder.CreateType();

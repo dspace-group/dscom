@@ -16,7 +16,11 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
 {
-    public TypeLibExporterNotifySink() { }
+    private readonly Assembly? _assembly;
+    public TypeLibExporterNotifySink(Assembly? assembly)
+    {
+        _assembly = assembly;
+    }
 
     public List<ReportedEvent> ReportedEvents { get; } = new List<ReportedEvent>();
 
@@ -30,9 +34,11 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
         return null!;
     }
 
-    public string[] GetNames()
+    public INameResolver GetNameResolver()
     {
-        return new string[] { "TOUPPERCASE", "tolowercase" };
+        return _assembly == null
+            ? NameResolver.CreateFromList(new string[] { "TOUPPERCASE", "tolowercase" })
+            : NameResolver.Create(_assembly);
     }
 }
 

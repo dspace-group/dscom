@@ -49,7 +49,7 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
         return null;
     }
 
-    public DynamicAssemblyBuilderResult Build(bool storeOnDisk = true, bool skipTlbExeCall = false)
+    public DynamicAssemblyBuilderResult Build(bool storeOnDisk = true, bool skipTlbExeCall = false, bool useComAlias = false)
     {
         foreach (var customAttributeBuilder in CustomAttributeBuilder)
         {
@@ -65,10 +65,10 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
         }
 
         var typeLibConverter = new TypeLibConverter();
-
+        var assembly = ModuleBuilder.Assembly;
         var tlbFilePath = storeOnDisk ? TypeLibPath : string.Empty;
-        var typeLibExporterNotifySink = new TypeLibExporterNotifySink();
-        if (typeLibConverter.ConvertAssemblyToTypeLib(ModuleBuilder.Assembly, tlbFilePath, typeLibExporterNotifySink) is not ITypeLib2 typelib)
+        var typeLibExporterNotifySink = new TypeLibExporterNotifySink(useComAlias ? assembly : null);
+        if (typeLibConverter.ConvertAssemblyToTypeLib(assembly, tlbFilePath, typeLibExporterNotifySink) is not ITypeLib2 typelib)
         {
             throw new COMException("Cannot create type library for this dynamic assembly");
         }

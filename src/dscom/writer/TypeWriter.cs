@@ -75,7 +75,7 @@ internal abstract class TypeWriter : BaseWriter
 
         if (typeLib != null)
         {
-            typeLib.CreateTypeInfo(Context.NameResolver.GetMappedName(Name), TypeKind, out var createTypeInfo)
+            typeLib.CreateTypeInfo(Context.NameResolver.GetMappedName(SourceType, Name), TypeKind, out var createTypeInfo)
                     .ThrowIfFailed($"Failed to create type info for {Name}.");
 
             _createTypeInfo2 = (ICreateTypeInfo2)createTypeInfo;
@@ -90,6 +90,15 @@ internal abstract class TypeWriter : BaseWriter
 
             TypeInfo.SetCustData(new Guid(Guids.GUID_ManagedName), SourceType.ToString())
                 .ThrowIfFailed($"Failed to set custom data for {Name}.");
+
+            var flagsAttrs = SourceType.GetCustomAttributes<Attributes.TypeFlagsAttribute>();
+            if (flagsAttrs != null && flagsAttrs.Any())
+            {
+                foreach (var flagAttr in flagsAttrs)
+                {
+                    TypeFlags = flagAttr.UpdateFlags(TypeFlags);
+                }
+            }
 
             TypeInfo.SetTypeFlags((uint)TypeFlags)
                 .ThrowIfFailed($"Failed to set type flags for {Name}.");

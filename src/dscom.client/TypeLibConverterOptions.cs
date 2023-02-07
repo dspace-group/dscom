@@ -25,11 +25,6 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     public bool Silent { get; set; }
 
     /// <summary>
-    /// Gets or sets an array if names that should be users.
-    /// </summary>
-    public string[] Names { get; set; } = Array.Empty<string>();
-
-    /// <summary>
     /// Gets or sets an array of warnings that should ignored.
     /// </summary>
     /// <returns></returns>

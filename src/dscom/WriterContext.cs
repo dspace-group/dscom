@@ -21,9 +21,10 @@ internal sealed class WriterContext
         Options = options;
         TargetTypeLib = targetTypeLib;
         NotifySink = notifySink;
-        NameResolver = new NameResolver(notifySink is ITypeLibExporterNameProvider provider ?
-            provider.GetNames() :
-            Array.Empty<string>());
+        NameResolver = notifySink is ITypeLibExporterNameProvider provider
+            ? provider.GetNameResolver()
+            : InteropServices.NameResolver.CreateFromList(Array.Empty<string>());
+
         if (NotifySink is ITypeLibCacheProvider typeLibCacheProvider)
         {
             if (typeLibCacheProvider.TypeLibCache is TypeInfoResolver typeInfoResolver)
@@ -42,7 +43,7 @@ internal sealed class WriterContext
 
     public TypeLibConverterSettings Options { get; private set; }
 
-    public NameResolver NameResolver { get; private set; }
+    public INameResolver NameResolver { get; private set; }
 
     public void LogTypeExported(string message)
     {

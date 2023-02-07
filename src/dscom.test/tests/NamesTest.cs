@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using dSPACE.Runtime.InteropServices.Attributes;
+using static dSPACE.Runtime.InteropServices.Tests.DynamicMethodBuilder;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -47,6 +49,110 @@ public class NamesTest : BaseTest
         typeLibInfo.Should().NotBeNull();
         kv = typeLibInfo!.GetAllEnumValues();
         kv.Should().OnlyContain(z => z.Key.StartsWith("tolowercase"));
+    }
+
+    [Fact]
+    public void EnumWithAlias_IsChanged()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithCustomAttribute<ComAliasAttribute>("froofroo")
+                .WithLiteral("A", 1)
+                .WithLiteral("B", 20)
+                .WithLiteral("C", 50)
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key.StartsWith("froofroo"));
+    }
+
+    [Fact]
+    public void EnumWithAliasBothLevels_AreIndependent()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithCustomAttribute<ComAliasAttribute>("froofroo")
+                .WithLiteralAndAttribute("A", 1, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizz" })
+                .WithLiteralAndAttribute("B", 20, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "buzz" })
+                .WithLiteralAndAttribute("C", 50, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizzbuzz" })
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
+    }
+
+    [Fact]
+    public void EnumReferences_AreAliasedCorectly()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithCustomAttribute<ComAliasAttribute>("froofroo")
+                .WithLiteralAndAttribute("A", 1, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizz" })
+                .WithLiteralAndAttribute("B", 20, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "buzz" })
+                .WithLiteralAndAttribute("C", 50, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizzbuzz" })
+                .Build(out var enumType)
+            .WithInterface("_enumAlias")
+                .WithMethod("getFruit")
+                    .WithParameter(new ParameterItem(enumType!, null, new DefaultValue(20)))
+                    .WithReturnType(enumType!)
+                    .Build()
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("_enumAlias");
+        typeLibInfo.Should().NotBeNull();
+
+        var funcDescValue = typeLibInfo!.GetFuncDescByName("getFruit");
+        funcDescValue!.Value.Should().NotBeNull();
+        var funcDesc = funcDescValue.Value;
+
+        var elemDescParam = funcDesc.GetParameter(0)!.Value;
+        var paramDesc = elemDescParam.desc.paramdesc;
+        paramDesc.Should().NotBeNull();
+
+        // the lpVarValue points to a PARAMDESCEX, but we don't care about the size, so dereference the VARIANTARG
+        // structure directly at the offset'd address.
+        var varValue = Marshal.GetObjectForNativeVariant(paramDesc.lpVarValue + sizeof(ulong));
+        varValue.Should().Be(20);
+
+        typeLibInfo!.GetRefTypeInfo(funcDesc.elemdescFunc.tdesc.lpValue.ExtractInt32(), out var returnType);
+        returnType.GetName().Should().Be("froofroo");
+
+        typeLibInfo.GetRefTypeInfo(elemDescParam.tdesc.lpValue.ExtractInt32(), out var paramType);
+        paramType.GetName().Should().Be("froofroo");
+    }
+
+    [Fact]
+    public void EnumWithMemberAlias_IsChanged()
+    {
+        var result = CreateAssembly()
+            .WithEnum("touppercase", typeof(int))
+                .WithCustomAttribute<ComVisibleAttribute>(true)
+                .WithLiteralAndAttribute("A", 1, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizz" })
+                .WithLiteralAndAttribute("B", 20, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "buzz" })
+                .WithLiteralAndAttribute("C", 50, typeof(ComAliasAttribute), new Type[] { typeof(string) }, new object[] { "fizzbuzz" })
+                .Build()
+            .Build(useComAlias: true);
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
+        typeLibInfo.Should().BeNull();
+        typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
+        typeLibInfo.Should().NotBeNull();
+        var kv = typeLibInfo!.GetAllEnumValues();
+        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
     }
 
     [Fact]

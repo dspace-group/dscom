@@ -288,4 +288,36 @@ public static class Extensions
                 return VarEnum.VT_USERDEFINED;
         }
     }
+
+    /// <summary>
+    /// Some <see cref="IntPtr"/> will contain a value that should be parsed as an <see cref="int"/>
+    /// and this requires extracting the lower portions. On 32-bit builds, it'll be the same, but on
+    /// 64-builds, we need to exclude the higher half of the 8 bytes to get the correct value of the
+    /// <see cref="int"/>.
+    /// </summary>
+    /// <param name="ptr">The pointer that contains some value that should be extracted as an <see cref="int"/>.</param>
+    /// <returns>
+    /// The <see cref="int" /> at the same offset as the <paramref name="ptr"/>, truncating the bits beyond the <see cref="int"/>
+    /// region.
+    /// </returns>
+    public static int ExtractInt32(this IntPtr ptr)
+    {
+        return new IntPtrUnion
+        {
+            Ptr = ptr
+        }.Int;
+    }
+
+    /// <remarks>
+    /// Refer to <see cref="ExtractInt32(IntPtr)"/> for details.
+    /// </remarks>
+    [StructLayout(LayoutKind.Explicit)]
+    private struct IntPtrUnion
+    {
+        [FieldOffset(0)]
+        public IntPtr Ptr;
+
+        [FieldOffset(0)]
+        public int Int;
+    }
 }

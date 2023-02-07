@@ -21,14 +21,14 @@ namespace dSPACE.Runtime.InteropServices;
 /// </summary>
 public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider, ITypeLibCacheProvider
 {
-    public TypeLibExporterNotifySink(TypeLibConverterOptions options)
+    private readonly INameResolver _nameResolver;
+
+    public TypeLibExporterNotifySink(TypeLibConverterOptions options, INameResolver nameResolver)
     {
         Options = options;
 
-        CollectNames();
+        _nameResolver = nameResolver;
     }
-
-    private List<string> Names { get; } = new();
 
     public TypeLibConverterOptions Options { get; }
 
@@ -115,24 +115,8 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
     /// <summary>
     /// Returns a list of names that can be used to specify the casing of type library elements.
     /// </summary>
-    public virtual string[] GetNames()
+    public INameResolver GetNameResolver()
     {
-        return Names.ToArray();
-    }
-
-    /// <summary>
-    /// Read all names from all files specified in the "Names" option.
-    /// </summary>
-    private void CollectNames()
-    {
-        foreach (var fileName in Options.Names)
-        {
-            if (!File.Exists(fileName))
-            {
-                throw new ArgumentException($"Given names file {fileName} does not exist.");
-            }
-
-            File.ReadLines(fileName).ToList().ForEach(n => Names.Add(n));
-        }
+        return _nameResolver;
     }
 }
