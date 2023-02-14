@@ -45,6 +45,7 @@
       SourceAssemblyFile="$(_DsComExportTypeLibraryAssemblyFile)"
       TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
       TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
-      AssemblyPaths="@(DsComTlbExportAssemblyPaths)" />
+      AssemblyPaths="@(DsComTlbExportAssemblyPaths)"
+      Names="@(DsComTlbAliasNames)" />
   </Target>
 </Project>

@@ -290,6 +290,7 @@ The build task consumes the following [items](https://learn.microsoft.com/en-us/
 | DsComTlbExportTlbReferences  | Referenced type library files.                           |
 | DsComTlbExportReferencePaths | Directories containing type libraries to use for export. |
 | DsComTlbExportAssemblyPaths  | Assemblies to add for the export.                        |
+| DsComTlbAliasNames           | Names to use as aliases for types with aliases.          |
 
 ### Example
 

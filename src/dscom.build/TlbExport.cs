@@ -88,6 +88,11 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// </summary>
     public ITaskItem[] AssemblyPaths { get; set; } = Array.Empty<ITaskItem>();
 
+    /// <summary>
+    /// Gets or sets the names to map to a new resolved name.
+    /// </summary>
+    public string[] Names { get; set; } = Array.Empty<string>();
+
     /// <inheritdoc cref="Task.Execute()" />
     public override bool Execute()
     {
@@ -170,6 +175,8 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
         checks.VerifyFilesPresent(settings.TLBReference, false, ref result);
         checks.VerifyDirectoriesPresent(settings.TLBRefpath, false, ref result);
         checks.VerifyFilesPresent(settings.ASMPath, false, ref result);
+
+        settings.Names = Names ?? Array.Empty<string>();
 
         // run conversion, if result has been successful.
         result = result && _context.ConvertAssemblyToTypeLib(settings, Log);
