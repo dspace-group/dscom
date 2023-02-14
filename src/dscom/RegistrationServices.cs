@@ -436,6 +436,41 @@ public class RegistrationServices
 
         using var managedCategoryKeyForImplemented = implementedCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
 
+        EnsureManageCategoryIsPresent();
+    }
+
+    private static bool HasManagedCategory()
+    {
+        using var componentCategoryKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.ComponentCategories, false);
+        if (componentCategoryKey is null)
+        {
+            return false;
+        }
+
+        using var managedCategoryKeyCheck = componentCategoryKey.OpenSubKey(RegistryKeys.ManagedCategoryGuid, false);
+        if (managedCategoryKeyCheck is null)
+        {
+            return false;
+        }
+
+        var key0 = Convert.ToString(0, CultureInfo.InvariantCulture);
+        var value = managedCategoryKeyCheck.GetValue(key0);
+        if (value is null || value.GetType() != typeof(string))
+        {
+            return false;
+        }
+
+        var exactValue = (string)value;
+        return StringComparer.InvariantCulture.Equals(exactValue, RegistryValues.ManagedCategoryDescription);
+    }
+
+    private static void EnsureManageCategoryIsPresent()
+    {
+        if (HasManagedCategory())
+        {
+            return;
+        }
+
         using var componentCategoryKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.ComponentCategories);
         using var managedCategoryKey = componentCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
 
