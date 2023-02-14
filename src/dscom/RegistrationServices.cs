@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32;
 
 namespace dSPACE.Runtime.InteropServices;
@@ -40,6 +41,10 @@ public class RegistrationServices
         public const string ThreadingModel = nameof(ThreadingModel);
         public const string InprocServer32 = nameof(InprocServer32);
         public const string ProgId = nameof(ProgId);
+
+        public const string Software = nameof(Software);
+
+        public const string Classes = nameof(Classes);
 
         public const string ManagedCategoryGuid = "{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}"; // Found in mscorelib
 
@@ -305,7 +310,8 @@ public class RegistrationServices
 
         var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
 
-        using var recordRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.Record);
+        using var rootKey = GetTargetRootKey();
+        using var recordRootKey = rootKey.CreateSubKey(RegistryKeys.Record);
         using var recordKey = recordRootKey.CreateSubKey(recordId);
         using var recordVersionKey = recordKey.CreateSubKey(assemblyVersion);
 
@@ -325,7 +331,8 @@ public class RegistrationServices
     {
         var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
 
-        using var recordRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Record, true);
+        using var rootKey = GetTargetRootKey();
+        using var recordRootKey = rootKey.OpenSubKey(RegistryKeys.Record, true);
         using var recordKey = recordRootKey?.OpenSubKey(recordId, true);
         using var recordVersionKey = recordKey?.OpenSubKey(assemblyVersion, true);
 
@@ -368,9 +375,10 @@ public class RegistrationServices
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
         var progId = Marshal.GenerateProgIdForType(type);
 
+        using var rootKey = GetTargetRootKey();
         if (!string.IsNullOrWhiteSpace(progId))
         {
-            using var typeNameKey = Registry.ClassesRoot.CreateSubKey(progId!);
+            using var typeNameKey = rootKey.CreateSubKey(progId!);
 
             typeNameKey.SetValue(string.Empty, docString);
 
@@ -379,7 +387,7 @@ public class RegistrationServices
             progIdClsIdKey.SetValue(string.Empty, clsId);
         }
 
-        using var clsIdRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.CLSID);
+        using var clsIdRootKey = rootKey.CreateSubKey(RegistryKeys.CLSID);
 
         using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
 
@@ -674,4 +682,37 @@ public class RegistrationServices
 
         return key!.SubKeyCount == 0 && key!.ValueCount == 0;
     }
+
+    private static RegistryKey GetTargetRootKey()
+    {
+        // According to
+        // https://learn.microsoft.com/en-us/windows/win32/sysinfo/merged-view-of-hkey-classes-root
+        // COM registration can take place per user without elevated permissions.
+        if (CanWriteGlobalRegistry())
+        {
+            return Registry.ClassesRoot;
+        }
+
+        var root = Registry.CurrentUser;
+        using var software = root.CreateSubKey(RegistryKeys.Software, true);
+        var classes = software.CreateSubKey(RegistryKeys.Software, true);
+        return classes;
+    }
+
+    private static bool CanWriteGlobalRegistry()
+    {
+        try
+        {
+            _ = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Software.ToUpperInvariant());
+            // This must be done using exceptions, since RegistryPermissions from CAS
+            // Will no longer work in .NET 6 and above and will return true always.
+
+            return true;
+        }
+        catch (Exception e) when (e is UnauthorizedAccessException or SecurityException)
+        {
+            return false;
+        }
+    }
+
 }
