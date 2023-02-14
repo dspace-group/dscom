@@ -42,5 +42,6 @@
     <DsComTlbExportTlbReferences Remove="*" />
     <DsComTlbExportReferencePaths Remove="*" />
     <DsComTlbExportAssemblyPaths Remove="*" />
+    <DsComTlbAliasNames Remove="*" />
   </ItemGroup>
 </Project>
