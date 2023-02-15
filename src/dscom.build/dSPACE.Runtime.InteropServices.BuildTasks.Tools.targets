@@ -44,6 +44,7 @@
       <_DsComTypeLibraryReferencePaths Condition="@(DsComTlbExportReferencePaths->Count()) &gt; 0">--tlbrefpath "@(DsComTlbExportReferencePaths, '"--tlbrefpath "')"</_DsComTypeLibraryReferencePaths>
       <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithoutHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithoutHintPath, '"--asmpath "')"</_DsComAssemblyReferences>
       <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithHintPath->GetMetadata('HintPath'), '"--asmpath "')"</_DsComAssemblyReferences>
+      <_DsComAliasNames Condition="@(DsComTlbAliasNames->Count() &gt; 0)">--names @(DsComTlbAliasNames, --names)</_DsComAliasNames>
       <_DsComArguments>tlbexport</_DsComArguments>
       <_DsComArguments Condition="'$(DsComTypeLibraryUniqueId)' != '' AND '$(DsComTypeLibraryUniqueId)' != '$([System.Guid]::Empty.ToString())'">$(_DsComArguments) --overridetlbid "$(DsComTypeLibraryUniqueId)"</_DsComArguments>
       <_DsComArguments Condition="'$(DsComToolVerbose)' == 'true'"> $(_DsComArguments) --verbose</_DsComArguments>
@@ -51,6 +52,7 @@
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComExportTypeLibraryAssemblyFile)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) --out $(_DsComExportTypeLibraryTargetFile)</_DsComArguments>
     </PropertyGroup>
     
