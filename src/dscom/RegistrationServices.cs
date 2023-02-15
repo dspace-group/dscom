@@ -10,10 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32;
 
 namespace dSPACE.Runtime.InteropServices;
@@ -25,6 +27,57 @@ namespace dSPACE.Runtime.InteropServices;
 [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Compatibility to the mscorelib TypeLibConverter class")]
 public class RegistrationServices
 {
+    /// <summary>
+    /// When registering a managed type to the classes using the
+    /// <see cref="RegisterAssembly(Assembly, bool, ManagedCategoryAction)"/> method,
+    /// the managed registration method can check whether the registry key
+    /// HKEY_CLASSES_ROOT\Component Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}\
+    /// is present and has at least one key representing a locale code having the 
+    /// value ".NET Category".
+    /// </summary>
+    public enum ManagedCategoryAction
+    {
+        /// <summary>
+        /// No check or action is performed.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// A check is performed. If at least one numeric key exist below 
+        /// HKEY_CLASSES_ROOT\Component Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}\
+        /// and all numeric keys have the correct value.
+        /// </summary>
+        FailIfNotPresent,
+
+        /// <summary>
+        /// A check is performed. This is performed like <see cref="FailIfNotPresent"/>, but
+        /// only for a neutral language, i.e. language code 0.
+        /// </summary>
+        FailIfNotPresentOnlyForNeutralLocale,
+
+        /// <summary>
+        /// This will actually create the key and value below 
+        /// HKEY_CLASSES_ROOT\Component Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}\
+        /// concerning only neutral languages, i.e. language code 0.
+        /// This is the original implementation as of 
+        /// <code>System.Runtime.InteropServices.RegisterAssembly(Assembly, RegistrationFlags)</code>.
+        /// If the operation fails, e.g. due to missing privileges or elevation,
+        /// any exception will be transmitted.
+        /// </summary>
+        Create,
+
+        /// <summary>
+        /// This will actually create the key and value below 
+        /// HKEY_CLASSES_ROOT\Component Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}\
+        /// concerning only neutral languages, i.e. language code 0.
+        /// This is the original implementation as of 
+        /// <code>System.Runtime.InteropServices.RegisterAssembly(Assembly, RegistrationFlags)</code>.
+        /// If the operation fails, e.g. due to missing privileges or elevation,
+        /// any exception will be swallowed.
+        /// </summary>
+        CreateSilently
+    }
+
     private static class RegistryKeys
     {
         private const string Implemented = nameof(Implemented);
@@ -40,6 +93,10 @@ public class RegistrationServices
         public const string ThreadingModel = nameof(ThreadingModel);
         public const string InprocServer32 = nameof(InprocServer32);
         public const string ProgId = nameof(ProgId);
+
+        public const string Software = nameof(Software);
+
+        public const string Classes = nameof(Classes);
 
         public const string ManagedCategoryGuid = "{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}"; // Found in mscorelib
 
@@ -123,8 +180,9 @@ public class RegistrationServices
     /// </summary>
     /// <param name="assembly">The assembly to register.</param>
     /// <param name="registerCodeBase">If set to <c>true</c>, the code base will be added to the registry; otherwise not.</param>
+    /// <param name="preferredAction">The managed category action for a global registration of HKEY_CLASSES_ROOT\Component Categories\62C8FE65-4EBB-45e7-B440-6E39B2CDBF29</param>
     /// <returns><c>true</c>, if at least one type from the registry has been registered.</returns>
-    public bool RegisterAssembly(Assembly assembly, bool registerCodeBase)
+    public bool RegisterAssembly(Assembly assembly, bool registerCodeBase, ManagedCategoryAction preferredAction = ManagedCategoryAction.None)
     {
         if (assembly is null)
         {
@@ -172,7 +230,7 @@ public class RegistrationServices
             }
             else
             {
-                RegisterManagedType(type, fullName, assemblyVersion, codeBase, runtimeVersion);
+                RegisterManagedType(type, fullName, assemblyVersion, codeBase, runtimeVersion, preferredAction);
             }
 
             // Skip: CustomRegistrationFunction
@@ -305,7 +363,8 @@ public class RegistrationServices
 
         var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
 
-        using var recordRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.Record);
+        using var rootKey = GetTargetRootKey();
+        using var recordRootKey = rootKey.CreateSubKey(RegistryKeys.Record);
         using var recordKey = recordRootKey.CreateSubKey(recordId);
         using var recordVersionKey = recordKey.CreateSubKey(assemblyVersion);
 
@@ -325,7 +384,8 @@ public class RegistrationServices
     {
         var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
 
-        using var recordRootKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Record, true);
+        using var rootKey = GetTargetRootKey();
+        using var recordRootKey = rootKey.OpenSubKey(RegistryKeys.Record, true);
         using var recordKey = recordRootKey?.OpenSubKey(recordId, true);
         using var recordVersionKey = recordKey?.OpenSubKey(assemblyVersion, true);
 
@@ -357,7 +417,7 @@ public class RegistrationServices
         return allVersionsGone;
     }
 
-    private static void RegisterManagedType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion)
+    private static void RegisterManagedType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion, ManagedCategoryAction preferredAction)
     {
         if (type.FullName is null)
         {
@@ -368,9 +428,10 @@ public class RegistrationServices
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
         var progId = Marshal.GenerateProgIdForType(type);
 
+        using var rootKey = GetTargetRootKey();
         if (!string.IsNullOrWhiteSpace(progId))
         {
-            using var typeNameKey = Registry.ClassesRoot.CreateSubKey(progId!);
+            using var typeNameKey = rootKey.CreateSubKey(progId!);
 
             typeNameKey.SetValue(string.Empty, docString);
 
@@ -379,7 +440,7 @@ public class RegistrationServices
             progIdClsIdKey.SetValue(string.Empty, clsId);
         }
 
-        using var clsIdRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.CLSID);
+        using var clsIdRootKey = rootKey.CreateSubKey(RegistryKeys.CLSID);
 
         using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
 
@@ -427,6 +488,90 @@ public class RegistrationServices
         using var implementedCategoryKey = clsIdKey.CreateSubKey(RegistryKeys.ImplementedCategories);
 
         using var managedCategoryKeyForImplemented = implementedCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
+
+        SetupGlobalManagedCategoryAction(preferredAction);
+    }
+
+    private static void SetupGlobalManagedCategoryAction(ManagedCategoryAction preferredAction)
+    {
+        switch (preferredAction)
+        {
+            case ManagedCategoryAction.Create:
+            case ManagedCategoryAction.CreateSilently:
+                {
+                    try
+                    {
+                        EnsureManageCategoryIsPresent();
+                    }
+                    catch (Exception e) when ((preferredAction is ManagedCategoryAction.CreateSilently)
+                        && (e is UnauthorizedAccessException or SecurityException))
+                    {
+                        Debug.WriteLine(e);
+                    }
+                }
+                break;
+            case ManagedCategoryAction.FailIfNotPresent:
+            case ManagedCategoryAction.FailIfNotPresentOnlyForNeutralLocale:
+                {
+                    if (!HasManagedCategory(preferredAction == ManagedCategoryAction.FailIfNotPresentOnlyForNeutralLocale))
+                    {
+                        var message = $"HKEY_CLASSES_ROOT\\{RegistryKeys.ComponentCategories}\\{RegistryKeys.ManagedCategoryGuid} does not provide a localized or neutral definition value containing '{RegistryValues.ManagedCategoryDescription}'";
+
+                        throw new InvalidOperationException(message);
+                    }
+                }
+                break;
+        }
+    }
+
+    private static bool HasManagedCategory(bool checkForNeutralLocale = true)
+    {
+        using var componentCategoryKey = Registry.ClassesRoot.OpenSubKey(RegistryKeys.ComponentCategories, false);
+        if (componentCategoryKey is null)
+        {
+            return false;
+        }
+
+        using var managedCategoryKeyCheck = componentCategoryKey.OpenSubKey(RegistryKeys.ManagedCategoryGuid, false);
+        if (managedCategoryKeyCheck is null)
+        {
+            return false;
+        }
+
+        if (checkForNeutralLocale)
+        {
+            var key0 = Convert.ToString(0, CultureInfo.InvariantCulture);
+            var value = managedCategoryKeyCheck.GetValue(key0);
+            if (value is null || value.GetType() != typeof(string))
+            {
+                return false;
+            }
+
+            var exactValue = (string)value;
+            return StringComparer.InvariantCulture.Equals(exactValue, RegistryValues.ManagedCategoryDescription);
+        }
+        else
+        {
+            var valueNames = managedCategoryKeyCheck.GetValueNames().Where(item => int.TryParse(item, out _)).ToArray();
+            return valueNames.LongLength > 0 && valueNames.All(key =>
+            {
+                var value = managedCategoryKeyCheck.GetValue(key);
+                if (value is not null and string exactValue)
+                {
+                    return StringComparer.InvariantCulture.Equals(exactValue, RegistryValues.ManagedCategoryDescription);
+                }
+
+                return false;
+            });
+        }
+    }
+
+    private static void EnsureManageCategoryIsPresent()
+    {
+        if (HasManagedCategory())
+        {
+            return;
+        }
 
         using var componentCategoryKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.ComponentCategories);
         using var managedCategoryKey = componentCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
@@ -674,4 +819,37 @@ public class RegistrationServices
 
         return key!.SubKeyCount == 0 && key!.ValueCount == 0;
     }
+
+    private static RegistryKey GetTargetRootKey()
+    {
+        // According to
+        // https://learn.microsoft.com/en-us/windows/win32/sysinfo/merged-view-of-hkey-classes-root
+        // COM registration can take place per user without elevated permissions.
+        if (CanWriteGlobalRegistry())
+        {
+            return Registry.ClassesRoot;
+        }
+
+        var root = Registry.CurrentUser;
+        using var software = root.CreateSubKey(RegistryKeys.Software, true);
+        var classes = software.CreateSubKey(RegistryKeys.Software, true);
+        return classes;
+    }
+
+    private static bool CanWriteGlobalRegistry()
+    {
+        try
+        {
+            _ = Registry.ClassesRoot.OpenSubKey(RegistryKeys.Software.ToUpperInvariant());
+            // This must be done using exceptions, since RegistryPermissions from CAS
+            // Will no longer work in .NET 6 and above and will return true always.
+
+            return true;
+        }
+        catch (Exception e) when (e is UnauthorizedAccessException or SecurityException)
+        {
+            return false;
+        }
+    }
+
 }
