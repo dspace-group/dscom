@@ -17,7 +17,7 @@ POPD
 
 PUSHD %~dp0\..
 
-dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
+dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
 
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
 
@@ -27,7 +27,7 @@ dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:PerformAc
 dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -bl
 SET ERRUNTIME=%ERRORLEVEL%
 
-dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
+dotnet msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime  -p:SkipResolvePackageAssets=true
 
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:PerformAcceptanceTest=NetStandard
 dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:PerformAcceptanceTest=NetStandard -bl
