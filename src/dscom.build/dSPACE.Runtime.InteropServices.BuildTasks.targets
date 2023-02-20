@@ -22,6 +22,7 @@
   <PropertyGroup>
     <_DsComExporterTargetsFile>$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Task.targets</_DsComExporterTargetsFile>
     <_DsComExporterTargetsFile Condition="'$(TargetFramework)' == 'netstandard2.0' OR ('$(TargetFrameworks)' != '' AND $(TargetFrameworks.Contains('netstandard2.0'))) OR 'Platform' == 'x86' OR ('Platform' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86')">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
+    <_DsComExporterTargetsFile Condition="'$(NETCoreSdkRuntimeIdentifier)' == 'win-x86'">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
     <_DsComExporterTargetsFile Condition="'$(_DsComForceToolUsage)' == 'true'">$(MsBuildThisFileDirectory)dSPACE.Runtime.InteropServices.BuildTasks.Tools.targets</_DsComExporterTargetsFile>
   </PropertyGroup>
 
