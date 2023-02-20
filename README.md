@@ -236,6 +236,15 @@ The result should be a line as follows in your `.csproj` file:
 
 **Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 6.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
 
+**Note**: After adding the package to your project you should delete `runtime;` from `<IncludeAssets>` to prevent copying all dependencies to your output directory. The reference should then look like:
+
+```xml
+    <PackageReference Include="dSPACE.Runtime.InteropServices.BuildTasks" Version="0.17.0" NoWarn="NU1701">
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+```
+
 #### Using the native build task
 
 The native build task is automatically selected, if a .NET 4.8 or .NET 6.0 assembly for Windows is being build using an x64 platform.
