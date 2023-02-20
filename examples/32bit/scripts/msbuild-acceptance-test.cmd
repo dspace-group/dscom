@@ -11,6 +11,8 @@ IF NOT EXIST %root%\_packages MKDIR _packages
 XCOPY /Y /I /C /F .\src\dscom\bin\Release\*.nupkg _packages\
 XCOPY /Y /I /C /F .\src\dscom.build\bin\Release\*.nupkg _packages\
 
+dotnet nuget locals all --clear
+
 POPD
 
 PUSHD %~dp0\..\comtestdotnet
