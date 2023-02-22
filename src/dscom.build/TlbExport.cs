@@ -74,6 +74,13 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     public string SourceAssemblyFile { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the overridden name of the library, which will be
+    /// set in the TLB using the IDL instructions.
+    /// If left empty, the name of the assembly will be used.
+    /// </summary>
+    public string TlbOverriddenName { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the additional type library files required for conversion.
     /// </summary>
     public ITaskItem[] TypeLibraryReferences { get; set; } = Array.Empty<ITaskItem>();
@@ -158,7 +165,8 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
             OverrideTlbId = tlbOverriddenId,
             TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences, false),
             TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths, false),
-            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths, true)
+            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths, true),
+            OverrideName = TlbOverriddenName
         };
 
         // Issue a warning, if the type library is about to be overridden.

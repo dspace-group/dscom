@@ -35,6 +35,7 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
       - [Enforcing the usage of the CLI](#enforcing-the-usage-of-the-cli)
       - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
     - [Parameters](#parameters)
+    - [Example](#example)
   - [32Bit support](#32bit-support)
   - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
@@ -275,6 +276,7 @@ The build task can be parameterized with the following [properties](https://lear
 | _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                                                                          |
 | _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                                                         | false                                         |
 | DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                    |
+| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string   | 
 | DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false`                                         |
 | DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`                                          |
 | DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false`                                         |

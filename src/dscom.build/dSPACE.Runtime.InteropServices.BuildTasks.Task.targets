@@ -46,6 +46,7 @@
       TypeLibraryReferences="@(DsComTlbExportTlbReferences)"
       TypeLibraryReferencePaths="@(DsComTlbExportReferencePaths)"
       AssemblyPaths="@(DsComTlbExportAssemblyPaths)"
+      TlbOverriddenName="$(DsComOverideLibraryName)"
       Names="@(DsComTlbAliasNames)" />
   </Target>
 </Project>
