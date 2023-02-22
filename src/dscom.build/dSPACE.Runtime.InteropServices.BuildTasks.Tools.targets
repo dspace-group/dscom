@@ -53,7 +53,7 @@
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComExportTypeLibraryAssemblyFile)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
-      <_DsComArguments> $(_DsComArguments) --out $(_DsComExportTypeLibraryTargetFile)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) --out "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
     </PropertyGroup>
     
     <Message Importance="High" Text="Calling dscom.exe to export type library" />
