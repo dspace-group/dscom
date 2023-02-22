@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="microsoft.build.tasks.core" Version="17.0.0" />
+    <PackageReference Include="microsoft.build.tasks.core" Version="17.0.0" PrivateAssets="all" IncludeAssets="compile; build" />
     <PackageReference Include="Microsoft.SourceLink.Github" Version="1.1.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\dscom\dscom.csproj" />
+    <ProjectReference Include="..\dscom\dscom.csproj" PrivateAssets="all" IncludeAssets="compile; build" />
   </ItemGroup>
 
   <Import Project="$(MsBuildThisFileDirectory)DsComPackaging.targets" />
