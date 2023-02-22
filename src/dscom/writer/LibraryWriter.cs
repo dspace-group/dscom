@@ -34,7 +34,9 @@ internal sealed class LibraryWriter : BaseWriter
 
     public override void Create()
     {
-        var name = Assembly.GetName().Name!.Replace('.', '_');
+        var name = string.IsNullOrEmpty(Context.Options.OverrideName)
+            ? Assembly.GetName().Name!.Replace('.', '_')
+            : Context.Options.OverrideName;
 
         var versionFromAssembly = Assembly.GetTLBVersionForAssembly();
         var guid = Context.Options.OverrideTlbId == Guid.Empty ? Assembly.GetTLBGuidForAssembly() : Context.Options.OverrideTlbId;

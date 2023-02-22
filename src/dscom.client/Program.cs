@@ -35,6 +35,7 @@ public static class ConsoleApp
                 new Option<string[]>(new string [] {"--silence", "/silence"}, description: "Suppresses output for the given warning (Can not be used with /silent)", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
                 new Option<bool>(new string [] {"--verbose", "/verbose"}, description: "Detailed log output"),
                 new Option<string[]>(new string [] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string>(new string [] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
                 new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new string [] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
             };
