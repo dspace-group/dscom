@@ -35,6 +35,8 @@
     <DsComTlbExportAutoAddReferences>true</DsComTlbExportAutoAddReferences>
     <!-- Do not add references, if HintPath Property is not set -->
     <DsComTlbExportIncludeReferencesWithoutHintPath>false</DsComTlbExportIncludeReferencesWithoutHintPath>
+    <!-- No value used by default. -->
+    <DsComOverideLibraryName></DsComOverideLibraryName>
   </PropertyGroup>
 
   <!-- Clear properties -->
