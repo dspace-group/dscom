@@ -21,7 +21,8 @@
  
   <PropertyGroup>
     <_DsComToolsFileDir>$(MsBuildThisFileDirectory)..\tools\x64\</_DsComToolsFileDir>
-    <_DsComToolsFileDir Condition="'$(Platform)' == 'x86' OR ('$(Platform)' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86')">$(MsBuildThisFileDirectory)..\tools\x86\</_DsComToolsFileDir>
+    <_DsComToolsFileDir Condition="'$(Platform)' == 'x86' OR ('$(Platform)' == 'AnyCPU' AND '$(SolutionPlatform)' == 'x86') OR '$(NETCoreSdkRuntimeIdentifier)' == 'win-x86'">$(MsBuildThisFileDirectory)..\tools\x86\</_DsComToolsFileDir>
+    <_DsComToolsFileDir Condition="'$(PlatformTarget)' == 'x86'">$(MsBuildThisFileDirectory)..\tools\x86\</_DsComToolsFileDir>
   </PropertyGroup>
 
   <!-- 
