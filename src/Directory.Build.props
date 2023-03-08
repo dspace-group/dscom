@@ -9,5 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)dscom.snk </AssemblyOriginatorKeyFile>
   </PropertyGroup>
 </Project>
