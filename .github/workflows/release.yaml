@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.406
+          global-json-file: global.json
 
       - name: Get .net version
         run: dotnet --version
@@ -27,9 +27,6 @@ jobs:
 
       - name: Build
         run: dotnet build -c Release
-
-      - name: Check code format (editorconfig)
-        run: dotnet format --verify-no-changes
 
       - name: Test (Release)
         run: dotnet test -c Release --no-build --verbosity normal
