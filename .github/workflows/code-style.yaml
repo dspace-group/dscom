@@ -25,6 +25,9 @@ jobs:
         run: dotnet --version
         continue-on-error: false
 
+      - name: Check env
+        run: echo $env:Path
+
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
         continue-on-error: false
