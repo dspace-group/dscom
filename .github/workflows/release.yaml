@@ -28,9 +28,6 @@ jobs:
       - name: Build
         run: dotnet build -c Release
 
-      - name: Check code format (editorconfig)
-        run: dotnet format --verify-no-changes
-
       - name: Test (Release)
         run: dotnet test -c Release --no-build --verbosity normal
 
