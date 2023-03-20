@@ -17,10 +17,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.404
-          
-      - name: Ensure that dotnet version is used
-        run: dotnet new globaljson --sdk-version 6.0.404 --roll-forward latestFeature
+          dotnet-version: 6.0.406
 
       - name: Get .net version
         run: dotnet --version

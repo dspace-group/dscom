@@ -16,13 +16,14 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.404
-      
-      - name: Ensure that dotnet version is used
-        run: dotnet new globaljson --sdk-version 6.0.404 --roll-forward latestFeature
+          dotnet-version: 6.0.406
 
       - name: Restore dependencies
         run: dotnet restore
+
+      - name: Check dotnet version
+        run: dotnet --version
+        continue-on-error: false
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
