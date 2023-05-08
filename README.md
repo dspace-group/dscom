@@ -4,20 +4,20 @@
 [![Nuget:Lib](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=dSPACE.Runtime.InteropServices&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices/)  
 [![Nuget:LibBuildTask](https://img.shields.io/nuget/v/dSPACE.Runtime.InteropServices?label=dSPACE.Runtime.InteropServices.BuildTasks&style=flat)](https://www.nuget.org/packages/dSPACE.Runtime.InteropServices.BuildTasks/)  
 
-[![Release](https://img.shields.io/github/v/release/dspace-group/dscom?label=release)](https://github.com/dspace-group/dscom/releases)
-![License](https://img.shields.io/github/license/dspace-group/dscom)
-[![dSPACE](https://img.shields.io/badge/-OpenSource%20powered%20by%20dSPACE-blue)](https://www.dspace.com/)
-
 [![Unit Tests](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/unit-test.yaml)
 [![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
 [![Code Style Check](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml)
 
 The command line client `dscom` is a replacement for `tlbexp.exe` and creates and registers TLBs from .NET assemblies.  
-The `dSPACE.Runtime.InteropServices` library contains various classes and methods for COM.  
-It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
+With the library `dSPACE.Runtime.InteropServices` you can, among other things, register assemblies and classes for COM and programmatically generate TLBs at runtime.  
 The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
 
-> This is an unstable prerelease. Anything may change at any time!
+Example:  
+
+```pwsh
+PS C:\> dotnet tool install --global dscom
+PS C:\> dscom tlbexport myassembly.dll
+```
 
 - [dSPACE COM tools](#dspace-com-tools)
   - [Introducing](#introducing)
@@ -271,17 +271,17 @@ This way the build stops, if the type library is not exported.
 
 The build task can be parameterized with the following [properties](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-properties?view=vs-2022):
 
-| **Name**                                       | **Description**                                                                                |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                                                                          |
-| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                                                         | false                                         |
-| DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                    |
-| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string   | 
-| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false`                                         |
-| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`                                          |
-| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false`                                         |
-| _DsComExportTypeLibraryTargetFile              | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
-| _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                             |
+| **Name**                                       | **Description**                                                                                                             |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                                                       |
+| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                                                          | false |
+| DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                                                  |
+| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                                                    |
+| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false`                       |
+| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`                                       |
+| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false` |
+| _DsComExportTypeLibraryTargetFile              | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` *                              |
+| _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                                                    |
 
 *) This value cannot be overridden.
 
