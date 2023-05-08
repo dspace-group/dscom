@@ -18,8 +18,14 @@ jobs:
         with:
           global-json-file: "./global.json"
 
-      - name: Restore dependencies
+      - name: Clean
+        run: dotnet clean
+
+      - name: Restore
         run: dotnet restore
+
+      - name: Build
+        run: dotnet build
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
