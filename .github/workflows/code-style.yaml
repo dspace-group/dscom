@@ -24,5 +24,17 @@ jobs:
       - name: Check dotnet version
         run: dotnet --version
 
+      - name: Check dotnet version
+        run: dotnet format --version
+
+      - name: Check dotnet version
+        run: echo $env:Path
+
+      - name: Check dotnet version
+        run: dir "C:\Program Files\dotnet"
+
+      - name: Check dotnet version
+        run: gcm dotnet
+
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
