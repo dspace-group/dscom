@@ -27,5 +27,14 @@ jobs:
       - name: Test version
         run: dotnet run --project .\test\test.csproj
 
+      - name: Test version
+        run: echo $env:PATH
+
+      - name: Test version
+        run: gcm dotnet
+
+      - name: dir
+        run: "dir C:\\Program Files\\dotnet"
+
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
