@@ -24,7 +24,7 @@ jobs:
       - name: Check dotnet version
         run: dotnet --version
 
-      - name: Check code format (editorconfig)
+      - name: Test version
         run: dotnet run --project .\test\test.csproj
 
       - name: Check code format (editorconfig)
