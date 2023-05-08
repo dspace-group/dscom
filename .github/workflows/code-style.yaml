@@ -34,7 +34,7 @@ jobs:
         run: gcm dotnet
 
       - name: dir
-        run: "dir C:\\Program Files\\dotnet"
+        run: 'dir "c:\Program Files\dotnet"'
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
