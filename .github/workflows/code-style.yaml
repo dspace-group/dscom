@@ -18,14 +18,25 @@ jobs:
         with:
           global-json-file: "./global.json"
 
-      - name: Clean
-        run: dotnet clean
-
-      - name: Restore
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build
+      - name: Check dotnet version
+        run: dotnet --version
+
+      - name: Check dotnet version
+        run: dotnet format --version
+
+      - name: Check dotnet version
+        run: echo $env:Path
+
+      - name: Check dotnet version
+        run: dir "C:\Program Files\dotnet"
+
+      - name: Check dotnet version
+        run: gcm dotnet
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
+        with:
+          global-json-file: "./global.json"
