@@ -23,5 +23,3 @@ jobs:
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
-        with:
-          global-json-file: "./global.json"
