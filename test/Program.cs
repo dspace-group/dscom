@@ -4,8 +4,20 @@ internal class Program
 {
     private static int Main(string[] args)
     {
-        TryGetDotNetCliVersion(out string a);
-        Console.WriteLine(a);
+
+        try
+        {
+            throw new ExecutionEngineException();
+        }
+        catch
+        {
+            Console.WriteLine("Huch!");
+        }
+
+
+
+        // TryGetDotNetCliVersion(out string a);
+        // Console.WriteLine(a);
 
         return 0;
     }

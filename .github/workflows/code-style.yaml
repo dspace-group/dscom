@@ -21,20 +21,17 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Check dotnet version
-        run: dotnet --version
+      - name: Install trace
+        run: dotnet tool install --global dotnet-trace
 
-      - name: Test version
-        run: dotnet run --project .\test\test.csproj
-
-      - name: Test version
-        run: echo $env:PATH
-
-      - name: Test version
-        run: gcm dotnet
-
-      - name: dir
-        run: 'dir "c:\Program Files\dotnet"'
+      - name: run trace
+        run: dotnet-trace collect -- dotnet format --verify-no-changes
 
       - name: Check code format (editorconfig)
         run: dotnet format --verify-no-changes
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: trace
+          path: "*.nettrace"
