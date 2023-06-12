@@ -17,8 +17,6 @@ The `dSPACE.Runtime.InteropServices` library contains various classes and method
 It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
 The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
 
-> This is an unstable prerelease. Anything may change at any time!
-
 - [dSPACE COM tools](#dspace-com-tools)
   - [Introducing](#introducing)
   - [Command Line Client](#command-line-client)
