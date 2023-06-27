@@ -18,9 +18,9 @@ public struct HRESULT
     [FieldOffset(0)]
     private readonly int _value;
 
-    public readonly bool Succeeded => _value >= 0;
+    public bool Succeeded => _value >= 0;
 
-    public readonly bool Failed => _value < 0;
+    public bool Failed => _value < 0;
 
     public HRESULT(int i)
     {
@@ -78,7 +78,7 @@ public struct HRESULT
     }
 
     [SecurityCritical, SecuritySafeCritical]
-    public readonly void ThrowIfFailed(string? message = null)
+    public void ThrowIfFailed(string? message = null)
     {
         if (Failed)
         {
@@ -86,7 +86,7 @@ public struct HRESULT
         }
     }
 
-    public override readonly bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null)
         {
@@ -111,7 +111,7 @@ public struct HRESULT
         return false;
     }
 
-    public override readonly int GetHashCode()
+    public override int GetHashCode()
     {
         return _value;
     }

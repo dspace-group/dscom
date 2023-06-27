@@ -86,7 +86,11 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 MajorVersion = 2,
                 MinorVersion = 0
             };
-            var typeLibOle = GetTypeLibFromIdentifier(identifierOle) ?? throw new COMException("System.Guid not found in any type library");
+            var typeLibOle = GetTypeLibFromIdentifier(identifierOle);
+            if (typeLibOle == null)
+            {
+                throw new COMException("System.Guid not found in any type library");
+            }
             typeLibOle.GetTypeInfo(0, out retval);
         }
         else if (type.GUID == new Guid(Guids.IID_IDispatch))

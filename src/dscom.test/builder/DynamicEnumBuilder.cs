@@ -47,7 +47,12 @@ internal sealed class DynamicEnumBuilder : DynamicBuilder<DynamicEnumBuilder>
     {
         WithLiteral(name, value);
 
-        var attributeConstructor = type.GetConstructor(constructorParamTypes ?? Array.Empty<Type>()) ?? throw new ArgumentException($"Constructor for {type} not found");
+        var attributeConstructor = type.GetConstructor(constructorParamTypes ?? Array.Empty<Type>());
+        if (attributeConstructor == null)
+        {
+            throw new ArgumentException($"Constructor for {type} not found");
+        }
+
         var attributeUsageAttribute = type.GetCustomAttribute<AttributeUsageAttribute>();
         if (attributeUsageAttribute != null)
         {

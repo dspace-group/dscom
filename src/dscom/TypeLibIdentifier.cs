@@ -53,7 +53,7 @@ public struct TypeLibIdentifier
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public override readonly bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is TypeLibIdentifier o && Equals(o);
     }
@@ -63,7 +63,7 @@ public struct TypeLibIdentifier
     /// </summary>
     /// <param name="other">The <see cref="TypeLibIdentifier"/> to compare</param>
     /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
-    public readonly bool Equals(TypeLibIdentifier other)
+    public bool Equals(TypeLibIdentifier other)
     {
         return MajorVersion == other.MajorVersion
                 && MinorVersion == other.MinorVersion
@@ -75,7 +75,7 @@ public struct TypeLibIdentifier
     /// A hash code for the current object.
     /// </summary>
     /// <returns>A hash code for the current object.</returns>
-    public override readonly int GetHashCode()
+    public override int GetHashCode()
     {
         return MajorVersion.GetHashCode() ^ MinorVersion.GetHashCode() ^ LibID.GetHashCode() ^ LanguageIdentifier.GetHashCode();
     }
