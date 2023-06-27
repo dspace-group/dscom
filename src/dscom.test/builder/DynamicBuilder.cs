@@ -27,12 +27,7 @@ internal abstract class DynamicBuilder<T> where T : DynamicBuilder<T>
 
     public T WithCustomAttribute(Type type, Type[]? constructorParamTypes, object[]? values)
     {
-        var dispIDAttributeConstructor = type.GetConstructor(constructorParamTypes ?? Array.Empty<Type>());
-        if (dispIDAttributeConstructor == null)
-        {
-            throw new ArgumentException($"Constructor for {type} not found");
-        }
-
+        var dispIDAttributeConstructor = type.GetConstructor(constructorParamTypes ?? Array.Empty<Type>()) ?? throw new ArgumentException($"Constructor for {type} not found");
         var attributeUsageAttribute = type.GetCustomAttribute<AttributeUsageAttribute>();
         if (attributeUsageAttribute != null)
         {
