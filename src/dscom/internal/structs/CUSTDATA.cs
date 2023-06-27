@@ -18,7 +18,7 @@ public struct CUSTDATA
 
     public IntPtr prgCustData;
 
-    public CUSTDATAITEM[] Items
+    public readonly CUSTDATAITEM[] Items
     {
         get
         {

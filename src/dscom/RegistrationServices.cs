@@ -141,13 +141,8 @@ public class RegistrationServices
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
     public int RegisterTypeForComClients(Type type, ComTypes.RegistrationClassContext classContext, ComTypes.RegistrationConnectionType flags)
     {
-        var value = type.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value
-                    ?? type.Assembly.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value;
-        if (value == null)
-        {
-            throw new ArgumentException($"The given type {type} does not have a valid GUID attribute.");
-        }
-
+        var value = (type.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value
+                    ?? type.Assembly.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value) ?? throw new ArgumentException($"The given type {type} does not have a valid GUID attribute.");
         var guid = new Guid(value);
 
         var genericClassFactory = typeof(ClassFactory<>);
@@ -194,12 +189,7 @@ public class RegistrationServices
             throw new ArgumentException("Cannot register a ReflectionOnly or dynamic assembly");
         }
 
-        var fullName = assembly.FullName;
-        if (fullName is null)
-        {
-            throw new ArgumentException("Cannot register an assembly without a full name");
-        }
-
+        var fullName = assembly.FullName ?? throw new ArgumentException("Cannot register an assembly without a full name");
         string? codeBase = null;
         if (registerCodeBase && assembly.Location is null)
         {
