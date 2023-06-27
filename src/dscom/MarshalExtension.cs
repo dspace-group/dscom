@@ -21,6 +21,9 @@ using System.Text;
 
 namespace dSPACE.Runtime.InteropServices;
 
+/// <summary>
+/// Provides extension methods for marshaling data between managed and unmanaged code.
+/// </summary>
 internal static class MarshalExtension
 {
     [SuppressMessage("Microsoft.Style", "IDE1006", Justification = "")]

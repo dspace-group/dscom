@@ -122,11 +122,7 @@ internal sealed class ClassWriter : TypeWriter
         {
             foreach (var interfaceTypeValue in sourceInterfaceAttribute.Value.Split('\0').Distinct())
             {
-                var interfaceType = SourceType.Assembly.GetType(interfaceTypeValue);
-                if (interfaceType == null)
-                {
-                    interfaceType = AppDomain.CurrentDomain.GetAssemblies().Select(z => z.GetType(interfaceTypeValue)).FirstOrDefault(x => x != null);
-                }
+                var interfaceType = SourceType.Assembly.GetType(interfaceTypeValue) ?? AppDomain.CurrentDomain.GetAssemblies().Select(z => z.GetType(interfaceTypeValue)).FirstOrDefault(x => x != null);
                 if (interfaceType != null)
                 {
                     var interfaceTypeInfo = Context.TypeInfoResolver.ResolveTypeInfo(interfaceType);
