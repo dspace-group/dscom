@@ -26,12 +26,20 @@ internal class PropertyMethodWriter : MethodWriter
         MemberInfo = _propertyInfo!;
     }
 
+    private bool? _isComVisible;
+
     protected override bool IsComVisible
     {
         get
         {
+            if (_isComVisible != null)
+            {
+                return _isComVisible.Value;
+            }
+
             var propertyAttribute = MemberInfo.GetCustomAttribute<ComVisibleAttribute>();
-            return (propertyAttribute == null || propertyAttribute.Value) && base.IsComVisible;
+            _isComVisible = (propertyAttribute == null || propertyAttribute.Value) && base.IsComVisible;
+            return _isComVisible.Value;
         }
     }
 
