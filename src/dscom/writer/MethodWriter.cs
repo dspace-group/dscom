@@ -60,12 +60,20 @@ internal class MethodWriter : BaseWriter
         return retVal;
     }
 
+    private bool? _isComVisible;
+
     protected virtual bool IsComVisible
     {
         get
         {
+            if (_isComVisible != null)
+            {
+                return _isComVisible.Value;
+            }
+
             var methodAttribute = MethodInfo.GetCustomAttribute<ComVisibleAttribute>();
-            return methodAttribute == null || methodAttribute.Value;
+            _isComVisible = methodAttribute == null || methodAttribute.Value;
+            return _isComVisible.Value;
         }
     }
 

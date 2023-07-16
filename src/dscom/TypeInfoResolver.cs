@@ -25,6 +25,8 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
     private readonly Dictionary<Guid, ITypeInfo> _types = new();
 
+    private readonly Dictionary<Type, ITypeInfo?> _resolvedTypeInfos = new();
+
     public WriterContext WriterContext { get; }
 
     public TypeInfoResolver(WriterContext writerContext)
@@ -67,6 +69,11 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
     public ITypeInfo? ResolveTypeInfo(Type type)
     {
+        if (_resolvedTypeInfos.TryGetValue(type, out var typeInfo))
+        {
+            return typeInfo;
+        }
+
         ITypeInfo? retval;
         if (type.FullName == "System.Collections.IEnumerator")
         {
@@ -126,6 +133,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 }
             }
         }
+        _resolvedTypeInfos[type] = retval;
         return retval;
     }
 
