@@ -1,11 +1,11 @@
 // Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@ using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices;
@@ -161,7 +160,7 @@ public static class ConsoleApp
                     throw new FileNotFoundException($"File {options.Assembly} not found.");
                 }
 
-                var assembly = Assembly.LoadFrom(options.Assembly);
+                var assembly = assemblyResolver.LoadAssembly(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
                 var nameResolver = options.Names.Any() ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
                 var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options, nameResolver));

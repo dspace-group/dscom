@@ -1,11 +1,11 @@
 // Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace dSPACE.Runtime.InteropServices;
 
@@ -21,38 +22,50 @@ namespace dSPACE.Runtime.InteropServices;
 /// </summary>
 internal sealed class AssemblyResolver : IDisposable
 {
+    private readonly AssemblyLoadContext _context;
     private bool _disposedValue;
 
     internal AssemblyResolver(TypeLibConverterOptions options)
     {
         Options = options;
-        AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
+        _context = new AssemblyLoadContext("dscom", true);
+        _context.Resolving += Context_Resolving;
     }
 
-    public TypeLibConverterOptions Options { get; }
-
-    private Assembly? ResolveEventHandler(object? sender, ResolveEventArgs args)
+    private Assembly? Context_Resolving(AssemblyLoadContext context, AssemblyName name)
     {
-        var name = args.Name;
-        var fileNameWithoutExtension = new AssemblyName(name).Name;
+        var dir = Path.GetDirectoryName(Options.Assembly);
 
-        foreach (var path in Options.ASMPath)
+        var asmPaths = Options.ASMPath;
+        if (Directory.Exists(dir))
         {
-            var dllToLoad = Path.Combine(path, $"{fileNameWithoutExtension}.dll");
+            asmPaths = asmPaths.Prepend(dir).ToArray();
+        }
+
+        foreach (var path in asmPaths)
+        {
+            var dllToLoad = Path.Combine(path, $"{name.Name}.dll");
             if (File.Exists(dllToLoad))
             {
-                return Assembly.LoadFrom(dllToLoad);
+                return _context.LoadFromAssemblyPath(dllToLoad);
             }
 
-            var exeToLoad = Path.Combine(path, $"{fileNameWithoutExtension}.exe");
+            var exeToLoad = Path.Combine(path, $"{name.Name}.exe");
             if (File.Exists(exeToLoad))
             {
-                return Assembly.LoadFrom(exeToLoad);
+                return _context.LoadFromAssemblyPath(exeToLoad);
             }
         }
 
         return null;
     }
+
+    public Assembly LoadAssembly(string path)
+    {
+        return _context.LoadFromAssemblyPath(path);
+    }
+
+    public TypeLibConverterOptions Options { get; }
 
     private void Dispose(bool disposing)
     {
@@ -60,7 +73,8 @@ internal sealed class AssemblyResolver : IDisposable
         {
             if (disposing)
             {
-                AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= ResolveEventHandler;
+                _context.Resolving -= Context_Resolving;
+                _context.Unload();
             }
 
             _disposedValue = true;
