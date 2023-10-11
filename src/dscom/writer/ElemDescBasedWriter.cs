@@ -46,7 +46,7 @@ internal class ElemDescBasedWriter : BaseWriter
 
         if (Type.GetUnderlayingType().IsGenericType)
         {
-            Context.LogWarning("Warning: Type library exporter encountered a generic type instance in a signature. Generic code may not be exported to COM.", unchecked(HRESULT.TLBX_E_GENERICINST_SIGNATURE));
+            Context.LogWarning($"Warning: Type library exporter encountered generic type {Type.GetUnderlayingType()} in a signature while writing type {ParentType}. Generic code may not be exported to COM.", unchecked(HRESULT.TLBX_E_GENERICINST_SIGNATURE));
         }
 
         var unrefedType = Type.IsByRef ? Type.GetElementType()! : Type;
@@ -62,7 +62,7 @@ internal class ElemDescBasedWriter : BaseWriter
                     marshasinfo += $" SafeArraySubType: {TypeProvider.MarshalAsAttribute!.SafeArraySubType}";
                 }
             }
-            Context.LogWarning($"Type library exporter warning processing '{Type.Name}'{marshasinfo}. Warning: The method or field has an invalid managed/unmanaged type combination, check the MarshalAs directive.", unchecked(HRESULT.TLBX_E_BAD_NATIVETYPE));
+            Context.LogWarning($"Type library exporter warning processing '{Type}'{marshasinfo}. Warning: The method or field has an invalid managed/unmanaged type combination, check the MarshalAs directive.", unchecked(HRESULT.TLBX_E_BAD_NATIVETYPE));
         }
     }
 

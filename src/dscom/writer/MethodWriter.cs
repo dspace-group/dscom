@@ -191,23 +191,23 @@ internal class MethodWriter : BaseWriter
             names = GetNamesForParameters().ToArray();
 
             typeInfo.AddFuncDesc((uint)funcIndex, funcDesc.Value)
-                .ThrowIfFailed($"Failed to add function description for {MethodInfo.Name}.");
+                .ThrowIfFailed($"Failed to add function description for {MethodInfo.DeclaringType}.{MethodInfo.Name}().");
 
             typeInfo.SetFuncAndParamNames((uint)funcIndex, names, (uint)names.Length)
-                .ThrowIfFailed($"Failed to set function and parameter names for {MethodInfo.Name}.");
+                .ThrowIfFailed($"Failed to set function and parameter names for {MethodInfo.DeclaringType}.{MethodInfo.Name}().");
 
             var description = MethodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
             if (description != null)
             {
                 typeInfo.SetFuncDocString((uint)funcIndex, description.Description)
-                    .ThrowIfFailed($"Failed to set function documentation string for {MethodInfo.Name}.");
+                    .ThrowIfFailed($"Failed to set function documentation string for {MethodInfo.DeclaringType}.{MethodInfo.Name}().");
             }
 
             if (memidCreated == 0 && InvokeKind == INVOKEKIND.INVOKE_FUNC)
             {
                 //Function has been forced as property (default member handling)
                 typeInfo.SetFuncCustData((uint)funcIndex, new Guid(Guids.GUID_Function2Getter), 1)
-                    .ThrowIfFailed($"Failed to set function custom data for {MethodInfo.Name}.");
+                    .ThrowIfFailed($"Failed to set function custom data for {MethodInfo.DeclaringType}.{MethodInfo.Name}().");
             }
 
         }

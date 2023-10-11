@@ -83,7 +83,7 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
         base.ReportEvent();
         if (!ParameterIsResolvable && Type.GetUnderlayingType().IsInterface)
         {
-            Context.LogWarning($"Warning: Type library exporter could not find the type library for {Type.GetUnderlayingType().Name}.  IUnknown was substituted for the interface.", HRESULT.TLBX_I_USEIUNKNOWN);
+            Context.LogWarning($"Warning: Type library exporter could not find the type library for {Type.GetUnderlayingType()} while writing member {ParentType}.{ParameterInfo.Member.Name}. IUnknown was substituted for the interface.", HRESULT.TLBX_I_USEIUNKNOWN);
         }
     }
 
