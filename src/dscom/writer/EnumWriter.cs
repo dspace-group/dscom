@@ -54,9 +54,9 @@ internal sealed class EnumWriter : TypeWriter
             varDesc.wVarFlags = 0;
 
             TypeInfo.AddVarDesc(index, varDesc)
-                .ThrowIfFailed($"Failed to add variable description for enum {Name}.");
+                .ThrowIfFailed($"Failed to add variable description for enum {SourceType}.");
             TypeInfo.SetVarName(index, Context.NameResolver.GetMappedName(field, $"{Name}_{field.Name}"))
-                .ThrowIfFailed($"Failed to set variable name for enum {Name}.");
+                .ThrowIfFailed($"Failed to set variable name {field.Name} for enum {SourceType}.");
             index++;
         }
 
