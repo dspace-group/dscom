@@ -26,3 +26,12 @@ public interface IDemoInterfaceComVisible
 {
     void DoSomething(IDemoInterfaceComInvisible param);
 }
+
+[ComVisible(true)]
+public interface IDemoInterfaceIndexerInvisible
+{
+    public string this[int x] { get; }
+
+    [ComVisible(false)]
+    public string this[string s] { get; }
+}
