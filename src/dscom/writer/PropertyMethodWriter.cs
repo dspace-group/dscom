@@ -22,7 +22,7 @@ internal class PropertyMethodWriter : MethodWriter
     private readonly PropertyInfo? _propertyInfo;
     public PropertyMethodWriter(InterfaceWriter interfaceWriter, MethodInfo methodInfo, WriterContext context, string methodName) : base(interfaceWriter, methodInfo, context, methodName)
     {
-        _propertyInfo = methodInfo.DeclaringType!.GetProperty(GetPropertyName());
+        _propertyInfo = methodInfo.DeclaringType!.GetProperties().First(p => p.GetGetMethod() == methodInfo || p.GetSetMethod() == methodInfo);
         MemberInfo = _propertyInfo!;
     }
 
