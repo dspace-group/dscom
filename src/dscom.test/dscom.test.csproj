@@ -15,7 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="moq" Version="4.20.69" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="xunit" Version="2.6.1" />
