@@ -24,7 +24,7 @@ internal sealed class ComAliasNameResolver : INameResolver
 
     public ComAliasNameResolver(Assembly assembly)
     {
-        var comVisibleTypes = assembly.GetTypes().Where(t => t.IsPublic && t.GetCustomAttribute<ComVisibleAttribute>() != null);
+        var comVisibleTypes = assembly.GetLoadableTypes().Where(t => t.IsPublic && t.GetCustomAttribute<ComVisibleAttribute>() != null);
         var types = comVisibleTypes
             .Where(t => t.GetCustomAttribute<ComAliasAttribute>() != null)
             .ToDictionary(t => t as object, t => t.GetCustomAttribute<ComAliasAttribute>()?.Alias ?? string.Empty)
@@ -35,7 +35,7 @@ internal sealed class ComAliasNameResolver : INameResolver
         }
 
         var members = comVisibleTypes
-            .SelectMany(t => t.GetMembers().Where(m => m.GetCustomAttribute<ComAliasAttribute>() != null))
+            .SelectMany(t => t.GetLoadableMembers().Where(m => m.GetCustomAttribute<ComAliasAttribute>() != null))
             .ToDictionary(m => m as object, m => m.GetCustomAttribute<ComAliasAttribute>()?.Alias ?? string.Empty)
         ;
         foreach (var kv in members)
@@ -44,8 +44,8 @@ internal sealed class ComAliasNameResolver : INameResolver
         }
 
         var parameters = comVisibleTypes
-            .SelectMany(t => t.GetMethods())
-            .SelectMany(m => m.GetParameters().Where(p => p.GetCustomAttribute<ComAliasAttribute>() != null))
+            .SelectMany(t => t.GetLoadableMethods())
+            .SelectMany(m => m.GetLoadableParameters().Where(p => p.GetCustomAttribute<ComAliasAttribute>() != null))
             .ToDictionary(p => p as object, p => p.GetCustomAttribute<ComAliasAttribute>()?.Alias ?? string.Empty)
         ;
         foreach (var kv in parameters)

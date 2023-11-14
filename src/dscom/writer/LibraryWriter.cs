@@ -91,21 +91,7 @@ internal sealed class LibraryWriter : BaseWriter
         var comVisibleAttributeAssembly = Assembly.GetCustomAttribute<ComVisibleAttribute>();
         var typesAreVisibleForComByDefault = comVisibleAttributeAssembly == null || comVisibleAttributeAssembly.Value;
 
-        Type?[] types;
-        try
-        {
-            types = Assembly.GetTypes().ToArray();
-        }
-        catch (ReflectionTypeLoadException e)
-        {
-            Context.LogWarning($"Type library exporter encountered an error while processing '{Assembly.GetName().Name}'. Error: {e.LoaderExceptions.First()!.Message}");
-
-            if (!e.Types.Any(t => t != null))
-            {
-                throw e.LoaderExceptions.First()!;
-            }
-            types = e.Types;
-        }
+        var types = Assembly.GetLoadableTypesAndLog(Context);
 
         List<TypeWriter> classInterfaceWriters = new();
 
