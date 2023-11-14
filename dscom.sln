@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dscom.build", "src\dscom.bu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assembly4", "src\dscom.demo\assembly4\assembly4.csproj", "{375866D7-1313-408D-AE5A-A77E48711EDB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assembly5", "src\dscom.demo\assembly5\assembly5.csproj", "{ACECABE4-AD32-4618-889F-E210D9564C8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,14 @@ Global
 		{375866D7-1313-408D-AE5A-A77E48711EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{375866D7-1313-408D-AE5A-A77E48711EDB}.Release|x86.ActiveCfg = Release|x86
 		{375866D7-1313-408D-AE5A-A77E48711EDB}.Release|x86.Build.0 = Release|x86
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Debug|x86.ActiveCfg = Debug|x86
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Debug|x86.Build.0 = Debug|x86
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|x86.ActiveCfg = Release|x86
+		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +119,7 @@ Global
 		{5B402A1B-18B1-4D88-804A-BC0E58EF3730} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 		{F8F68E57-CFFE-4EA5-9C1A-2CD9223B5D85} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 		{375866D7-1313-408D-AE5A-A77E48711EDB} = {CAAB6257-7EC0-484E-9593-B60CEE8F47D1}
+		{ACECABE4-AD32-4618-889F-E210D9564C8F} = {CAAB6257-7EC0-484E-9593-B60CEE8F47D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F23D9EA-A9D9-4CE5-94B5-050A9B68CA1C}
