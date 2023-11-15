@@ -51,4 +51,24 @@ public static class AssemblyExtensions
     {
         return assembly.GetLibIdentifier(Guid.Empty);
     }
+
+    internal static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+    {
+        return GetLoadableTypesAndLog(assembly, null);
+    }
+
+    internal static IEnumerable<Type> GetLoadableTypesAndLog(this Assembly assembly, WriterContext? context)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        // https://stackoverflow.com/questions/7889228/how-to-prevent-reflectiontypeloadexception-when-calling-assembly-gettypes
+        catch (ReflectionTypeLoadException e)
+        {
+            context?.LogWarning($"Type library exporter encountered an error while processing '{assembly.GetName().Name}'. Error: {e.LoaderExceptions.First()!.Message}");
+
+            return e.Types.Where(t => t is not null)!;
+        }
+    }
 }
