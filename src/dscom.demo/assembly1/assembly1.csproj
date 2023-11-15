@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -13,6 +13,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;</NoWarn>
     <Platforms>AnyCPU;x86</Platforms>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile> 
     <!-- <EnableComHosting>true</EnableComHosting> -->
   </PropertyGroup>
 

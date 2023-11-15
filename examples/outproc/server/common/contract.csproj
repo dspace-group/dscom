@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <TargetFramework Condition="'$(PerformAcceptanceTest)' == '' OR '$(PerformAcceptanceTest)' != 'Runtime'">netstandard2.0</TargetFramework>
-    <TargetFrameworks Condition="'$(PerformAcceptanceTest)' == 'Runtime'">net6.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks Condition="'$(PerformAcceptanceTest)' == 'Runtime'">net8.0-windows;net6.0-windows;net48</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
