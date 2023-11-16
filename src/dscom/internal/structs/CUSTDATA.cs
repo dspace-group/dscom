@@ -1,5 +1,3 @@
-#pragma warning disable 1591
-
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -18,6 +16,7 @@ public struct CUSTDATA
 
     public IntPtr prgCustData;
 
+    [SuppressMessage("Style", "IDE0004:Remove Unnecessary Cast", Justification = "Required for ambiguous signature match.")]
     public CUSTDATAITEM[] Items
     {
         get

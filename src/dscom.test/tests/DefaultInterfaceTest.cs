@@ -18,14 +18,17 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class DefaultInterfaceTest : BaseTest
 {
+    private const string InterfaceName = "DerivedInterface";
+    private const string TestInterface = "TestInterface";
+    private const string BaseInterface = "BaseInterface";
 
     [Fact]
     public void ClassWithClassAndComInterface_DefaultInterfaceIsClassInterface()
     {
         var result = CreateAssembly()
-                .WithInterface("TestInterface")
+                .WithInterface(TestInterface)
                     .Build(out _)
-                .WithClass("TestClass", new string[] { "TestInterface" })
+                .WithClass("TestClass", new[] { TestInterface })
                 .Build()
             .Build();
 
@@ -48,9 +51,9 @@ public class DefaultInterfaceTest : BaseTest
     public void ClassWithClassAndComInterfaceDefaultIsComInterface_DefaultInterfaceIsComInterface()
     {
         var result = CreateAssembly()
-                .WithInterface("TestInterface")
+                .WithInterface(TestInterface)
                     .Build(out var testInterfaceType)
-                .WithClass("TestClass", new string[] { "TestInterface" })
+                .WithClass("TestClass", new[] { TestInterface })
                 .WithCustomAttribute<ComDefaultInterfaceAttribute>(testInterfaceType!)
                 .Build()
             .Build();
@@ -66,19 +69,20 @@ public class DefaultInterfaceTest : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("TestInterface");
+        name.Should().Be(TestInterface);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
     }
 
     [Fact]
     public void ClassWithTwoComInterfaceAndNoDefaultAttribute_DefaultInterfaceIsFirstComInterface()
     {
+        const string testInterface2 = "TestInterface2";
         var result = CreateAssembly()
                 .WithInterface("TestInterface1")
                     .Build(out _)
-                .WithInterface("TestInterface2")
+                .WithInterface(testInterface2)
                     .Build(out _)
-                .WithClass("TestClass", new string[] { "TestInterface1", "TestInterface2" })
+                .WithClass("TestClass", new[] { "TestInterface1", testInterface2 })
                 .WithCustomAttribute<ClassInterfaceAttribute>(ClassInterfaceType.None)
                 .Build()
             .Build();
@@ -102,9 +106,9 @@ public class DefaultInterfaceTest : BaseTest
     public void DerivedClassWithClassInterfaceFromClassWithDefaultAttribute_DefaultIsClassInterface()
     {
         var result = CreateAssembly()
-                .WithInterface("BaseInterface")
+                .WithInterface(BaseInterface)
                     .Build(out var baseInterfaceType)
-                .WithClass("BaseClass", new string[] { "BaseInterface" })
+                .WithClass("BaseClass", new[] { BaseInterface })
                 .WithCustomAttribute<ComDefaultInterfaceAttribute>(baseInterfaceType!)
                 .Build(out var baseClass)
                 .WithClass("DerivedClass", Array.Empty<string>(), baseClass)
@@ -130,13 +134,13 @@ public class DefaultInterfaceTest : BaseTest
     public void DerivedClassWithDefaultInterfaceFromBaseClass_DefualtIsBaseComInterface()
     {
         var result = CreateAssembly()
-                .WithInterface("BaseInterface")
+                .WithInterface(BaseInterface)
                     .Build(out var baseInterfaceType)
-                .WithInterface("DerivedInterface")
+                .WithInterface(InterfaceName)
                     .Build(out _)
-                .WithClass("BaseClass", new string[] { "BaseInterface" })
+                .WithClass("BaseClass", new[] { BaseInterface })
                     .Build(out var baseClass)
-                .WithClass("DerivedClass", new string[] { "DerivedInterface" }, baseClass)
+                .WithClass("DerivedClass", new[] { InterfaceName }, baseClass)
                     .WithCustomAttribute<ComDefaultInterfaceAttribute>(baseInterfaceType!)
                 .Build()
             .Build();
@@ -152,7 +156,7 @@ public class DefaultInterfaceTest : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("BaseInterface");
+        name.Should().Be(BaseInterface);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
     }
 
@@ -160,13 +164,13 @@ public class DefaultInterfaceTest : BaseTest
     public void DerivedClassWithComInterfaceWithoutClassInterfaceFromClassWithComInterface_DefaultIsDerivedComInterface()
     {
         var result = CreateAssembly()
-                .WithInterface("BaseInterface")
+                .WithInterface(BaseInterface)
                     .Build(out _)
-                .WithInterface("DerivedInterface")
+                .WithInterface(InterfaceName)
                     .Build(out _)
-                .WithClass("BaseClass", new string[] { "BaseInterface" })
+                .WithClass("BaseClass", new[] { BaseInterface })
                     .Build(out var baseClass)
-                .WithClass("DerivedClass", new string[] { "DerivedInterface" }, baseClass)
+                .WithClass("DerivedClass", new[] { InterfaceName }, baseClass)
                     .WithCustomAttribute<ClassInterfaceAttribute>(ClassInterfaceType.None)
                     .Build()
             .Build();
@@ -182,7 +186,7 @@ public class DefaultInterfaceTest : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("DerivedInterface");
+        name.Should().Be(InterfaceName);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
     }
 }

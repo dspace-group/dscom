@@ -127,7 +127,9 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
 
     internal DynamicTypeBuilder WithStruct(string structName)
     {
+#pragma warning disable SYSLIB0050 // Type or member is obsolete
         var dynamicTypeBuilder = new DynamicTypeBuilder(this, structName, TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout | TypeAttributes.Serializable, null, typeof(ValueType));
+#pragma warning restore SYSLIB0050 // Type or member is obsolete
         DynamicTypeBuilder.Add(dynamicTypeBuilder);
         return dynamicTypeBuilder;
     }

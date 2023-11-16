@@ -18,13 +18,17 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class ClassTest : BaseTest
 {
+    private const string CustomInterface = "CustomInterface";
+    private const string SourceInterfaces = "SourceInterfaces";
+    private const string InterfaceTest = "InterfaceTest";
+
     [Fact]
     public void ComVisibleClassWithInterface_TKINDIsCOCLASS()
     {
         var result = CreateAssembly()
-                        .WithInterface("InterfaceTest").WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
+                        .WithInterface(InterfaceTest).WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
                             .Build()
-                        .WithClass("TestClass", new string[] { "InterfaceTest" })
+                        .WithClass("TestClass", new[] { InterfaceTest })
                             .Build()
                         .Build();
 
@@ -40,9 +44,9 @@ public class ClassTest : BaseTest
     public void ComVisibleClassWithDefaultInterface_TKINDIsCOCLASS()
     {
         var result = CreateAssembly()
-            .WithInterface("InterfaceTest").WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
+            .WithInterface(InterfaceTest).WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
                 .Build(out var interfaceType)
-            .WithClass("TestClass", new string[] { "InterfaceTest" })
+            .WithClass("TestClass", new[] { InterfaceTest })
                 .WithCustomAttribute(typeof(ComDefaultInterfaceAttribute), interfaceType!)
                 .Build()
             .Build();
@@ -60,7 +64,7 @@ public class ClassTest : BaseTest
             typeInfo!.GetRefTypeOfImplType(index, out var href);
             typeInfo!.GetRefTypeInfo(href, out var ppTI);
             ppTI.GetDocumentation(-1, out var refTypeName, out var refTypeDocString, out var refTypeHelpContext, out var refTypeHelpFile);
-            refTypeName.Should().BeOneOf("InterfaceTest", "_TestClass");
+            refTypeName.Should().BeOneOf(InterfaceTest, "_TestClass");
             index++;
         }
     }
@@ -176,7 +180,7 @@ public class ClassTest : BaseTest
                 .WithClass("GenericBaseClass")
                     .WithGenericTypeParameter("T")
                     .Build(out var genericType);
-        genericType = genericType!.MakeGenericType(new Type[] { typeof(string) });
+        genericType = genericType!.MakeGenericType(new[] { typeof(string) });
         var result = dynamicTypeBuilder
                 .WithClass("DerivedClass", Array.Empty<string>(), genericType)
                 .Build()
@@ -205,7 +209,7 @@ public class ClassTest : BaseTest
                 .WithClass("GenericBaseClass")
                     .WithGenericTypeParameter("T")
                     .Build(out var genericType);
-        genericType = genericType!.MakeGenericType(new Type[] { typeof(string) });
+        genericType = genericType!.MakeGenericType(new[] { typeof(string) });
         var result = dynamicTypeBuilder
                 .WithClass("DerivedClass", Array.Empty<string>(), genericType)
                 .WithCustomAttribute<ClassInterfaceAttribute>(ClassInterfaceType.AutoDispatch)
@@ -219,9 +223,9 @@ public class ClassTest : BaseTest
     public void MethodWithParameterTypeOfUserDefinedClass_CoClassDefaultInterfaceIsUsedAsParameterType()
     {
         var result = CreateAssembly()
-            .WithInterface("CustomInterface")
+            .WithInterface(CustomInterface)
                 .Build(out _)
-            .WithClass("CustomClass", new string[] { "CustomInterface" })
+            .WithClass("CustomClass", new[] { CustomInterface })
                 .WithCustomAttribute<ClassInterfaceAttribute>(ClassInterfaceType.None)
                 .Build(out var customClass)
             .WithInterface("TestInterface")
@@ -248,20 +252,21 @@ public class ClassTest : BaseTest
         var typeInfo64Bit = (ITypeInfo64Bit)type!;
         typeInfo64Bit.GetRefTypeInfo(hrefType, out var refTypeInfo64Bit);
         refTypeInfo64Bit.GetDocumentation(-1, out var name, out _, out _, out _);
-        name.Should().Be("CustomInterface");
+        name.Should().Be(CustomInterface);
     }
 
     [Fact]
     public void ClassImplements3InterfacesClassInterfaceTypeNone_FirstInterfaceIsTheDefaultInterface()
     {
+        const string customInterface2 = "CustomInterface2";
         var result = CreateAssembly()
             .WithInterface("CustomInterface1")
                 .Build(out _)
-            .WithInterface("CustomInterface2")
+            .WithInterface(customInterface2)
                 .Build(out _)
             .WithInterface("CustomInterface3")
                 .Build(out _)
-            .WithClass("CustomClass", new string[] { "CustomInterface1", "CustomInterface2", "CustomInterface3" })
+            .WithClass("CustomClass", new[] { "CustomInterface1", customInterface2, "CustomInterface3" })
                 .WithCustomAttribute<ClassInterfaceAttribute>(ClassInterfaceType.None)
                 .Build()
             .Build();
@@ -294,7 +299,7 @@ public class ClassTest : BaseTest
     public void CoClassWithComSourceInterfaces_ComSourceInterfacesIsIMPLTYPEFLAGFSOURCE()
     {
         var result = CreateAssembly()
-                .WithInterface("SourceInterfaces").Build(out var sourceInterfaces)
+                .WithInterface(SourceInterfaces).Build(out var sourceInterfaces)
                 .WithClass("TestInterface")
                     .WithCustomAttribute<ComSourceInterfacesAttribute>(sourceInterfaces!)
                     .Build()
@@ -314,7 +319,7 @@ public class ClassTest : BaseTest
 
             refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-            if (name == "SourceInterfaces")
+            if (name == SourceInterfaces)
             {
                 found = true;
                 pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
@@ -329,8 +334,8 @@ public class ClassTest : BaseTest
     public void CoClassWithComSourceInterfacesAndComInterfaceIsUsed_ComSourceInterfacesIsIMPLTYPEFLAGFSOURCEOneTime()
     {
         var result = CreateAssembly()
-                .WithInterface("SourceInterfaces").Build(out var sourceInterfaces)
-                .WithClass("TestClass", new string[] { "SourceInterfaces" })
+                .WithInterface(SourceInterfaces).Build(out var sourceInterfaces)
+                .WithClass("TestClass", new[] { SourceInterfaces })
                     .WithCustomAttribute<ComSourceInterfacesAttribute>(sourceInterfaces!)
                     .Build()
                 .Build();
@@ -351,7 +356,7 @@ public class ClassTest : BaseTest
 
             refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-            if (name == "SourceInterfaces")
+            if (name == SourceInterfaces)
             {
                 found++;
 

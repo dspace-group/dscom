@@ -26,38 +26,38 @@ public static class ConsoleApp
     {
         var tlbexportCommand = new Command("tlbexport", "Export the assembly to the specified type library") {
                 new Argument<string>("Assembly", "File name of assembly to parse"),
-                new Option<string>(new string [] {"--out", "/out"}, description: "File name of type library to be produced"),
-                new Option<string[]>(new string [] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string[]>(new string [] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string[]>(new string [] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<bool>(new string [] {"--silent", "/silent"}, description: "Suppresses all output except for errors"),
-                new Option<string[]>(new string [] {"--silence", "/silence"}, description: "Suppresses output for the given warning (Can not be used with /silent)", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<bool>(new string [] {"--verbose", "/verbose"}, description: "Detailed log output"),
-                new Option<string[]>(new string [] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string>(new string [] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
-                new Option<Guid>(new string [] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
-                new Option<bool?>(new string [] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
+                new Option<string>(new[] {"--out", "/out"}, description: "File name of type library to be produced"),
+                new Option<string[]>(new[] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string[]>(new[] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<bool>(new[] {"--silent", "/silent"}, description: "Suppresses all output except for errors"),
+                new Option<string[]>(new[] {"--silence", "/silence"}, description: "Suppresses output for the given warning (Can not be used with /silent)", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<bool>(new[] {"--verbose", "/verbose"}, description: "Detailed log output"),
+                new Option<string[]>(new[] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string>(new[] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
+                new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
+                new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
             {
                 new Argument<string>("TypeLibrary", "File name of type library"),
-                new Option<string>(new string [] {"--out", "/out"}, description: "File name of the output"),
-                new Option<string[]>(new string [] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string[]>(new string [] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string[]>(new string [] {"--filterregex", "/filterregex"}, description: "Regex to filter the output", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string>(new[] {"--out", "/out"}, description: "File name of the output"),
+                new Option<string[]>(new[] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string[]>(new[] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string[]>(new[] {"--filterregex", "/filterregex"}, description: "Regex to filter the output", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
             };
 
         var tlbregisterCommand = new Command("tlbregister", "Register a type library")
             {
                 new Argument<string>("TypeLibrary", "File name of type library"),
-                new Option<bool>(new string [] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
+                new Option<bool>(new[] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
             };
 
         var tlbunregisterCommand = new Command("tlbunregister", "Unregister a type library")
             {
                 new Argument<string>("TypeLibrary", "File name of type library"),
-                new Option<bool>(new string [] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
+                new Option<bool>(new[] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
             };
 
         var rootCommand = new RootCommand

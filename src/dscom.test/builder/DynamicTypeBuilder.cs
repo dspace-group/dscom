@@ -110,7 +110,7 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
     {
         TypeBuilder = DynamicTypeLibBuilder.ModuleBuilder.DefineType($"{Namespace}.{Name}", TypeAttributes, ParentType);
 
-        if (GenericTypeParameters.Any())
+        if (GenericTypeParameters.Count != 0)
         {
             TypeBuilder.DefineGenericParameters(GenericTypeParameters.ToArray());
         }
