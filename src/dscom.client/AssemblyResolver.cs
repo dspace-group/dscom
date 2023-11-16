@@ -74,7 +74,6 @@ internal sealed class AssemblyResolver : IDisposable
             if (disposing)
             {
                 _context.Resolving -= Context_Resolving;
-                _context.Unload();
             }
 
             _disposedValue = true;
