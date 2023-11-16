@@ -14,9 +14,10 @@
 
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
-using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+
+#pragma warning disable CA1861 
 
 namespace dSPACE.Runtime.InteropServices;
 
@@ -162,7 +163,7 @@ public static class ConsoleApp
 
                 var assembly = assemblyResolver.LoadAssembly(options.Assembly);
                 var typeLibConverter = new TypeLibConverter();
-                var nameResolver = options.Names.Any() ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
+                var nameResolver = options.Names.Length > 0 ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
                 var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options, nameResolver));
 
                 if (typeLib is ICreateTypeLib2 createTypeLib2)

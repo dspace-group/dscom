@@ -170,3 +170,18 @@ dotnet_diagnostic.CS0618.severity = none        # Obsolete
 dotnet_diagnostic.CA1305.severity = none        # CultureInfo
 dotnet_diagnostic.CA1837.severity = none        # Use Environment.ProcessId instead of Process.GetCurrentProcess().Id
 
+
+# new warnings introduced by .NET 8 targets 
+
+dotnet_diagnostic.SYSLIB1054.severity = none    # Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
+dotnet_diagnostic.SYSLIB1096.severity = none    # Convert to 'GeneratedComInterface'
+
+dotnet_diagnostic.CA1510.severity = none        # Use ArgumentNullException throw helper
+dotnet_diagnostic.CA1513.severity = none        # Use ObjectDisposedException throw helper
+dotnet_diagnostic.CA1850.severity = none        # Prefer static 'HashData' method over 'ComputeHash'
+dotnet_diagnostic.CA1859.severity = none        # Use concrete types when possible for improved performance
+dotnet_diagnostic.CA1861.severity = none        # Avoid constant arrays as arguments
+
+dotnet_diagnostic.CS1574.severity = none        # XML comment has cref attribute that could not be resolved
+
+dotnet_diagnostic.IDE0251.severity = none       # Make member 'readonly'
