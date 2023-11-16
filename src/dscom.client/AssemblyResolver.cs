@@ -28,7 +28,7 @@ internal sealed class AssemblyResolver : IDisposable
     internal AssemblyResolver(TypeLibConverterOptions options)
     {
         Options = options;
-        _context = new AssemblyLoadContext("dscom", true);
+        _context = new AssemblyLoadContext("dscom");
         _context.Resolving += Context_Resolving;
     }
 
