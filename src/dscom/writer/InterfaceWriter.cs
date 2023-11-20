@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
@@ -34,7 +35,7 @@ internal abstract class InterfaceWriter : TypeWriter
 
     public abstract Guid BaseInterfaceGuid { get; }
 
-    protected List<MethodWriter> MethodWriter { get; } = new();
+    protected List<MethodWriter?> MethodWriters { get; } = new();
 
     private ITypeInfo? BaseTypeInfo { get; set; }
 
@@ -72,7 +73,7 @@ internal abstract class InterfaceWriter : TypeWriter
         DispatchIdCreator.NormalizeIds();
 
         // Create all writer.
-        MethodWriter.ForEach(writer => writer.Create());
+        MethodWriters.ForEach(writer => writer?.Create());
 
         TypeInfo.LayOut().ThrowIfFailed($"Failed to layout type {SourceType}.");
     }
@@ -84,7 +85,7 @@ internal abstract class InterfaceWriter : TypeWriter
 
         foreach (var method in methods)
         {
-            var numIdenticalNames = MethodWriter.Count(z => z.IsVisibleMethod && (z.MemberInfo.Name == method.Name || z.MethodName.StartsWith(method.Name + "_", StringComparison.Ordinal)));
+            var numIdenticalNames = MethodWriters.Count(z => z is not null && z.IsVisibleMethod && (z.MemberInfo.Name == method.Name || z.MethodName.StartsWith(method.Name + "_", StringComparison.Ordinal)));
 
             numIdenticalNames += GetMethodNamesOfBaseTypeInfo(BaseTypeInfo).Count(z => z == method.Name || z.StartsWith(method.Name + "_", StringComparison.Ordinal));
 
@@ -92,35 +93,46 @@ internal abstract class InterfaceWriter : TypeWriter
             MethodWriter? methodWriter = null;
             if ((method.Name.StartsWith("get_", StringComparison.Ordinal) || method.Name.StartsWith("set_", StringComparison.Ordinal)) && method.IsSpecialName)
             {
-                alternateName = alternateName.Substring(4);
-                if (method.Name.StartsWith("get_", StringComparison.Ordinal))
+                var propertyInfo = method.DeclaringType!.GetProperties().First(p => p.GetGetMethod() == method || p.GetSetMethod() == method);
+                var comVisibleAttribute = propertyInfo.GetCustomAttribute<ComVisibleAttribute>();
+
+                if (comVisibleAttribute is null || comVisibleAttribute.Value)
                 {
-                    methodWriter = new PropertyGetMethodWriter(this, method, Context, alternateName);
-                }
-                else
-                if (method.Name.StartsWith("set_", StringComparison.Ordinal))
-                {
-                    methodWriter = new PropertySetMethodWriter(this, method, Context, alternateName);
+                    alternateName = alternateName.Substring(4);
+                    if (method.Name.StartsWith("get_", StringComparison.Ordinal))
+                    {
+                        methodWriter = new PropertyGetMethodWriter(this, method, Context, alternateName);
+                    }
+                    else
+                    if (method.Name.StartsWith("set_", StringComparison.Ordinal))
+                    {
+                        methodWriter = new PropertySetMethodWriter(this, method, Context, alternateName);
+                    }
                 }
             }
             else
             {
-                methodWriter = new(this, method, Context, alternateName);
+                var comVisibleAttribute = method.GetCustomAttribute<ComVisibleAttribute>();
+                if (comVisibleAttribute is null || comVisibleAttribute.Value)
+                {
+                    methodWriter = new(this, method, Context, alternateName);
+                }
             }
-            if (methodWriter != null)
-            {
-                MethodWriter.Add(methodWriter);
-            }
+
+            MethodWriters.Add(methodWriter);
         }
 
         var index = 0;
         var functionIndex = 0;
-        foreach (var methodWriter in MethodWriter)
+        foreach (var methodWriter in MethodWriters)
         {
-            methodWriter.FunctionIndex = functionIndex;
-            methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * IntPtr.Size);
-            DispatchIdCreator!.RegisterMember(methodWriter);
-            functionIndex += methodWriter.IsValid ? 1 : 0;
+            if (methodWriter is not null)
+            {
+                methodWriter.FunctionIndex = functionIndex;
+                methodWriter.VTableOffset = VTableOffsetUserMethodStart + (index * IntPtr.Size);
+                DispatchIdCreator!.RegisterMember(methodWriter);
+                functionIndex += methodWriter.IsValid ? 1 : 0;
+            }
             index++;
         }
     }
@@ -163,10 +175,10 @@ internal abstract class InterfaceWriter : TypeWriter
 
     protected override void Dispose(bool disposing)
     {
-        if (MethodWriter != null)
+        if (MethodWriters != null)
         {
-            MethodWriter.ForEach(t => t.Dispose());
-            MethodWriter.Clear();
+            MethodWriters.ForEach(t => t?.Dispose());
+            MethodWriters.Clear();
         }
 
         base.Dispose(disposing);
