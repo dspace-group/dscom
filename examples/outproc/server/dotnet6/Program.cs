@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.ComTypes;
-internal class Program
+internal sealed class Program
 {
     [DllImport("ole32.dll")]
     public static extern int CoResumeClassObjects();
@@ -33,10 +33,10 @@ internal class Program
 
         var registration = new RegistrationServices();
         var cookie = registration.RegisterTypeForComClients(typeof(Server.Common.Greeter), RegistrationClassContext.LocalServer, RegistrationConnectionType.MultipleUse | RegistrationConnectionType.Suspended);
-        
+
         System.Console.WriteLine($"OutProc COM server running. PID:{Environment.ProcessId}");
         System.Console.WriteLine($"RegisterTypeForComClients return cookie {cookie}");
-        
+
         var hr = CoResumeClassObjects();
         if (hr < 0)
         {

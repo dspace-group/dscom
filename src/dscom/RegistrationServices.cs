@@ -10,6 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma warning disable IL3000
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
