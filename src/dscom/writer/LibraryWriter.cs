@@ -97,7 +97,7 @@ internal sealed class LibraryWriter : BaseWriter
 
         foreach (var type in types)
         {
-            if (type == null)
+            if (type == null || type.Namespace is null)
             {
                 continue;
             }
@@ -212,11 +212,11 @@ internal sealed class LibraryWriter : BaseWriter
         var searchExistingType = UniqueNames.FirstOrDefault(t => t.Key.Name == type.Name);
         if (searchExistingType.Key != null)
         {
-            var namesp = searchExistingType.Key.Namespace!;
+            var namesp = searchExistingType.Key.Namespace ?? string.Empty;
             namesp = namesp.Replace(".", "_");
             UniqueNames[searchExistingType.Key] = $"{namesp}_{searchExistingType.Key.Name}";
 
-            namesp = type.Namespace!;
+            namesp = type.Namespace ?? string.Empty;
             namesp = namesp.Replace(".", "_");
             UniqueNames.Add(type, $"{namesp}_{type.Name}");
         }
