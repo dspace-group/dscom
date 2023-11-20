@@ -1,5 +1,3 @@
-#pragma warning disable 1591
-
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -14,10 +12,20 @@ namespace dSPACE.Runtime.InteropServices.ComTypes.Internal;
 [ExcludeFromCodeCoverage]
 public struct CUSTDATA
 {
+    /// <summary>
+    /// The cCustData 
+    /// </summary>
     public uint cCustData;
 
+    /// <summary>
+    /// And <see cref="IntPtr"/> to the prgCustData.
+    /// </summary>
     public IntPtr prgCustData;
 
+    /// <summary>
+    /// The CUSTDATAITEM items
+    /// </summary>
+    [SuppressMessage("Style", "IDE0004:Remove Unnecessary Cast", Justification = "Required for ambiguous signature match.")]
     public CUSTDATAITEM[] Items
     {
         get

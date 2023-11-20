@@ -18,10 +18,13 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class EventTests : BaseTest
 {
+    private const string EventInterface1 = "EventInterface1";
+    private const string EventInterface2 = "EventInterface2";
+
     [Fact]
     public void ClassWithSourceInterfacesAttribute_InterfaceIsDefaultSource()
     {
-        var result = CreateAssembly().WithInterface("EventInterface1")
+        var result = CreateAssembly().WithInterface(EventInterface1)
                 .Build(out var interfaceType)
             .WithClass("CustomClass")
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interfaceType!)
@@ -40,7 +43,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
     }
@@ -48,7 +51,7 @@ public class EventTests : BaseTest
     [Fact]
     public void ClassWithDuplicateSourceInterfacesAttribute_InterfaceIsOnceDefaultSource()
     {
-        var result = CreateAssembly().WithInterface("EventInterface1")
+        var result = CreateAssembly().WithInterface(EventInterface1)
                 .Build(out var interfaceType)
             .WithClass("CustomClass")
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interfaceType!, interfaceType!)
@@ -67,7 +70,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
     }
@@ -75,9 +78,9 @@ public class EventTests : BaseTest
     [Fact]
     public void ClassWithTwoSourceInterfacesAttribute_FirstInterfaceIsDefaultSourceSecondIsSource()
     {
-        var result = CreateAssembly().WithInterface("EventInterface1")
+        var result = CreateAssembly().WithInterface(EventInterface1)
                 .Build(out var interfaceType1)
-            .WithInterface("EventInterface2")
+            .WithInterface(EventInterface2)
                 .Build(out var interfaceType2)
             .WithClass("CustomClass")
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interfaceType1!, interfaceType2!)
@@ -96,7 +99,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
 
@@ -105,16 +108,16 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be("EventInterface2");
+        name.Should().Be(EventInterface2);
         pImplTypeFlags.Should().Be(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
     }
 
     [Fact]
     public void ClassWithInterfaceAndSourceInterfacesAttribute_InterfaceAppearsTwiceSecondIsDefaultSource()
     {
-        var result = CreateAssembly().WithInterface("EventInterface1")
+        var result = CreateAssembly().WithInterface(EventInterface1)
                 .Build(out var interfaceType)
-            .WithClass("CustomClass", new string[] { "EventInterface1" })
+            .WithClass("CustomClass", new string[] { EventInterface1 })
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interfaceType!)
                 .Build()
             .Build();
@@ -131,7 +134,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().Be(0);
 
         typeInfo!.GetRefTypeOfImplType(2, out href);
@@ -139,7 +142,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
     }
@@ -147,12 +150,12 @@ public class EventTests : BaseTest
     [Fact]
     public void DerivedClassWithSourceInterfacesAttributeBaseClassWithSourceInterfaceAttribute_BothInterfacesSource()
     {
-        var result = CreateAssembly().WithInterface("EventInterface1")
+        var result = CreateAssembly().WithInterface(EventInterface1)
                 .Build(out var interface1Type)
             .WithClass("CustomClass1")
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interface1Type!)
                 .Build(out var class1Type)
-            .WithInterface("EventInterface2")
+            .WithInterface(EventInterface2)
                 .Build(out var interface2Type)
             .WithClass("CustomClass2", Array.Empty<string>(), class1Type)
                 .WithCustomAttribute<ComSourceInterfacesAttribute>(interface2Type!)
@@ -171,7 +174,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("EventInterface2");
+        name.Should().Be(EventInterface2);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
         pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
 
@@ -180,7 +183,7 @@ public class EventTests : BaseTest
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be("EventInterface1");
+        name.Should().Be(EventInterface1);
         pImplTypeFlags.Should().Be(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
     }
 }

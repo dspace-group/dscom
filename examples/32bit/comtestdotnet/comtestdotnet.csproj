@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
     <LangVersion>10.0</LangVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>

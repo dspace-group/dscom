@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>

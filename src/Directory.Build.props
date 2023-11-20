@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;</NoWarn>
+    <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305</NoWarn>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RollForward>LatestMajor</RollForward>
     <Authors>Mathias Nissen;Mark Lechtermann;Sebastian Osterbrink;Carsten Igel</Authors>
@@ -10,4 +10,18 @@
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+      CS1712: Type parameter 'type_parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
+    -->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+  </PropertyGroup>
+
+
 </Project>

@@ -80,7 +80,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             var converter = new TypeLibConverter();
 
             // Choose appropriate name resolver based on inputs with the Com Alias as the fallback.
-            var nameResolver = settings.Names != null && settings.Names.Any()
+            var nameResolver = settings.Names.Length != 0
                 ? NameResolver.Create(settings.Names)
                 : NameResolver.Create(assembly);
 
