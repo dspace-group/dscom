@@ -185,3 +185,5 @@ dotnet_diagnostic.CA1861.severity = none        # Avoid constant arrays as argum
 dotnet_diagnostic.CS1574.severity = none        # XML comment has cref attribute that could not be resolved
 
 dotnet_diagnostic.IDE0251.severity = none       # Make member 'readonly'
+
+dotnet_diagnostic.xUnit1012.severity = none       # Make member 'readonly'
