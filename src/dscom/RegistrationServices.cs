@@ -121,7 +121,7 @@ public class RegistrationServices
     /// <exception cref="T:System.ArgumentNullException">The <paramref name="type" /> parameter cannot be created.</exception>
     public void RegisterTypeForComClients(Type type, ref Guid g)
     {
-        var genericClassFactory = typeof(ClassFactory<>);
+        var genericClassFactory = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA ? typeof(STAClassFactory<>) : typeof(ClassFactory<>);
         Type[] typeArgs = { type };
         var constructedClassFactory = genericClassFactory.MakeGenericType(typeArgs);
 
@@ -147,7 +147,7 @@ public class RegistrationServices
                     ?? type.Assembly.GetCustomAttributes<GuidAttribute>().FirstOrDefault()?.Value) ?? throw new ArgumentException($"The given type {type} does not have a valid GUID attribute.");
         var guid = new Guid(value);
 
-        var genericClassFactory = typeof(ClassFactory<>);
+        var genericClassFactory = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA ? typeof(STAClassFactory<>) : typeof(ClassFactory<>);
         Type[] typeArgs = { type };
         var constructedClassFactory = genericClassFactory.MakeGenericType(typeArgs);
 
