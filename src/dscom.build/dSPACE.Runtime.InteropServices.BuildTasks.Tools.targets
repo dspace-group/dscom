@@ -56,6 +56,8 @@
       <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
       <_DsComArguments Condition="'$(DsComOverideLibraryName)' != ''"> $(_DsComArguments) --overridename "$(DsComOverideLibraryName)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) --out "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
+	    <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
+	    <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
     </PropertyGroup>
     
     <Message Importance="High" Text="Calling dscom.exe to export type library" />
@@ -66,7 +68,7 @@
           StdErrEncoding="UTF-8"
           StdOutEncoding="UTF-8"
           IgnoreExitCode="false"
-          WorkingDirectory="$(OutputPath)" />
+          WorkingDirectory="$(_DsComWorkingDir)" />
 
     <Warning Code="DSCOM001" Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
   </Target>
