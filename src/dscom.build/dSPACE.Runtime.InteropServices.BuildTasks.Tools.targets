@@ -52,7 +52,7 @@
       <_DsComArguments> $(_DsComArguments) $(_DsComAssemblyReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
-      <_DsComArguments> $(_DsComArguments) $(_DsComExportTypeLibraryAssemblyFile)</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryAssemblyFile)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
       <_DsComArguments Condition="'$(DsComOverideLibraryName)' != ''"> $(_DsComArguments) --overridename "$(DsComOverideLibraryName)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) --out "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
@@ -63,7 +63,7 @@
     <Message Importance="High" Text="Calling dscom.exe to export type library" />
     <Message Importance="Low" Text="Using arguments '$(_DsComArguments)' to call dscom" />
     
-    <Exec Command="$(_DsComToolsFileDir)dscom.exe $(_DsComArguments)"
+    <Exec Command='"$(_DsComToolsFileDir)dscom.exe" $(_DsComArguments)'
           ConsoleToMsBuild="true" 
           StdErrEncoding="UTF-8"
           StdOutEncoding="UTF-8"
