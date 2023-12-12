@@ -187,3 +187,5 @@ dotnet_diagnostic.CS1574.severity = none        # XML comment has cref attribute
 dotnet_diagnostic.IDE0251.severity = none       # Make member 'readonly'
 
 dotnet_diagnostic.xUnit1012.severity = none       # Make member 'readonly'
+dotnet_diagnostic.xUnit1042.severity = none       # The member referenced by the MemberData attribute returns untyped data rows, such as object[]. Consider using TheoryData<> as the return type to provide bette 
+r type safety.
