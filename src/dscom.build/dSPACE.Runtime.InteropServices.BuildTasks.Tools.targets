@@ -55,6 +55,7 @@
       <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryAssemblyFile)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
       <_DsComArguments Condition="'$(DsComOverideLibraryName)' != ''"> $(_DsComArguments) --overridename "$(DsComOverideLibraryName)"</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComTlbExportCreateMissingDependentTlbs)' != ''"> $(_DsComArguments) --createmissingdependenttlbs $(DsComTlbExportCreateMissingDependentTlbs)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) --out "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
 	    <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
 	    <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
