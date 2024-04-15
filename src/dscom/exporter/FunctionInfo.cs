@@ -20,11 +20,12 @@ internal sealed class FunctionInfo : BaseInfo
 {
     public FunctionInfo(ITypeInfo2 typeInfo, FUNCDESC funcDesc, BaseInfo? parent, string itemName) : base(parent, itemName)
     {
-        typeInfo.GetDocumentation(funcDesc.memid, out _, out _, out _, out _);
+        typeInfo.GetDocumentation(funcDesc.memid, out _, out var strDocString, out _, out _);
         var names = new string[funcDesc.cParams + 1];
         typeInfo.GetNames(funcDesc.memid, names, funcDesc.cParams + 1, out _);
         Name = names[0];
 
+        DocString = strDocString ?? string.Empty;
         MemberId = funcDesc.memid;
         CallConv = funcDesc.callconv;
         Kind = funcDesc.funckind.ToString();
@@ -32,6 +33,8 @@ internal sealed class FunctionInfo : BaseInfo
         FunctionFlags = funcDesc.wFuncFlags;
         NumberOfParameters = funcDesc.cParams;
         VTableOffset = funcDesc.oVft;
+
+        // typeInfo.GetDocumentation2(funcDesc.memid, out _, out _, out _, );
 
         var ptr = funcDesc.lprgelemdescParam;
 
@@ -54,6 +57,8 @@ internal sealed class FunctionInfo : BaseInfo
     public string Name { get; private set; }
 
     public int MemberId { get; }
+
+    public string DocString { get; private set; }
 
     public CALLCONV CallConv { get; private set; }
 
