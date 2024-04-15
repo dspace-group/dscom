@@ -22,7 +22,8 @@ internal sealed class VariableDescriptionInfo : BaseInfo
     {
         if (varDesc.varkind is VARKIND.VAR_CONST or VARKIND.VAR_PERINSTANCE)
         {
-            typeInfo!.GetDocumentation(varDesc.memid, out var name, out _, out _, out _);
+            typeInfo!.GetDocumentation(varDesc.memid, out var name, out var docString, out _, out _);
+            DocString = docString ?? string.Empty;
             Name = string.IsNullOrEmpty(name) ? null : name;
             Value = new TypeDescriptionInfo(typeInfo, varDesc.elemdescVar.tdesc, this, nameof(Value));
             Type = (VarEnum)varDesc.elemdescVar.tdesc.vt;
@@ -34,4 +35,6 @@ internal sealed class VariableDescriptionInfo : BaseInfo
     public VarEnum? Type { get; private set; }
 
     public object? Value { get; private set; }
+
+    public object? DocString { get; private set; }
 }
