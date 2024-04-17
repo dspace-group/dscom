@@ -460,6 +460,7 @@ public class MemIdTest : BaseTest
         using var method1 = testInterface!.GetFuncDescByName("Method1");
         method1.Should().NotBeNull();
         method1!.Value.oVft.Should().Be(0);
+        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
 
         using var method2 = testInterface!.GetFuncDescByName("Method2");
         method2.Should().BeNull();
@@ -467,6 +468,7 @@ public class MemIdTest : BaseTest
         using var method3 = testInterface!.GetFuncDescByName("Method3");
         method3.Should().NotBeNull();
         method3!.Value.oVft.Should().Be(0);
+        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 2);
     }
 
     [Fact]
@@ -491,6 +493,7 @@ public class MemIdTest : BaseTest
         using var method1 = testInterface!.GetFuncDescByName("Property1");
         method1.Should().NotBeNull();
         method1!.Value.oVft.Should().Be(0);
+        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
 
         using var method2 = testInterface!.GetFuncDescByName("Property2");
         method2.Should().BeNull();
@@ -498,6 +501,7 @@ public class MemIdTest : BaseTest
         using var method3 = testInterface!.GetFuncDescByName("Property3", INVOKEKIND.INVOKE_PROPERTYGET);
         method3.Should().NotBeNull();
         method3!.Value.oVft.Should().Be(0);
+        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 4);
     }
 
     [Fact]
@@ -522,6 +526,7 @@ public class MemIdTest : BaseTest
         using var method1 = testInterface!.GetFuncDescByName("Method1");
         method1.Should().NotBeNull();
         method1!.Value.oVft.Should().Be(56);
+        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
 
         using var method2 = testInterface!.GetFuncDescByName("Method2");
         method2.Should().BeNull();
@@ -529,6 +534,7 @@ public class MemIdTest : BaseTest
         using var method3 = testInterface!.GetFuncDescByName("Method3");
         method3.Should().NotBeNull();
         method3!.Value.oVft.Should().Be(72);
+        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 2);
     }
 
     [Fact]
@@ -553,6 +559,7 @@ public class MemIdTest : BaseTest
         using var method1 = testInterface!.GetFuncDescByName("Property1");
         method1.Should().NotBeNull();
         method1!.Value.oVft.Should().Be(56);
+        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
 
         using var method2 = testInterface!.GetFuncDescByName("Property2");
         method2.Should().BeNull();
@@ -560,6 +567,7 @@ public class MemIdTest : BaseTest
         using var method3 = testInterface!.GetFuncDescByName("Property3", INVOKEKIND.INVOKE_PROPERTYGET);
         method3.Should().NotBeNull();
         method3!.Value.oVft.Should().Be(88);
+        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 4);
     }
 
     [Theory]

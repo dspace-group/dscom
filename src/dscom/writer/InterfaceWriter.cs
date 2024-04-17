@@ -126,6 +126,7 @@ internal abstract class InterfaceWriter : TypeWriter
         var functionIndex = 0;
         foreach (var methodWriter in MethodWriters)
         {
+            // A methodWriter can be null if ComVisible is false
             if (methodWriter is not null)
             {
                 methodWriter.FunctionIndex = functionIndex;
@@ -133,6 +134,14 @@ internal abstract class InterfaceWriter : TypeWriter
                 DispatchIdCreator!.RegisterMember(methodWriter);
                 functionIndex += methodWriter.IsValid ? 1 : 0;
             }
+            else
+            {
+                // In case of ComVisible false, we need to increment the the next free DispId
+                // This offset is needed to keep the DispId in sync with the VTable and the behavior of tlbexp.
+                DispatchIdCreator!.GetNextFreeDispId();
+            }
+
+            // Increment the index for the VTableOffset
             index++;
         }
     }
