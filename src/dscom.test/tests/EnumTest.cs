@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
@@ -93,4 +94,49 @@ public class EnumTest : BaseTest
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_A");
         kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_B");
     }
+
+    [Fact]
+    public void EnumsValuesWithDescription_EnumValueHasDocString()
+    {
+        var result = CreateAssembly()
+            .WithEnum<int>("TestEnum").WithNamespace("dspace.test.namespace1")
+                .WithLiteralAndAttribute("A", 1, typeof(DescriptionAttribute), new Type[] { typeof(string) }, new object[] { "TestDescription_A" })
+                .WithLiteralAndAttribute("B", 1, typeof(DescriptionAttribute), new Type[] { typeof(string) }, new object[] { "TestDescription_B" })
+                .Build()
+            .Build();
+
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestEnum");
+        typeInfo.Should().NotBeNull();
+
+        using var attribute = typeInfo!.GetTypeInfoAttributes();
+        attribute.Should().NotBeNull();
+        var count = attribute!.Value.cVars;
+        count.Should().Be(2);
+        typeInfo!.GetVarDesc(0, out var ppVarDesc0);
+        try
+        {
+            var varDesc = Marshal.PtrToStructure<VARDESC>(ppVarDesc0);
+            varDesc.varkind.Should().Be(VARKIND.VAR_CONST);
+            typeInfo!.GetDocumentation(varDesc.memid, out _, out var strDocString, out _, out _);
+            strDocString.Should().Be("TestDescription_A");
+        }
+        finally
+        {
+            typeInfo.ReleaseVarDesc(ppVarDesc0);
+        }
+
+        typeInfo!.GetVarDesc(1, out var ppVarDesc1);
+        try
+        {
+            var varDesc = Marshal.PtrToStructure<VARDESC>(ppVarDesc1);
+            varDesc.varkind.Should().Be(VARKIND.VAR_CONST);
+            typeInfo!.GetDocumentation(varDesc.memid, out _, out var strDocString, out _, out _);
+            strDocString.Should().Be("TestDescription_B");
+        }
+        finally
+        {
+            typeInfo.ReleaseVarDesc(ppVarDesc1);
+        }
+    }
 }
+

@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
@@ -30,7 +32,7 @@ internal sealed class EnumWriter : TypeWriter
 
         uint index = 0;
         var fields =
-            SourceType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            SourceType.GetFields(BindingFlags.Public | BindingFlags.Static)
             .OrderBy(field => field.MetadataToken);
         foreach (var field in fields)
         {
@@ -57,6 +59,12 @@ internal sealed class EnumWriter : TypeWriter
                 .ThrowIfFailed($"Failed to add variable description for enum {SourceType}.");
             TypeInfo.SetVarName(index, Context.NameResolver.GetMappedName(field, $"{Name}_{field.Name}"))
                 .ThrowIfFailed($"Failed to set variable name {field.Name} for enum {SourceType}.");
+
+            // If the field has a DescriptionAttribute, use it as the variable description.
+            var descriptionAttribute = field.GetCustomAttribute<DescriptionAttribute>(false);
+            TypeInfo.SetVarDocString(index, descriptionAttribute?.Description ?? string.Empty)
+                .ThrowIfFailed($"Failed to set variable description for enum {SourceType}.");
+
             index++;
         }
 
