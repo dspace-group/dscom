@@ -80,7 +80,7 @@ internal sealed class DispatchIdCreator
         }
     }
 
-    private uint GetNextFreeDispId()
+    internal uint GetNextFreeDispId()
     {
         var dispId = _currentDispId;
         _currentDispId++;
