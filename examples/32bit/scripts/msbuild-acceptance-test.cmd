@@ -6,7 +6,7 @@ PUSHD %root%
 
 dotnet build-server shutdown
 
-dotnet pack -p:Configuration=Release
+dotnet pack src\dscom.build\dscom.build.csproj -p:Configuration=Release
 
 IF NOT EXIST %root%\_packages MKDIR _packages
 
