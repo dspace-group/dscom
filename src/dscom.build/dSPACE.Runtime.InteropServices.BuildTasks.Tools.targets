@@ -33,7 +33,7 @@
           AfterTargets="AfterBuild" 
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
-          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU'">
+          Condition="'$(_DsComToolsFileDir)' != ''">
     <ItemGroup>
       <_DsComTlbExportAssemblyPathsWithHintPath Include="@(DsComTlbExportAssemblyPaths->HasMetadata('HintPath'))" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Include="@(DsComTlbExportAssemblyPaths)" />
