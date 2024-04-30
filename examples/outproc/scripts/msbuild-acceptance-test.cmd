@@ -68,12 +68,12 @@ SET EXITCODE=0
 
 IF NOT "%ERRUNTIME%" == "0" (
   SET EXITCODE=1
-  ECHO "::warning file=%~dp0\..\server\common\contract.csproj::Runtime specific acceptance test failed."
+  ECHO "::warning::Runtime specific acceptance test failed."
 )
 
 IF NOT "%ERSTANDARD%" == "0" (
   SET EXITCODE=1
-  ECHO "::warning file=%~dp0\..\server\common\contract.csproj::.NET Standard 2.0 specific acceptance test failed."
+  ECHO "::warning::.NET Standard 2.0 specific acceptance test failed."
 )
 
 IF "%EXITCODE%" == "0" (
