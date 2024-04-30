@@ -34,6 +34,7 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
       - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
     - [Parameters](#parameters)
     - [Example](#example)
+    - [Hints](#hints)
   - [32Bit support](#32bit-support)
   - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
@@ -306,6 +307,12 @@ The build task consumes the following [items](https://learn.microsoft.com/en-us/
    </ItemGroup>
 </Project>
 ```
+
+### Hints
+
+When using the build tasks to create an 32 bit version for your type libraries / projects: The tasks require the .NET runtime in their specific CPU architecture to be installed.
+
+So, for building 32 bit TLBs, dscom32 will be executed, which **requires** .NET runtime in x86 flavor to be available.
 
 ## 32Bit support
 
