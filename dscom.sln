@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assembly4", "src\dscom.demo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "assembly5", "src\dscom.demo\assembly5\assembly5.csproj", "{ACECABE4-AD32-4618-889F-E210D9564C8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "assembly6", "src\dscom.demo\assembly6\assembly6.csproj", "{243EC7AA-E56D-48B1-9DD6-C93661A746A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,14 @@ Global
 		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|x86.ActiveCfg = Release|x86
 		{ACECABE4-AD32-4618-889F-E210D9564C8F}.Release|x86.Build.0 = Release|x86
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Debug|x86.ActiveCfg = Debug|x86
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Debug|x86.Build.0 = Debug|x86
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Release|x86.ActiveCfg = Release|x86
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +130,7 @@ Global
 		{F8F68E57-CFFE-4EA5-9C1A-2CD9223B5D85} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 		{375866D7-1313-408D-AE5A-A77E48711EDB} = {CAAB6257-7EC0-484E-9593-B60CEE8F47D1}
 		{ACECABE4-AD32-4618-889F-E210D9564C8F} = {CAAB6257-7EC0-484E-9593-B60CEE8F47D1}
+		{243EC7AA-E56D-48B1-9DD6-C93661A746A5} = {CAAB6257-7EC0-484E-9593-B60CEE8F47D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F23D9EA-A9D9-4CE5-94B5-050A9B68CA1C}
