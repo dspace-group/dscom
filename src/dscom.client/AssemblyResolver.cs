@@ -20,16 +20,14 @@ namespace dSPACE.Runtime.InteropServices;
 /// <summary>
 /// Uses the "ASMPath" option to handle the AppDomain.CurrentDomain.AssemblyResolve event and try to load the specified assemblies.
 /// </summary>
-internal sealed class AssemblyResolver : IDisposable
+internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
 {
-    private readonly AssemblyLoadContext _context;
     private bool _disposedValue;
 
-    internal AssemblyResolver(TypeLibConverterOptions options)
+    internal AssemblyResolver(TypeLibConverterOptions options) : base("dscom", isCollectible: true)
     {
         Options = options;
-        _context = new AssemblyLoadContext("dscom");
-        _context.Resolving += Context_Resolving;
+        Resolving += Context_Resolving;
     }
 
     private Assembly? Context_Resolving(AssemblyLoadContext context, AssemblyName name)
@@ -47,13 +45,13 @@ internal sealed class AssemblyResolver : IDisposable
             var dllToLoad = Path.Combine(path, $"{name.Name}.dll");
             if (File.Exists(dllToLoad))
             {
-                return _context.LoadFromAssemblyPath(dllToLoad);
+                return LoadFromAssemblyPath(dllToLoad);
             }
 
             var exeToLoad = Path.Combine(path, $"{name.Name}.exe");
             if (File.Exists(exeToLoad))
             {
-                return _context.LoadFromAssemblyPath(exeToLoad);
+                return LoadFromAssemblyPath(exeToLoad);
             }
         }
 
@@ -62,7 +60,7 @@ internal sealed class AssemblyResolver : IDisposable
 
     public Assembly LoadAssembly(string path)
     {
-        return _context.LoadFromAssemblyPath(path);
+        return LoadFromAssemblyPath(path);
     }
 
     public TypeLibConverterOptions Options { get; }
@@ -73,7 +71,8 @@ internal sealed class AssemblyResolver : IDisposable
         {
             if (disposing)
             {
-                _context.Resolving -= Context_Resolving;
+                Resolving -= Context_Resolving;
+                Unload();
             }
 
             _disposedValue = true;
