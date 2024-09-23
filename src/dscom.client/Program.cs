@@ -15,6 +15,7 @@
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #pragma warning disable CA1861 
@@ -38,6 +39,7 @@ public static class ConsoleApp
                 new Option<string>(new[] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
                 new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
+                new Option<bool>(new[] {"--embedtlb", "/embedtlb"}, description: "Embeds type library into the assembly. (default false)")
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
@@ -153,22 +155,27 @@ public static class ConsoleApp
                     options.Out = Path.Combine(Directory.GetCurrentDirectory(), tlbfilename);
                 }
 
-                // Is disposed at the end of the method
-                using var assemblyResolver = new AssemblyResolver(options);
+                ExportTypeLibraryImpl(options, out var weakRef);
 
-                if (!File.Exists(options.Assembly))
+                if (options.EmbedTlb)
                 {
-                    throw new FileNotFoundException($"File {options.Assembly} not found.");
-                }
+                    for (var i = 0; weakRef.IsAlive && (i < 10); i++)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
 
-                var assembly = assemblyResolver.LoadAssembly(options.Assembly);
-                var typeLibConverter = new TypeLibConverter();
-                var nameResolver = options.Names.Length > 0 ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
-                var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options, nameResolver));
+                    if (weakRef.IsAlive)
+                    {
+                        throw new ApplicationException("Unable to embed type library as the assembly is still locked by other processes.");
+                    }
 
-                if (typeLib is ICreateTypeLib2 createTypeLib2)
-                {
-                    createTypeLib2.SaveAllChanges().ThrowIfFailed($"Failed to save type library {options.Out}.");
+                    var settings = new TypeLibEmbedderSettings
+                    {
+                        SourceTlbPath = options.Out,
+                        TargetAssembly = options.Assembly
+                    };
+                    TypeLibEmbedder.EmbedTypeLib(settings);
                 }
 
                 return 0;
@@ -178,6 +185,29 @@ public static class ConsoleApp
                 return HandleException(e, "Failed to export type library.");
             }
         });
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void ExportTypeLibraryImpl(TypeLibConverterOptions options, out WeakReference weakRef)
+    {
+        using var assemblyResolver = new AssemblyResolver(options);
+        weakRef = new WeakReference(assemblyResolver, trackResurrection: true);
+        if (!File.Exists(options.Assembly))
+        {
+            throw new FileNotFoundException($"File {options.Assembly} not found.");
+        }
+
+        var assembly = assemblyResolver.LoadAssembly(options.Assembly);
+        var typeLibConverter = new TypeLibConverter();
+        var nameResolver = options.Names.Length > 0 ? NameResolver.Create(options.Names) : NameResolver.Create(assembly);
+        var typeLib = typeLibConverter.ConvertAssemblyToTypeLib(assembly, options, new TypeLibExporterNotifySink(options, nameResolver));
+
+        if (typeLib is ICreateTypeLib2 createTypeLib2)
+        {
+            createTypeLib2.SaveAllChanges().ThrowIfFailed($"Failed to save type library {options.Out}.");
+        }
+
+        assemblyResolver.Dispose();
     }
 
     private static void RegisterTypeLib(string typeLibFilePath, bool forUser = false)

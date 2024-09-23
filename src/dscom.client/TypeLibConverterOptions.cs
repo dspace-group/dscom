@@ -39,4 +39,9 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     /// Gets or sets whether to generate missing TLB files for dependent assemblies.  
     /// </summary>
     public bool? CreateMissingDependentTLBs { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether to embed the generated type library into the assembly.
+    /// </summary>
+    public bool EmbedTlb { get; set; }
 }
