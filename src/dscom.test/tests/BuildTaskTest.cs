@@ -40,6 +40,11 @@ public class BuildTaskTest : BaseTest
             return ShouldSucceed;
         }
 
+        public bool EmbedTypeLib(TypeLibEmbedderSettings settings, TaskLoggingHelper log)
+        {
+            return ShouldSucceed;
+        }
+
         public bool EnsureFileExists(string? fileNameAndPath)
         {
             return !ExistingFiles.Any() || ExistingFiles.Contains(fileNameAndPath ?? string.Empty);
@@ -134,6 +139,17 @@ public class BuildTaskTest : BaseTest
         context = GetBuildContext();
         context.ShouldSucceed = shouldSucceed;
         var classUnderTest = new TlbExport(context)
+        {
+            BuildEngine = new BuildEngineStub()
+        };
+        return classUnderTest;
+    }
+
+    private static TlbEmbed GetEmbedTask(out BuildContextStub context, bool shouldSucceed = true)
+    {
+        context = GetBuildContext();
+        context.ShouldSucceed = shouldSucceed;
+        var classUnderTest = new TlbEmbed(context)
         {
             BuildEngine = new BuildEngineStub()
         };
@@ -779,5 +795,26 @@ public class BuildTaskTest : BaseTest
         task.Execute().Should().BeFalse();
         task.Log.HasLoggedErrors.Should().BeFalse();
     }
+
+    [Fact]
+    public void TestEmbedIsSuccessful()
+    {
+        var task = GetEmbedTask(out var context);
+        var assemblyFileName = "MyAssemblyFile.dll";
+        var tlbFileName = "MyAssemblyFile.tlb";
+
+        var assemblyFilePath = Path.Combine(Path.GetTempPath(), assemblyFileName);
+        var tlbFilePath = Path.Combine(Path.GetTempPath(), tlbFileName);
+        task.TargetAssemblyFile = assemblyFilePath;
+        task.SourceTlbFile = tlbFilePath;
+        context.ExistingFiles.Add(assemblyFilePath);
+        context.ExistingFiles.Add(tlbFilePath);
+
+        context.ShouldSucceed = true;
+
+        task.Execute().Should().BeTrue();
+        task.Log.HasLoggedErrors.Should().BeFalse();
+    }
+
 }
 

@@ -178,6 +178,29 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     }
 
     [Fact]
+    public void TlbExportAndEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
+    {
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
+
+        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        var dependentTlbPath = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
+
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--embedtlb");
+        result.ExitCode.Should().Be(0);
+
+        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
+
+        OleAut32.LoadTypeLibEx(DemoProjectAssembly1Path, REGKIND.NONE, out var embeddedTypeLib);
+        OleAut32.LoadTypeLibEx(tlbFilePath, REGKIND.NONE, out var sourceTypeLib);
+
+        embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
+        sourceTypeLib.GetDocumentation(-1, out var sourceTypeLibName, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
+    }
+
+    [Fact]
     public void TlbExportCreateMissingDependentTLBsFalseAndOverrideTlbId_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly3Path)}.tlb";
