@@ -49,6 +49,7 @@
       <_DsComArguments>tlbexport</_DsComArguments>
       <_DsComArguments Condition="'$(DsComTypeLibraryUniqueId)' != '' AND '$(DsComTypeLibraryUniqueId)' != '$([System.Guid]::Empty.ToString())'">$(_DsComArguments) --overridetlbid "$(DsComTypeLibraryUniqueId)"</_DsComArguments>
       <_DsComArguments Condition="'$(DsComToolVerbose)' == 'true'"> $(_DsComArguments) --verbose</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) --tlbembed</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAssemblyReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>

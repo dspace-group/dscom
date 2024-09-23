@@ -28,7 +28,8 @@
  
   <!-- Embed task -->
   <UsingTask AssemblyFile="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbExport" />
-
+  <UsingTask AssemblyFile="$(_DsComTaskAssemblyFile)" TaskName="dSPACE.Runtime.InteropServices.BuildTasks.TlbEmbed" />
+  
   <!-- 
       Create a target to be called after the build has taken place. (Target assembly must exist).
       Call target only if target file has changed or resulting type library is missing.
@@ -48,5 +49,16 @@
       AssemblyPaths="@(DsComTlbExportAssemblyPaths)"
       TlbOverriddenName="$(DsComOverideLibraryName)"
       Names="@(DsComTlbAliasNames)" />
+  </Target>
+
+  <Target Name="DsComEmbedTypeLibraryAfterBuild"
+          AfterTarget="DsComExportTypeLibraryAfterBuild"
+          Inputs="$(_DsComExportTypeLibraryTargetFile)"
+          Outputs="$(_DsComExportTypeLibraryAssemblyFile)"
+          Condition="$(DsComTypeLibraryEmbedAfterBuild)">>
+    <!-- Embed Type library on build -->
+    <TlbEmbed
+      SourceTlbFile="$(_DsComExportTypeLibraryTargetFile)"
+      TargetAssemblyFile="$(_DsComExportTypeLibraryAssemblyFile)" />
   </Target>
 </Project>

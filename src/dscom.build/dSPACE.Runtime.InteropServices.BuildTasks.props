@@ -37,6 +37,8 @@
     <DsComTlbExportIncludeReferencesWithoutHintPath>false</DsComTlbExportIncludeReferencesWithoutHintPath>
     <!-- No value used by default. -->
     <DsComOverideLibraryName></DsComOverideLibraryName>
+    <!-- Do not embed type library after build -->
+    <DsComTypeLibraryEmbedAfterBuild>false</DsComTypeLibraryEmbedAfterBuild>
   </PropertyGroup>
 
   <!-- Clear properties -->

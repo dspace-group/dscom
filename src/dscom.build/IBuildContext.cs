@@ -61,4 +61,6 @@ public interface IBuildContext
     /// <param name="log">The log to write error messages to.</param>
     /// <returns><c>true</c>, if the conversion has taken place successfully; <c>false</c> otherwise.</returns>
     bool ConvertAssemblyToTypeLib(TypeLibConverterSettings settings, TaskLoggingHelper log);
+
+    bool EmbedTypeLib(TypeLibEmbedderSettings settings, TaskLoggingHelper log);
 }
