@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices.DemoAssembly7;
 
 [ComVisible(true)]
-public interface IOptionalParameter
+public interface IDescriptionDemo
 {
     int MyProperty1
     {
