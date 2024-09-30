@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>dSPACE.Runtime.InteropServices.DemoAssembly7</RootNamespace>
+    <AssemblyName>dSPACE.Runtime.InteropServices.DemoAssembly7</AssemblyName>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Platforms>AnyCPU;x86</Platforms>
+    <EnableComHosting>true</EnableComHosting>
+    <NoWarn>NU5104,CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dscom\dscom.csproj" />
+  </ItemGroup>
+
+</Project>
