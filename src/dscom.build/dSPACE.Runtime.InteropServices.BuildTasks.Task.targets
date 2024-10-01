@@ -52,10 +52,10 @@
   </Target>
 
   <Target Name="DsComEmbedTypeLibraryAfterBuild"
-          AfterTarget="DsComExportTypeLibraryAfterBuild"
+          AfterTargets="DsComExportTypeLibraryAfterBuild"
           Inputs="$(_DsComExportTypeLibraryTargetFile)"
           Outputs="$(_DsComExportTypeLibraryAssemblyFile)"
-          Condition="$(DsComTypeLibraryEmbedAfterBuild)">>
+          Condition="$(DsComTypeLibraryEmbedAfterBuild)">
     <!-- Embed Type library on build -->
     <TlbEmbed
       SourceTlbFile="$(_DsComExportTypeLibraryTargetFile)"
