@@ -62,10 +62,11 @@ The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe` 
 It supports the following features:
 
 - Convert an assembly to a type library
-  - Optionally embed the generated type library into the assembly
+  - Optionally embed the generated type library into the converted assembly
 - Convert a type library to `YAML` file
 - Register a type library
 - Unregister a type library
+- Embeds a type library into an existing assembly 
 
 ### Installation
 
@@ -98,10 +99,11 @@ Options:
   -?, -h, --help  Show help and usage information
 
 Commands:
-  tlbexport <Assembly>         Export the assembly to the specified type library
-  tlbdump <TypeLibrary>        Dump a type library
-  tlbregister <TypeLibrary>    Register a type library
-  tlbunregister <TypeLibrary>  Unregister a type library
+  tlbexport <Assembly>                           Export the assembly to the specified type library
+  tlbdump <TypeLibrary>                          Dump a type library
+  tlbregister <TypeLibrary>                      Register a type library
+  tlbunregister <TypeLibrary>                    Unregister a type library
+  tlbembed <SourceTypeLibrary> <TargetAssembly>  Embeds a source type library into a target file
 ```
 
 ## Library
@@ -177,7 +179,7 @@ public class TypeLibConverterCallback : ITypeLibExporterNotifySink
 
 ### TypeLibEmbedder.EmbedTypeLib
 
-.NET +8 introduced ability to embed type library into assemblies with the ComHostTypeLibrary property. However, using this is not fully compatible with the dscom build tools as it requires a type library to be already generated prior to the build. This class provides the impleementation for embedding a type library into an assembly via Win32 API p/invoke calls. 
+.NET +6 introduced ability to embed type library into assemblies with the ComHostTypeLibrary property. However, using this is not fully compatible with the dscom build tools as it requires a type library to be already generated prior to the build. This class provides the implementation for embedding a type library into an assembly via Win32 API p/invoke calls. 
 
 The class and method are static, so you only need to create a settings to provide parameter for the source type library and the target assembly for where the type library will be embedded.
 
@@ -201,6 +203,8 @@ var settings = new TypeLibEmbedderSettings
 };
 TypeLibEmbedder.EmbedTypeLib(settings);
 ```
+
+IMPORTANT: Embedding the type library will alter the assembly, which may cause issues with signing the assembly. Therefore, the scenario of signing the assembly with a certificate or a strong name is not tested. If it is required that the assembly be signed, it is recommended that a build script be used to ensure proper sequence of steps is executed. 
 
 ### RegistrationServices.RegisterTypeForComClients
 
