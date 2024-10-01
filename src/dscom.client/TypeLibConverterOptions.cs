@@ -41,7 +41,14 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     public bool? CreateMissingDependentTLBs { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets whether to embed the generated type library into the assembly.
+    /// Gets or sets the optional path to embed the TLB into a different file other than the assembly. Defaults to the assembly.
     /// </summary>
-    public bool EmbedTlb { get; set; }
+    public string? Embed { get; set; }
+
+    /// <summary>
+    /// Gets or sets the index to be used for type library resource when embedding 
+    /// type library into assembly. Effective only if the <seealso cref="Embed"/> 
+    /// is set to <c>true</c>.
+    /// </summary>
+    public ushort Index { get; set; }
 }

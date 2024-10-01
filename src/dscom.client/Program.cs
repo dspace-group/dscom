@@ -24,6 +24,13 @@ namespace dSPACE.Runtime.InteropServices;
 
 public static class ConsoleApp
 {
+    /// <summary>
+    /// Use a null character, which is an illegal character and therefore impossible
+    /// to input via a command line arguments to make it distinct from nulls that
+    /// gets passed when the option is specified but no argument is given.
+    /// </summary>
+    private const string NotSpecifiedViaCommandLineArgumentsDefault = "\0";
+
     public static int Main(string[] args)
     {
         var tlbexportCommand = new Command("tlbexport", "Export the assembly to the specified type library") {
@@ -39,7 +46,8 @@ public static class ConsoleApp
                 new Option<string>(new[] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
                 new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
-                new Option<bool>(new[] {"--embedtlb", "/embedtlb"}, description: "Embeds type library into the assembly. (default false)")
+                new Option<string?>(new[] { "--embed", "/embed"}, () => NotSpecifiedViaCommandLineArgumentsDefault, description: "Embeds type library into the assembly. (default: false)") { Arity = ArgumentArity.ZeroOrOne },
+                new Option<ushort>(new[] {"--index", "/index"}, () => 1, description: "If the switch --embedtlb is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. (default 1)")
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
@@ -63,12 +71,20 @@ public static class ConsoleApp
                 new Option<bool>(new[] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
             };
 
+        var tlbembedCommand = new Command("tlbembed", "Embeds a source type library into a target file")
+            {
+                new Argument<string>("SourceTypeLibrary","File name of type library"),
+                new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
+                new Option<ushort>(new[] {"--index", "/index"}, () => 1, description:"Index to use for resource ID for the type library. If omitted, defaults to 1. Must be a positive integer from 1 to 65535.")
+            };
+
         var rootCommand = new RootCommand
             {
                 tlbexportCommand,
                 tlbdumpCommand,
                 tlbregisterCommand,
-                tlbunregisterCommand
+                tlbunregisterCommand,
+                tlbembedCommand
             };
 
         rootCommand.Description = $"dSPACE COM tools ({(Environment.Is64BitProcess ? "64Bit" : "32Bit")})";
@@ -77,6 +93,7 @@ public static class ConsoleApp
         ConfigureTLBDumpHandler(tlbdumpCommand);
         ConfigureTLBRegisterHandler(tlbregisterCommand);
         ConfigureTLBUnRegisterHandler(tlbunregisterCommand);
+        ConfigureTLBEmbedHandler(tlbembedCommand);
 
         return rootCommand.Invoke(args);
     }
@@ -138,6 +155,11 @@ public static class ConsoleApp
         });
     }
 
+    private static void ConfigureTLBEmbedHandler(Command tlbembedCommand)
+    {
+        tlbembedCommand.Handler = CommandHandler.Create<TypeLibEmbedderSettings>((settings) => TypeLibEmbedder.EmbedTypeLib(settings));
+    }
+
     private static void ConfigureTLBExportHandler(Command tlbexportCommand)
     {
         tlbexportCommand.Handler = CommandHandler.Create<TypeLibConverterOptions>((options) =>
@@ -157,7 +179,7 @@ public static class ConsoleApp
 
                 ExportTypeLibraryImpl(options, out var weakRef);
 
-                if (options.EmbedTlb)
+                if (options.Embed != NotSpecifiedViaCommandLineArgumentsDefault)
                 {
                     for (var i = 0; weakRef.IsAlive && (i < 10); i++)
                     {
@@ -170,10 +192,13 @@ public static class ConsoleApp
                         throw new ApplicationException("Unable to embed type library as the assembly is still locked by other processes.");
                     }
 
+                    var assemblyPath = string.IsNullOrWhiteSpace(options.Embed) ? options.Assembly : options.Embed;
+                    Console.WriteLine($"Embedding type library '{options.Out}' into assembly '{assemblyPath}'...");
                     var settings = new TypeLibEmbedderSettings
                     {
-                        SourceTlbPath = options.Out,
-                        TargetAssembly = options.Assembly
+                        SourceTypeLibrary = options.Out,
+                        TargetAssembly = assemblyPath,
+                        Index = options.Index
                     };
                     TypeLibEmbedder.EmbedTypeLib(settings);
                 }
