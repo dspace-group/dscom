@@ -14,10 +14,10 @@
     <Nullable>enable</Nullable>
     <EnableComHosting>true</EnableComHosting>
     <WarningsAsErrors>$(WarningsAsErrors);DSCOM001</WarningsAsErrors>
+    <DsComTypeLibraryEmbedAfterBuild>true</DsComTypeLibraryEmbedAfterBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <ComHostTypeLibrary Condition="Exists('comtestdotnet.tlb')" Include="comtestdotnet.tlb" Id="1" />
     <Using Remove="System.Net.Http" Condition="'$(PerformAcceptanceTest)' == 'Runtime'" />
   </ItemGroup>
 

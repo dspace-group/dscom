@@ -13,7 +13,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;CS1591</NoWarn>
     <Platforms>AnyCPU;x86</Platforms>
-    <!-- <EnableComHosting>true</EnableComHosting> -->
+    <EnableComHosting>true</EnableComHosting>
   </PropertyGroup>
 
   <!-- 

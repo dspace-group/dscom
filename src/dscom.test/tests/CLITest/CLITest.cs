@@ -17,10 +17,13 @@ using System.Text;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-// The CLI is not available for .NET Framework
-public class CLITest : IClassFixture<CompileReleaseFixture>
+/// <summary>
+/// Provides the base implementation for running CLI tests.
+/// </summary>
+/// <remarks>The CLI tests are not available for .NET Framework</remarks>
+public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>
 {
-    private const string ErrorNoCommandOrOptions = "Required command was not provided.";
+    protected const string ErrorNoCommandOrOptions = "Required command was not provided.";
 
     internal record struct ProcessOutput(string StdOut, string StdErr, int ExitCode);
 
@@ -32,7 +35,7 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
 
     internal string DemoProjectAssembly3Path { get; }
 
-    public CLITest(CompileReleaseFixture compileFixture)
+    public CLITestBase(CompileReleaseFixture compileFixture)
     {
         DSComPath = compileFixture.DSComPath;
         DemoProjectAssembly1Path = compileFixture.DemoProjectAssembly1Path;
@@ -48,8 +51,53 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         {
             File.Delete(file);
         }
-
     }
+
+    internal static ProcessOutput Execute(string filename, params string[] args)
+    {
+        var processOutput = new ProcessOutput();
+        using var process = new Process();
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        var sb = new StringBuilder();
+        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { sb.Append(e.Data); });
+        process.StartInfo.FileName = filename;
+        process.StartInfo.Arguments = string.Join(" ", args);
+        process.Start();
+
+        process.BeginErrorReadLine();
+        process.WaitForExit();
+        processOutput.StdOut = process.StandardOutput.ReadToEnd();
+        processOutput.StdErr = sb.ToString();
+        processOutput.ExitCode = process.ExitCode;
+
+        return processOutput;
+    }
+
+    /// <summary>
+    /// When running tests that involves the <c>tlbembed</c> command or <c>tlbexport</c> 
+    /// command with the <c>--embed</c> switch enabled, the test should call the function 
+    /// to handle the difference between .NET 4.8 which normally would expect COM objects 
+    /// to be defined in the generated assembly versus .NET 5+ where COM objects will be 
+    /// present in a <c>*.comhost.dll</c> instead.
+    /// </summary>
+    /// <param name="sourceAssemblyFile">The path to the source assembly from where the COM objects are defined.</param>
+    internal static string GetEmbeddedPath(string sourceAssemblyFile)
+    {
+        var embedFile = Path.Combine(Path.GetDirectoryName(sourceAssemblyFile) ?? string.Empty, Path.GetFileNameWithoutExtension(sourceAssemblyFile) + ".comhost" + Path.GetExtension(sourceAssemblyFile));
+        File.Exists(embedFile).Should().BeTrue($"File {embedFile} must exist prior to running the test.");
+        return embedFile;
+    }
+}
+
+/// <summary>
+/// The basic CLI tests to run.
+/// </summary>
+[Collection("CLI Tests")]
+public class CLITest : CLITestBase
+{
+    public CLITest(CompileReleaseFixture compileFixture) : base(compileFixture) { }
 
     [Fact]
     public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
@@ -180,18 +228,20 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
     [Fact]
     public void TlbExportAndEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
+        var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
+
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
 
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
         var dependentTlbPath = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
 
-        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, "--embedtlb");
-        result.ExitCode.Should().Be(0);
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path, $"--embed {embedPath}");
+        result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
 
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
 
-        OleAut32.LoadTypeLibEx(DemoProjectAssembly1Path, REGKIND.NONE, out var embeddedTypeLib);
+        OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib);
         OleAut32.LoadTypeLibEx(tlbFilePath, REGKIND.NONE, out var sourceTypeLib);
 
         embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
@@ -320,26 +370,117 @@ public class CLITest : IClassFixture<CompileReleaseFixture>
         var yamlContent = File.ReadAllText(yamlFilePath);
         yamlContent.Should().Contain($"guid: {guid}");
     }
+}
 
-    internal static ProcessOutput Execute(string filename, params string[] args)
+/// <summary>
+/// The tests for embeds are performed as a separate class due to the additional setup
+/// required and the need for creating a TLB file as part of export prior to testing
+/// the embed functionality itself. There are parallelization issues with running them,
+/// even within the same class. Thus, the separate class has additional setup during the
+/// constructor to perform the export once and ensure the process relating to export is
+/// disposed with before attempting to test the embed functionality.
+/// </summary>
+[Collection("CLI Tests")]
+public class CLITestEmbed : CLITestBase
+{
+    internal string TlbFilePath { get; }
+
+    internal string DependentTlbPath { get; }
+
+    public CLITestEmbed(CompileReleaseFixture compileFixture) : base(compileFixture)
     {
-        var processOutput = new ProcessOutput();
-        var process = new Process();
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        var sb = new StringBuilder();
-        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => { sb.Append(e.Data); });
-        process.StartInfo.FileName = filename;
-        process.StartInfo.Arguments = string.Join(" ", args);
-        process.Start();
+        var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
 
-        process.BeginErrorReadLine();
-        process.WaitForExit();
-        processOutput.StdOut = process.StandardOutput.ReadToEnd();
-        processOutput.StdErr = sb.ToString();
-        processOutput.ExitCode = process.ExitCode;
+        var result = Execute(DSComPath, "tlbexport", DemoProjectAssembly1Path);
+        result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
 
-        return processOutput;
+        result = Execute(DSComPath, "tlbexport", DemoProjectAssembly2Path);
+        result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
+
+        TlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
+        DependentTlbPath = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path)}.tlb";
+
+        File.Exists(TlbFilePath).Should().BeTrue($"File {TlbFilePath} should be available.");
+        File.Exists(DependentTlbPath).Should().BeTrue($"File {DependentTlbPath} should be available.");
+
+        // This is necessary to ensure the process from previous Execute for the export command has completely disposed before running tests.
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+    }
+
+    [Fact]
+    public void TlbEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
+    {
+        var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
+
+        var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath);
+        result.ExitCode.Should().Be(0, $"because embedding should succeed. Output: {result.StdErr} ");
+
+        OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib);
+        OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
+
+        embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
+        sourceTypeLib.GetDocumentation(-1, out var sourceTypeLibName, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
+    }
+
+    [Fact]
+    public void TlbEmbedAssemblyWithArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
+    {
+        var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
+        var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath, "--index 2");
+        result.ExitCode.Should().Be(0);
+
+        OleAut32.LoadTypeLibEx(embedPath + "\\2", REGKIND.NONE, out var embeddedTypeLib);
+        OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
+
+        embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
+        sourceTypeLib.GetDocumentation(-1, out var sourceTypeLibName, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
+    }
+
+    [Fact]
+    public void TlbEmbedAssemblyWithArbitraryTlbAndArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
+    {
+        var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
+        var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath, "--index 3");
+        result.ExitCode.Should().Be(0);
+
+        OleAut32.LoadTypeLibEx(embedPath + "\\3", REGKIND.NONE, out var embeddedTypeLib);
+        OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
+
+        embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
+        sourceTypeLib.GetDocumentation(-1, out var sourceTypeLibName, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
+    }
+
+    [Fact]
+    public void TlbEmbedAssemblyWithMultipleTypeLibraries_ExitCodeAre0AndTlbsAreEmbeddedAndValid()
+    {
+        var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
+        var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath);
+        result.ExitCode.Should().Be(0);
+
+        result = Execute(DSComPath, "tlbembed", DependentTlbPath, DemoProjectAssembly1Path, "--index 2");
+        result.ExitCode.Should().Be(0);
+
+        OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib1);
+        OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib1);
+
+        embeddedTypeLib1.GetDocumentation(-1, out var embeddedTypeLibName1, out _, out _, out _);
+        sourceTypeLib1.GetDocumentation(-1, out var sourceTypeLibName1, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName1, embeddedTypeLibName1);
+
+        OleAut32.LoadTypeLibEx(DemoProjectAssembly1Path + "\\2", REGKIND.NONE, out var embeddedTypeLib2);
+        OleAut32.LoadTypeLibEx(DependentTlbPath, REGKIND.NONE, out var sourceTypeLib2);
+
+        embeddedTypeLib2.GetDocumentation(-1, out var embeddedTypeLibName2, out _, out _, out _);
+        sourceTypeLib2.GetDocumentation(-1, out var sourceTypeLibName2, out _, out _, out _);
+
+        Assert.Equal(sourceTypeLibName2, embeddedTypeLibName2);
     }
 }
