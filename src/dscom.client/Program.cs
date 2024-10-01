@@ -47,7 +47,7 @@ public static class ConsoleApp
                 new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
                 new Option<string?>(new[] { "--embed", "/embed"}, () => NotSpecifiedViaCommandLineArgumentsDefault, description: "Embeds type library into the assembly. (default: false)") { Arity = ArgumentArity.ZeroOrOne },
-                new Option<ushort>(new[] {"--index", "/index"}, () => 1, description: "If the switch --embedtlb is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. (default 1)")
+                new Option<ushort>(new[] {"--index", "/index"}, () => 1, description: "If the switch --embed is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. Ignored if --embed not present. (default 1)")
             };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
