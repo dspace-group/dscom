@@ -20,12 +20,17 @@ namespace dSPACE.Runtime.InteropServices;
 public class TypeLibEmbedderSettings
 {
     /// <summary>
-    /// G   ets or sets source TLB file path.
+    /// Gets or sets source TLB file path.
     /// </summary>
-    public string SourceTlbPath { get; set; } = string.Empty;
+    public string SourceTypeLibrary { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets target assembly path.
     /// </summary>
     public string TargetAssembly { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the resource index. Defaults to 1.
+    /// </summary>
+    public ushort Index { get; set; } = 1;
 }

@@ -141,7 +141,7 @@ internal sealed class DefaultBuildContext : IBuildContext
             var result = TypeLibEmbedder.EmbedTypeLib(settings);
             if (!result)
             {
-                log.LogError("Could not embed type library {0} into assembly {1}", settings.SourceTlbPath, settings.TargetAssembly);
+                log.LogError("Could not embed type library {0} into assembly {1}", settings.SourceTypeLibrary, settings.TargetAssembly);
                 return false;
             }
 

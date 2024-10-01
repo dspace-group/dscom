@@ -126,7 +126,7 @@ public sealed class TlbEmbed : Microsoft.Build.Utilities.Task
 
         var settings = new TypeLibEmbedderSettings
         {
-            SourceTlbPath = SourceTlbFile,
+            SourceTypeLibrary = SourceTlbFile,
             TargetAssembly = TargetAssemblyFile
         };
 

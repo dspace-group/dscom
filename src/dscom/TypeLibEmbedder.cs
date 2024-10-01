@@ -56,8 +56,22 @@ public static class TypeLibEmbedder
         [In] IntPtr hUpdate,
         [In] bool fDiscard);
 
+    /// <summary>
+    /// Adds the supplied type library as a TYPELIB resource type into the assembly. 
+    /// For the purpose of embedding, the assembly is treated as if it was a PE file.
+    /// The resource will be always assigned index #1. 
+    /// </summary>
+    /// <param name="settings">Settings to indicate the source type library and target
+    /// assembly.</param>
+    /// <returns><code>true</code> is returned to indicate success.</returns>
+    /// <exception cref="ApplicationException">Reports an issue with applying changes to the resources.</exception>
     public static bool EmbedTypeLib(TypeLibEmbedderSettings settings)
     {
+        if (settings.Index < 1)
+        {
+            throw new ApplicationException("The index must be set to a number between 1 to 65535.");
+        }
+
         int win32ErrorCode;
 
         var assemblyFileHandle = BeginUpdateResourceW(settings.TargetAssembly, false);
@@ -71,11 +85,11 @@ public static class TypeLibEmbedder
         try
         {
             strPtr = Marshal.StringToHGlobalUni("TYPELIB");
-            var bytes = File.ReadAllBytes(settings.SourceTlbPath);
-            if (!UpdateResourceW(assemblyFileHandle, strPtr, new IntPtr(1), 0, bytes, bytes.Length))
+            var bytes = File.ReadAllBytes(settings.SourceTypeLibrary);
+            if (!UpdateResourceW(assemblyFileHandle, strPtr, new IntPtr(settings.Index), 0, bytes, bytes.Length))
             {
                 win32ErrorCode = Marshal.GetLastWin32Error();
-                throw new ApplicationException($"Error: Unable to update assembly file '{settings.TargetAssembly}' using TLB file '{settings.SourceTlbPath}'; error code {win32ErrorCode}.");
+                throw new ApplicationException($"Error: Unable to update assembly file '{settings.TargetAssembly}' using TLB file '{settings.SourceTypeLibrary}'; error code {win32ErrorCode}.");
             }
         }
         finally
@@ -89,7 +103,7 @@ public static class TypeLibEmbedder
         if (!EndUpdateResourceW(assemblyFileHandle, false))
         {
             win32ErrorCode = Marshal.GetLastWin32Error();
-            throw new ApplicationException($"Error: Unable to write changes to assembly file '{settings.TargetAssembly}' using TLB file '{settings.SourceTlbPath}'; error code {win32ErrorCode}.");
+            throw new ApplicationException($"Error: Unable to write changes to assembly file '{settings.TargetAssembly}' using TLB file '{settings.SourceTypeLibrary}'; error code {win32ErrorCode}.");
         };
 
         return true;
