@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Castle.Components.DictionaryAdapter.Xml;
 using System.Diagnostics;
 using System.Text;
 
@@ -42,15 +43,21 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>
         DemoProjectAssembly2Path = compileFixture.DemoProjectAssembly2Path;
         DemoProjectAssembly3Path = compileFixture.DemoProjectAssembly3Path;
 
-        foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.tlb"))
+        RetryHandler.Retry(() =>
         {
-            File.Delete(file);
-        }
+            foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.tlb"))
+            {
+                File.Delete(file);
+            };
+        }, new[] { typeof(UnauthorizedAccessException) });
 
-        foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.yaml"))
+        RetryHandler.Retry(() =>
         {
-            File.Delete(file);
-        }
+            foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.yaml"))
+            {
+                File.Delete(file);
+            };
+        }, new[] { typeof(UnauthorizedAccessException) });
     }
 
     internal static ProcessOutput Execute(string filename, params string[] args)
