@@ -42,12 +42,20 @@ public class CompileReleaseFixture
         var configuration = "Release";
 #endif
 
+#if NET8_0_OR_GREATER
+        var frameworkVersion = "net8.0";
+#elif NET6_0_OR_GREATER
+        var frameworkVersion = "net6.0";
+#else
+        var frameworkVersion = "net48";
+#endif
+
         // Path to descom.exe
         DSComPath = Path.Combine(Workdir, "src", "dscom.client", "bin", configuration, "net6.0", "dscom.exe");
 
         // Path to dscom.demo assemblies
-        DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
-        DemoProjectAssembly2Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly2", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly2.dll");
-        DemoProjectAssembly3Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly3", "bin", configuration, "net6.0", "dSPACE.Runtime.InteropServices.DemoAssembly3.dll");
+        DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
+        DemoProjectAssembly2Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly2", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly2.dll");
+        DemoProjectAssembly3Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly3", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly3.dll");
     }
 }

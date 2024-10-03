@@ -41,7 +41,7 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
   - [Limitations](#limitations)
     - [RegisterAssembly](#registerassembly)
 
-## Introducing
+## Introduction
 
 Fortunately, .NET still supports COM, but there is no support for generating TLBs.  
 From the Microsoft documentation:
@@ -62,9 +62,11 @@ The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe` 
 It supports the following features:
 
 - Convert an assembly to a type library
+  - Optionally embed the generated type library into the converted assembly
 - Convert a type library to `YAML` file
 - Register a type library
 - Unregister a type library
+- Embeds a type library into an existing assembly 
 
 ### Installation
 
@@ -97,10 +99,11 @@ Options:
   -?, -h, --help  Show help and usage information
 
 Commands:
-  tlbexport <Assembly>         Export the assembly to the specified type library
-  tlbdump <TypeLibrary>        Dump a type library
-  tlbregister <TypeLibrary>    Register a type library
-  tlbunregister <TypeLibrary>  Unregister a type library
+  tlbexport <Assembly>                           Export the assembly to the specified type library
+  tlbdump <TypeLibrary>                          Dump a type library
+  tlbregister <TypeLibrary>                      Register a type library
+  tlbunregister <TypeLibrary>                    Unregister a type library
+  tlbembed <SourceTypeLibrary> <TargetAssembly>  Embeds a source type library into a target file
 ```
 
 ## Library
@@ -115,6 +118,8 @@ dSPACE.Runtime.InteropServices supports the following methods and classes:
 
 - TypeLibConverter
   - ConvertAssemblyToTypeLib
+- TypeLibEmbedder
+  - EmbedTypeLib
 - RegistrationServices
   - RegisterTypeForComClients
   - UnregisterTypeForComClients
@@ -171,6 +176,35 @@ public class TypeLibConverterCallback : ITypeLibExporterNotifySink
     }
 }
 ```
+
+### TypeLibEmbedder.EmbedTypeLib
+
+.NET +6 introduced ability to embed type library into assemblies with the ComHostTypeLibrary property. However, using this is not fully compatible with the dscom build tools as it requires a type library to be already generated prior to the build. This class provides the implementation for embedding a type library into an assembly via Win32 API p/invoke calls. 
+
+The class and method are static, so you only need to create a settings to provide parameter for the source type library and the target assembly for where the type library will be embedded.
+
+It is important to note that type libraries are _not_ bit-agnostic and therefore, it will not make sense to embed them in an AnyCPU assemblies. For .NET 5.0 and greater, that is not an issue since the generated *.comhost.dll are tied to a specific bitness. For .NET 4.8, it is strongly recommended that the assembly be built with either x64 or x86 rather than AnyCPU. 
+
+```csharp
+public static bool EmbedTypeLib(
+    TypeLibEmbedderSettings settings
+)
+```
+
+Example:
+
+```csharp
+using dSPACE.Runtime.InteropServices;
+
+var settings = new TypeLibEmbedderSettings
+{
+    SourceTlbPath = "C:\\path\\to\\type\\library.tlb",
+    TargetAssembly = "C:\\path\\to\\assembly.dll"
+};
+TypeLibEmbedder.EmbedTypeLib(settings);
+```
+
+IMPORTANT: Embedding the type library will alter the assembly, which may cause issues with signing the assembly. Therefore, the scenario of signing the assembly with a certificate or a strong name is not tested. If it is required that the assembly be signed, it is recommended that a build script be used to ensure proper sequence of steps is executed. 
 
 ### RegistrationServices.RegisterTypeForComClients
 
@@ -242,7 +276,7 @@ The native build task is automatically selected, if a .NET 4.8 or .NET 6.0 assem
 
 #### Using the CLI based task
 
-The CLI task is automatically selected, if a .NET Standard 2.0 assembly is build. It is also chosen, if the target platform is set to x86.
+The CLI task is automatically selected, if a .NET Standard 2.0 assembly is being build. It is also chosen if the target platform is set to x86.
 
 #### Enforcing the usage of the CLI
 
@@ -281,7 +315,7 @@ The build task can be parameterized with the following [properties](https://lear
 | DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false`                                         |
 | _DsComExportTypeLibraryTargetFile              | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
 | _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                             |
-
+| DsComTypeLibraryEmbedAfterBuild                | Embeds the generated type library into the source assembly file. <br /> Default value: `false`                                         |
 *) This value cannot be overridden.
 
 The build task consumes the following [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):

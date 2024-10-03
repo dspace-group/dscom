@@ -134,6 +134,26 @@ internal sealed class DefaultBuildContext : IBuildContext
 #endif
     }
 
+    public bool EmbedTypeLib(TypeLibEmbedderSettings settings, TaskLoggingHelper log)
+    {
+        try
+        {
+            var result = TypeLibEmbedder.EmbedTypeLib(settings);
+            if (!result)
+            {
+                log.LogError("Could not embed type library {0} into assembly {1}", settings.SourceTypeLibrary, settings.TargetAssembly);
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            log.LogErrorFromException(ex);
+            return false;
+        }
+    }
+
 #if NET5_0_OR_GREATER
     /// <summary>
     /// Creates an instance of <see cref="AssemblyLoadContext"/> that will

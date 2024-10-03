@@ -47,12 +47,16 @@
       <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithHintPath->GetMetadata('HintPath'), '" --asmpath "')"</_DsComAssemblyReferences>
       <_DsComAliasNames Condition="@(DsComTlbAliasNames->Count()) &gt; 0">--names @(DsComTlbAliasNames, --names)</_DsComAliasNames>
       <_DsComArguments>tlbexport</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryAssemblyFile)"</_DsComArguments>
       <_DsComArguments Condition="'$(DsComTypeLibraryUniqueId)' != '' AND '$(DsComTypeLibraryUniqueId)' != '$([System.Guid]::Empty.ToString())'">$(_DsComArguments) --overridetlbid "$(DsComTypeLibraryUniqueId)"</_DsComArguments>
       <_DsComArguments Condition="'$(DsComToolVerbose)' == 'true'"> $(_DsComArguments) --verbose</_DsComArguments>
+      <!-- Handles .NET 4.8 which would be embedded into the same output assembly -->
+      <_DsComArguments Condition="'$(DsComTypeLibraryEmbedAfterBuild)' == 'true' AND $(ComHostIntermediatePath) == ''"> $(_DsComArguments) --embed</_DsComArguments>
+      <!-- Handles .NET 5+ which would be embedded into the generated comhost DLL -->
+      <_DsComArguments Condition="'$(DsComTypeLibraryEmbedAfterBuild)' == 'true' AND $(ComHostIntermediatePath) != ''"> $(_DsComArguments) --embed $(ComHostIntermediatePath)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAssemblyReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
-      <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryAssemblyFile)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAliasNames)</_DsComArguments>
       <_DsComArguments Condition="'$(DsComOverideLibraryName)' != ''"> $(_DsComArguments) --overridename "$(DsComOverideLibraryName)"</_DsComArguments>
       <_DsComArguments Condition="'$(DsComTlbExportCreateMissingDependentTlbs)' != ''"> $(_DsComArguments) --createmissingdependenttlbs $(DsComTlbExportCreateMissingDependentTlbs)</_DsComArguments>
