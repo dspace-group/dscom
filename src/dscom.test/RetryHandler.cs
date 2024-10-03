@@ -36,7 +36,7 @@ internal static class RetryHandler
     }
 }
 
-internal class RetryAbortException : Exception
-{ 
+internal sealed class RetryAbortException : Exception
+{
     public RetryAbortException(string message, Exception innerException) : base(message, innerException) { }
 }
