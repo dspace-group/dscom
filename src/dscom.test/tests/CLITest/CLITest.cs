@@ -105,7 +105,7 @@ public class CLITest : CLITestBase
 {
     public CLITest(CompileReleaseFixture compileFixture) : base(compileFixture) { }
 
-    [Fact]
+    [StaFact]
     public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath);
@@ -115,7 +115,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void CallWithoutCommandABC_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath, "ABC");
@@ -125,7 +125,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
     }
 
-    [Fact]
+    [StaFact]
     public void CallWithVersionOption_VersionIsAssemblyInformationalVersionAttributeValue()
     {
         var assemblyInformationalVersion = typeof(TypeLibConverter).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
@@ -137,7 +137,7 @@ public class CLITest : CLITestBase
         versionFromLib.Should().StartWith(result.StdOut.Trim());
     }
 
-    [Fact]
+    [StaFact]
     public void CallWithHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "--help");
@@ -145,7 +145,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbexport", "--help");
@@ -153,7 +153,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbdump", "--help");
@@ -161,7 +161,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbregister", "--help");
@@ -169,7 +169,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbunregister", "--help");
@@ -177,7 +177,7 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
@@ -185,7 +185,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
@@ -193,7 +193,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
@@ -201,7 +201,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
@@ -209,7 +209,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTlbIsAvailableAndValid()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
@@ -231,7 +231,7 @@ public class CLITest : CLITestBase
         File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
@@ -256,7 +256,7 @@ public class CLITest : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportCreateMissingDependentTLBsFalseAndOverrideTlbId_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly3Path)}.tlb";
@@ -274,7 +274,7 @@ public class CLITest : CLITestBase
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
@@ -292,7 +292,7 @@ public class CLITest : CLITestBase
         result.StdErr.Should().Contain(Path.GetFileNameWithoutExtension(DemoProjectAssembly2Path));
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
@@ -307,7 +307,7 @@ public class CLITest : CLITestBase
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportCreateMissingDependentTLBsNoValue_ExitCodeIs0()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(DemoProjectAssembly1Path)}.tlb";
@@ -322,7 +322,7 @@ public class CLITest : CLITestBase
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
@@ -337,7 +337,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().BeNullOrEmpty();
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndOptionSilenceTX801311A6_StdOutAndStdErrIsEmpty()
     {
         var tlbFileName = $"{Guid.NewGuid()}.tlb";
@@ -352,7 +352,7 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().BeNullOrEmpty();
     }
 
-    [Fact]
+    [StaFact]
     public void TlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
     {
         var guid = Guid.NewGuid().ToString();
@@ -414,7 +414,7 @@ public class CLITestEmbed : CLITestBase
         GC.WaitForPendingFinalizers();
     }
 
-    [Fact]
+    [StaFact]
     public void TlbEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
@@ -431,7 +431,7 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [Fact]
+    [StaFact]
     public void TlbEmbedAssemblyWithArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
@@ -447,7 +447,7 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [Fact]
+    [StaFact]
     public void TlbEmbedAssemblyWithArbitraryTlbAndArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
@@ -463,7 +463,7 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [Fact]
+    [StaFact]
     public void TlbEmbedAssemblyWithMultipleTypeLibraries_ExitCodeAre0AndTlbsAreEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(DemoProjectAssembly1Path);
