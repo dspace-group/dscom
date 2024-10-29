@@ -53,7 +53,7 @@
       <!-- Handles .NET 4.8 which would be embedded into the same output assembly -->
       <_DsComArguments Condition="'$(DsComTypeLibraryEmbedAfterBuild)' == 'true' AND $(ComHostIntermediatePath) == ''"> $(_DsComArguments) --embed</_DsComArguments>
       <!-- Handles .NET 5+ which would be embedded into the generated comhost DLL -->
-      <_DsComArguments Condition="'$(DsComTypeLibraryEmbedAfterBuild)' == 'true' AND $(ComHostIntermediatePath) != ''"> $(_DsComArguments) --embed $(ComHostIntermediatePath)</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComTypeLibraryEmbedAfterBuild)' == 'true' AND $(ComHostIntermediatePath) != ''"> $(_DsComArguments) --embed "$(ComHostIntermediatePath)"</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComAssemblyReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferences)</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) $(_DsComTypeLibraryReferencePaths)</_DsComArguments>
