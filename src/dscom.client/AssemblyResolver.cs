@@ -44,14 +44,15 @@ internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
         {
             var dllToLoad = Path.Combine(path, $"{name.Name}.dll");
             if (File.Exists(dllToLoad))
-            {
-                return LoadFromAssemblyPath(dllToLoad);
+            {                
+                return Assembly.LoadFile(dllToLoad);
             }
 
             var exeToLoad = Path.Combine(path, $"{name.Name}.exe");
             if (File.Exists(exeToLoad))
             {
-                return LoadFromAssemblyPath(exeToLoad);
+                return Assembly.LoadFile(exeToLoad);
+                //return LoadFromAssemblyPath(exeToLoad);
             }
         }
 
