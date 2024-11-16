@@ -29,9 +29,9 @@
   <!-- Export settings. -->
   <PropertyGroup>
     <!-- Set file path of target file -->
-    <_DsComExportTypeLibraryTargetFile>$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
+    <_DsComExportTypeLibraryTargetFile Condition="$(DsComExportTypeLibraryTargetFile) == ''">$(TargetDir)\$(TargetName)$(_DsComTlbExt)</_DsComExportTypeLibraryTargetFile>
     <!-- Set file path of source file -->
-    <_DsComExportTypeLibraryAssemblyFile>$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
+    <_DsComExportTypeLibraryAssemblyFile Condition="$(DsComExportTypeLibraryAssemblyFile) = ''">$(TargetPath)</_DsComExportTypeLibraryAssemblyFile>
   </PropertyGroup>
 
   <ItemGroup>
