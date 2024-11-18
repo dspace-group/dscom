@@ -306,17 +306,16 @@ The build task can be parameterized with the following [properties](https://lear
 
 | **Name**                                       | **Description**                                                                                |
 | ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                                                                          |
-| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                                                         | false                                         |
-| DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                    |
-| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string   | 
-| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false`                                         |
-| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`                                          |
-| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false`                                         |
-| _DsComExportTypeLibraryTargetFile              | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
-| _DsComExportTypeLibraryAssemblyFile            | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                             |
-| DsComTypeLibraryEmbedAfterBuild                | Embeds the generated type library into the source assembly file. <br /> Default value: `false`                                         |
-*) This value cannot be overridden.
+| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                          |
+| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                             |
+| DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                     |
+| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                       | 
+| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false` |
+| DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`          |
+| DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false` |
+| DsComExportTypeLibraryTargetFile               | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
+| DsComExportTypeLibraryAssemblyFile             | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                       |
+| DsComTypeLibraryEmbedAfterBuild                | Embeds the generated type library into the source assembly file. <br /> Default value: `false` |
 
 The build task consumes the following [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):
 
@@ -326,6 +325,19 @@ The build task consumes the following [items](https://learn.microsoft.com/en-us/
 | DsComTlbExportReferencePaths | Directories containing type libraries to use for export. |
 | DsComTlbExportAssemblyPaths  | Assemblies to add for the export.                        |
 | DsComTlbAliasNames           | Names to use as aliases for types with aliases.          |
+
+The CLI based task consumes these additional [properties](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-properties?view=vs-2022):
+
+| **Name**                     | **Description**                                          |
+| ---------------------------- | -------------------------------------------------------- |
+| DsComToolVerbose             | Enables `verbose` option.                                |
+| DsComToolSilent              | Enables `silent` option.                                 |
+
+The CLI based task consumes these additional [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):
+
+| **Name**                     | **Description**                                          |
+| ---------------------------- | -------------------------------------------------------- |
+| DsComToolSilence             | Enables `silence` option for the given warnings          |
 
 ### Example
 
