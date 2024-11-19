@@ -445,6 +445,7 @@ classextern forwarder System.Exception
 - Color is converted to `OLE_COLOR`(stdole)
 - No support for `UnmanagedType.CustomMarshaler`
 - No support for .NET Framework assemblies with `AssemblyMetadataAttribute` value ".NETFrameworkAssembly"
+- Using DsComTypeLibraryEmbedAfterBuild=true in combination with the Default ComHost due to a cyclic dependency in .NET SDK [#286](https://github.com/dspace-group/dscom/issues/286).
 
 ### RegisterAssembly
 
