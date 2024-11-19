@@ -204,7 +204,9 @@ var settings = new TypeLibEmbedderSettings
 TypeLibEmbedder.EmbedTypeLib(settings);
 ```
 
-IMPORTANT: Embedding the type library will alter the assembly, which may cause issues with signing the assembly. Therefore, the scenario of signing the assembly with a certificate or a strong name is not tested. If it is required that the assembly be signed, it is recommended that a build script be used to ensure proper sequence of steps is executed. 
+IMPORTANT: Embedding the type library will alter the assembly, which may cause issues with signing the assembly. Therefore, the scenario of signing the assembly with a certificate or a strong name is not tested. If it is required that the assembly be signed, it is recommended that a build script be used to ensure proper sequence of steps is executed.
+
+IMPORTANT: In order to embed the type library into the built assembly, the process must unload the assembly. As dotnet restricts the usage of unloadable assemblies via AssemblyLoadContext to pure CLR assemblies, embedding TLBs into an assembly may only work, if none of the assemblies loaded via `--asmpath` may be a mixed mode C++/CLI assembly. In this case, please use to different calls to `dscom.exe` / `dscom32.exe` or the separate dscom build tasks. For more information refer to issue [#292](https://github.com/dspace-group/dscom/issues/292).
 
 ### RegistrationServices.RegisterTypeForComClients
 

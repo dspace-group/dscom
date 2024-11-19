@@ -20,6 +20,13 @@ namespace dSPACE.Runtime.InteropServices;
 public class TypeLibConverterOptions : TypeLibConverterSettings
 {
     /// <summary>
+    /// Use a null character, which is an illegal character and therefore impossible
+    /// to input via a command line arguments to make it distinct from nulls that
+    /// gets passed when the option is specified but no argument is given.
+    /// </summary>
+    internal const string NotSpecifiedViaCommandLineArgumentsDefault = "\0";
+
+    /// <summary>
     /// Gets or sets a value indicating whether the output is silent.
     /// </summary>
     public bool Silent { get; set; }
@@ -51,4 +58,13 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     /// is set to <c>true</c>.
     /// </summary>
     public ushort Index { get; set; }
+
+    /// <summary>
+    /// Centralized check for using a meaningful value for <see cref="Embed"/>.
+    /// </summary>
+    /// <returns><c>true</c>, if the tlb should be embedded into the resulting assembly; <c>false</c> otherwise.</returns>
+    internal bool ShouldEmbed()
+    {
+        return Embed is null || !StringComparer.OrdinalIgnoreCase.Equals(Embed, NotSpecifiedViaCommandLineArgumentsDefault);
+    }
 }

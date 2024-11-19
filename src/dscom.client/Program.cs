@@ -24,13 +24,6 @@ namespace dSPACE.Runtime.InteropServices;
 
 public static class ConsoleApp
 {
-    /// <summary>
-    /// Use a null character, which is an illegal character and therefore impossible
-    /// to input via a command line arguments to make it distinct from nulls that
-    /// gets passed when the option is specified but no argument is given.
-    /// </summary>
-    private const string NotSpecifiedViaCommandLineArgumentsDefault = "\0";
-
     public static int Main(string[] args)
     {
         var tlbexportCommand = new Command("tlbexport", "Export the assembly to the specified type library") {
@@ -46,7 +39,7 @@ public static class ConsoleApp
                 new Option<string>(new[] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
                 new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
                 new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
-                new Option<string?>(new[] { "--embed", "/embed"}, () => NotSpecifiedViaCommandLineArgumentsDefault, description: "Embeds type library into the assembly. (default: false)") { Arity = ArgumentArity.ZeroOrOne },
+                new Option<string?>(new[] { "--embed", "/embed"}, () => TypeLibConverterOptions.NotSpecifiedViaCommandLineArgumentsDefault, description: "Embeds type library into the assembly. (default: false)") { Arity = ArgumentArity.ZeroOrOne },
                 new Option<ushort>(new[] {"--index", "/index"}, () => 1, description: "If the switch --embed is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. Ignored if --embed not present. (default 1)")
             };
 
@@ -179,29 +172,12 @@ public static class ConsoleApp
 
                 ExportTypeLibraryImpl(options, out var weakRef);
 
-                if (options.Embed != NotSpecifiedViaCommandLineArgumentsDefault)
+                if (options.ShouldEmbed())
                 {
-                    for (var i = 0; weakRef.IsAlive && (i < 10); i++)
-                    {
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                    }
-
-                    if (weakRef.IsAlive)
-                    {
-                        throw new ApplicationException("Unable to embed type library as the assembly is still locked by other processes.");
-                    }
-
-                    var assemblyPath = string.IsNullOrWhiteSpace(options.Embed) ? options.Assembly : options.Embed;
-                    Console.WriteLine($"Embedding type library '{options.Out}' into assembly '{assemblyPath}'...");
-                    var settings = new TypeLibEmbedderSettings
-                    {
-                        SourceTypeLibrary = options.Out,
-                        TargetAssembly = assemblyPath,
-                        Index = options.Index
-                    };
-                    TypeLibEmbedder.EmbedTypeLib(settings);
+                    ExportTypeLibraryAfterExport(options, weakRef);
                 }
+
+                _ = RemoveWeakReference(weakRef);
 
                 return 0;
             }
@@ -231,8 +207,6 @@ public static class ConsoleApp
         {
             createTypeLib2.SaveAllChanges().ThrowIfFailed($"Failed to save type library {options.Out}.");
         }
-
-        assemblyResolver.Dispose();
     }
 
     private static void RegisterTypeLib(string typeLibFilePath, bool forUser = false)
@@ -312,5 +286,34 @@ public static class ConsoleApp
         }
 
         return 1;
+    }
+
+    private static void ExportTypeLibraryAfterExport(TypeLibConverterOptions options, WeakReference weakRef)
+    {
+        if (!RemoveWeakReference(weakRef))
+        {
+            throw new ApplicationException("Unable to embed type library as the assembly is still locked by other processes.");
+        }
+
+        var assemblyPath = string.IsNullOrWhiteSpace(options.Embed) ? options.Assembly : options.Embed;
+        Console.WriteLine($"Embedding type library '{options.Out}' into assembly '{assemblyPath}'...");
+        var settings = new TypeLibEmbedderSettings
+        {
+            SourceTypeLibrary = options.Out,
+            TargetAssembly = assemblyPath,
+            Index = options.Index
+        };
+        TypeLibEmbedder.EmbedTypeLib(settings);
+    }
+
+    private static bool RemoveWeakReference(WeakReference weakRef)
+    {
+        for (var i = 0; weakRef.IsAlive && (i < 10); i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        return !weakRef.IsAlive;
     }
 }
