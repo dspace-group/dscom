@@ -24,7 +24,7 @@ internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
 {
     private bool _disposedValue;
 
-    internal AssemblyResolver(TypeLibConverterOptions options) : base("dscom", isCollectible: false)
+    internal AssemblyResolver(TypeLibConverterOptions options) : base("dscom", isCollectible: options.ShouldEmbed())
     {
         Options = options;
         Resolving += Context_Resolving;
@@ -72,6 +72,10 @@ internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
             if (disposing)
             {
                 Resolving -= Context_Resolving;
+                if (this.IsCollectible)
+                {
+                    this.Unload();
+                }
             }
 
             _disposedValue = true;
