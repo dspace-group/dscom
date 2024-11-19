@@ -72,9 +72,9 @@ internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
             if (disposing)
             {
                 Resolving -= Context_Resolving;
-                if (this.IsCollectible)
+                if (IsCollectible)
                 {
-                    this.Unload();
+                    Unload();
                 }
             }
 

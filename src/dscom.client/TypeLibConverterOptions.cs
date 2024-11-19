@@ -65,6 +65,6 @@ public class TypeLibConverterOptions : TypeLibConverterSettings
     /// <returns><c>true</c>, if the tlb should be embedded into the resulting assembly; <c>false</c> otherwise.</returns>
     internal bool ShouldEmbed()
     {
-        return this.Embed is null || !StringComparer.OrdinalIgnoreCase.Equals(this.Embed, NotSpecifiedViaCommandLineArgumentsDefault);
+        return Embed is null || !StringComparer.OrdinalIgnoreCase.Equals(Embed, NotSpecifiedViaCommandLineArgumentsDefault);
     }
 }
