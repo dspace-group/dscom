@@ -33,6 +33,7 @@ dotnet add CsLibrary.csproj package --prerelease -s %root%\_packages dSPACE.Runt
 
 dotnet build-server shutdown
 
+msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 ..\CppLibrary\CppLibrary.vcxproj
 msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime
 
 dotnet build-server shutdown
