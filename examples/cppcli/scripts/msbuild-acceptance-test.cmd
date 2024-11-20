@@ -25,10 +25,11 @@ POPD
 PUSHD %~dp0\..\CsLibrary
 
 msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
+msbuild -nodeReuse:False -t:Rebuild -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true ..\CppLibrary\CppLibrary.vcxproj
 
 dotnet build-server shutdown
 
-dotnet add CsLibrary.csproj package --no-restore --prerelease -s %root%\_packages dSPACE.Runtime.InteropServices.BuildTasks
+dotnet add CsLibrary.csproj package --prerelease -s %root%\_packages dSPACE.Runtime.InteropServices.BuildTasks
 
 dotnet build-server shutdown
 
