@@ -10,6 +10,8 @@ dotnet pack src\dscom.build\dscom.build.csproj -p:Configuration=Release
 
 IF NOT EXIST %root%\_packages MKDIR _packages
 
+XCOPY /Y /I /C /F .\src\dscom\bin\x64\Release\*.nupkg _packages\
+XCOPY /Y /I /C /F .\src\dscom.build\bin\x64\Release\*.nupkg _packages\
 XCOPY /Y /I /C /F .\src\dscom\bin\Release\*.nupkg _packages\
 XCOPY /Y /I /C /F .\src\dscom.build\bin\Release\*.nupkg _packages\
 

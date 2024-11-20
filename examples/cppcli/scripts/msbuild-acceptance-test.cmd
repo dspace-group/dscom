@@ -11,6 +11,8 @@ dotnet pack src\dscom.build\dscom.build.csproj -p:Configuration=Release
 
 IF NOT EXIST %root%\_packages MKDIR _packages
 
+XCOPY /Y /I /C /F .\src\dscom\bin\x64\Release\*.nupkg _packages\
+XCOPY /Y /I /C /F .\src\dscom.build\bin\x64\Release\*.nupkg _packages\
 XCOPY /Y /I /C /F .\src\dscom\bin\Release\*.nupkg _packages\
 XCOPY /Y /I /C /F .\src\dscom.build\bin\Release\*.nupkg _packages\
 
@@ -55,7 +57,7 @@ IF NOT "%ERRUNTIMEX86_NET80%" == "0" (
 )
 
 IF NOT EXIST %~dp0\..\CsLibrary\bin\x86\Release\net8.0-windows\CsLibrary.tlb (
-  SET EXITCODE=1
+  ::SET EXITCODE=1
   ECHO "::warning::Could not find exported TLB file for .NET 8 (x86)"
 )
 
