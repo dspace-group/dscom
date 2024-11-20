@@ -12,13 +12,10 @@ jobs:
         test_suite:
           - name: OutProc
             path: outproc
-            requires_cpp: false
           - name: 32 Bit
             path: 32bit
-            requires_cpp: false
           - name: C++/CLI
             path: cppcli
-            requires_cpp: true
 
     steps:
       - uses: actions/checkout@v3
@@ -43,7 +40,6 @@ jobs:
         run: dotnet build -c Release
 
       - uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ matrix.test_suite.requires_cpp }}
 
       - name: Run ${{ matrix.test_suite.Name }} Acceptance test
         run: .\msbuild-acceptance-test.cmd
