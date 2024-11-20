@@ -22,22 +22,22 @@ dotnet nuget locals global-packages --clear
 
 POPD
 
+PUSHD %~dp0\..\CppLibrary
+
+nuget restore -SolutionDirectory ..
+msbuild -nodeReuse:False -t:Rebuild -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
+
+POPD
+
 PUSHD %~dp0\..\CsLibrary
 
 msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
-msbuild -nodeReuse:False -t:Rebuild -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true ..\CppLibrary\CppLibrary.vcxproj
 
 dotnet build-server shutdown
 
 dotnet add CsLibrary.csproj package --prerelease -s %root%\_packages dSPACE.Runtime.InteropServices.BuildTasks
 
 dotnet build-server shutdown
-
-PUSHD %~dp0\..\CppLibrary
-
-nuget restore -SolutionDirectory ..
-
-POPD
 
 msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime
 
