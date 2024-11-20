@@ -24,8 +24,8 @@ POPD
 
 PUSHD %~dp0\..\CppLibrary
 
+msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:PerformAcceptanceTest=Runtime
 nuget restore -SolutionDirectory ..
-msbuild -nodeReuse:False -t:Rebuild -p:Configuration=Release -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
 
 POPD
 
@@ -39,7 +39,7 @@ dotnet add CsLibrary.csproj package --prerelease -s %root%\_packages dSPACE.Runt
 
 dotnet build-server shutdown
 
-msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime
+msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -p:SkipResolvePackageAssets=true
 
 dotnet build-server shutdown
 
