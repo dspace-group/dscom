@@ -376,6 +376,9 @@ Depending on whether you want to process 32bit or 64bit assemblies, you need to 
 > To prevent this it is **recommended that the assembly is compiled as a 32 bit assembly** and not as an AnyCPU assembly.  
 > see: <https://github.com/dotnet/runtime/issues/32493>
 
+> Warning!
+> In order to use 32 bit support with the build targets, the x86 version of .NET must be installed, as dscom requests the hostfxr.dll to be loaded.
+
 ## Migration notes (mscorelib vs System.Private.CoreLib)
 
 Both assemblies are **ComVisible=false** but lot of .NET Framework types are **ComVisible=true**.
