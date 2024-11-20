@@ -70,6 +70,10 @@
     
     <Message Importance="High" Text="Calling dscom.exe to export type library" />
     <Message Importance="Low" Text="Using arguments '$(_DsComArguments)' to call dscom" />
+
+    <Error Code="DSCOM004" 
+           Text="Cannot export type library '$(_DsComExportTypeLibraryTargetFile)' from non-existing assembly '$(_DsComExportTypeLibraryAssemblyFile)'" 
+           Condition="!Exists('$(_DsComExportTypeLibraryAssemblyFile)')" />
     
     <Exec Command='"$(_DsComToolsFileDir)dscom.exe" $(_DsComArguments)'
           ConsoleToMsBuild="true" 
@@ -79,5 +83,37 @@
           WorkingDirectory="$(_DsComWorkingDir)" />
 
     <Warning Code="DSCOM001" Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
+  </Target>
+
+  <Target Name="DsComEmbedTypeLibraryAfterBuild" 
+          AfterTargets="DsComExportTypeLibraryAfterBuild" 
+          Inputs="$(_DsComExportTypeLibraryTargetFile)"
+          Outputs="$(_DsComExportTypeLibraryAssemblyFile)"
+          Condition="$(DsComTypeLibraryEmbedAfterBuild) AND '$(_DsComToolsFileDir)' != ''">
+    <PropertyGroup>
+      <_DsComArguments>tlbembed</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
+      <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryAssemblyFile)"</_DsComArguments>
+      <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
+      <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
+    </PropertyGroup>
+    
+    <Error Code="DSCOM002" 
+           Text="Cannot embed type library '$(_DsComExportTypeLibraryTargetFile)' into non-existing assembly '$(_DsComExportTypeLibraryAssemblyFile)'" 
+           Condition="!Exists('$(_DsComExportTypeLibraryAssemblyFile)')" />
+
+    <Error Code="DSCOM003" 
+           Text="Cannot embed non-existing type library '$(_DsComExportTypeLibraryTargetFile)' into assembly '$(_DsComExportTypeLibraryAssemblyFile)'" 
+           Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
+
+    <Message Importance="High" Text="Calling dscom.exe to embed type library into assembly" />
+    <Message Importance="Low" Text="Using arguments '$(_DsComArguments)' to call dscom" />
+    
+    <Exec Command='"$(_DsComToolsFileDir)dscom.exe" $(_DsComArguments)'
+          ConsoleToMsBuild="true" 
+          StdErrEncoding="UTF-8"
+          StdOutEncoding="UTF-8"
+          IgnoreExitCode="false"
+          WorkingDirectory="$(_DsComWorkingDir)" />
   </Target>
 </Project>

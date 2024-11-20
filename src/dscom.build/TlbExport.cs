@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if NET5_0_OR_GREATER
-using System.Runtime.Loader;
-#else
-using System.Reflection;
-#endif
-
 using Microsoft.Build.Framework;
 
 namespace dSPACE.Runtime.InteropServices.BuildTasks;
@@ -28,25 +22,10 @@ namespace dSPACE.Runtime.InteropServices.BuildTasks;
 public sealed class TlbExport : Microsoft.Build.Utilities.Task
 {
     /// <summary>
-    /// The build context applied to this instance.
-    /// </summary>
-    private readonly IBuildContext _context;
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="TlbExport" />
-    /// export class using the specified build context.
-    /// </summary>
-    /// <param name="context">The build context to apply.</param>
-    public TlbExport(IBuildContext context)
-    {
-        _context = context;
-    }
-
-    /// <summary>
     /// Creates a new instance of the <see cref="TlbExport" />
     /// class using the default build context.
     /// </summary>
-    public TlbExport() : this(new DefaultBuildContext())
+    public TlbExport()
     {
     }
 
@@ -103,150 +82,7 @@ public sealed class TlbExport : Microsoft.Build.Utilities.Task
     /// <inheritdoc cref="Task.Execute()" />
     public override bool Execute()
     {
-        var targetAssemblyFile = GetTargetRuntimeAssembly();
-
-        // if the assembly is found next to this assembly
-        if (File.Exists(targetAssemblyFile))
-        {
-#if NET5_0_OR_GREATER
-            // Load the assembly from a context
-            var loadContext = new AssemblyLoadContext($"msbuild-preload-ctx-{Guid.NewGuid()}", true);
-
-            try
-            {
-                _ = loadContext.LoadFromAssemblyPath(targetAssemblyFile);
-
-                // Execute the task with the resolved assembly.
-                return ExecuteTask();
-            }
-            finally
-            {
-                // unload the assembly
-                loadContext.Unload();
-            }
-#else
-            _ = Assembly.LoadFrom(targetAssemblyFile);
-
-            return ExecuteTask();
-#endif        
-        }
-        else
-        {
-            // Make .NET Runtime resolve the file itself
-            return ExecuteTask();
-        }
+        /* This task remains for historical reasons */
+        throw new NotSupportedException();
     }
-
-    /// <summary>
-    /// Performs the real task execution with the maybe temporarily loaded
-    /// Interop Assembly.
-    /// </summary>
-    /// <returns>The result of the task.</returns>
-    private bool ExecuteTask()
-    {
-        if (!_context.IsRunningOnWindows)
-        {
-            var verbatimDescription = _context.RuntimeDescription;
-            Log.LogError("This task can only be executed on Microsoft Windows (TM) based operating systems. This platform does not support the creation of this task: {0}", verbatimDescription);
-            return false;
-        }
-
-        if (!Guid.TryParse(TlbOverriddenId, out var tlbOverriddenId))
-        {
-            Log.LogError("Cannot convert {0} to a valid Guid", TlbOverriddenId);
-            return false;
-        }
-
-        // Create type library converter settings from task parameters
-        var settings = new TypeLibConverterSettings()
-        {
-            Out = TargetFile,
-            Assembly = SourceAssemblyFile,
-            OverrideTlbId = tlbOverriddenId,
-            TLBReference = ConvertTaskItemToFsPath(TypeLibraryReferences, false),
-            TLBRefpath = ConvertTaskItemToFsPath(TypeLibraryReferencePaths, false),
-            ASMPath = ConvertTaskItemToFsPath(AssemblyPaths, true),
-            OverrideName = TlbOverriddenName
-        };
-
-        // Issue a warning, if the type library is about to be overridden.
-        if (settings.OverrideTlbId != Guid.Empty)
-        {
-            Log.LogMessage(MessageImportance.High, "The default unique id of the resulting type library will be overridden with the following value: {0}", settings.OverrideTlbId);
-        }
-
-        // Perform file system checks.
-        var checks = new FileSystemChecks(Log, _context);
-
-        var result = true;
-        checks.VerifyFilePresent(settings.Assembly, true, ref result);
-        checks.VerifyFilesPresent(settings.TLBReference, false, ref result);
-        checks.VerifyDirectoriesPresent(settings.TLBRefpath, false, ref result);
-        checks.VerifyFilesPresent(settings.ASMPath, false, ref result);
-
-        settings.Names = Names ?? Array.Empty<string>();
-
-        // run conversion, if result has been successful.
-        result = result && _context.ConvertAssemblyToTypeLib(settings, Log);
-
-        // report success or failure.
-        return result && !Log.HasLoggedErrors;
-    }
-
-    /// <summary>
-    /// Takes the <see cref="ITaskItem.ItemSpec" /> of the specified <paramref name="items" />
-    /// and interprets them as file system entry and hence a file or directory path.
-    /// </summary>
-    /// <param name="items">The items to interpret a file system entries.</param>
-    /// <param name="canContainHintPaths">If set to <c>true</c>, the <paramref name="items"/> can 
-    /// contain the Metadata value 'HintPath'. Hence the data will be scanned for this.
-    /// If not, it is assumed, that the <paramref name="items"/> property 
-    /// <see cref="ITaskItem.ItemSpec"/> contains the file system path.</param>
-    /// <returns>The converted item-spec values.</returns>
-    private static string[] ConvertTaskItemToFsPath(IReadOnlyCollection<ITaskItem> items, bool canContainHintPaths)
-    {
-        const string HintPath = nameof(HintPath);
-
-        var itemsWithHintPath = Enumerable.Empty<ITaskItem>();
-        if (canContainHintPaths)
-        {
-            itemsWithHintPath = items
-                .Where(item => item != null)
-                .Where(item => !string.IsNullOrWhiteSpace(item.GetMetadata(HintPath)));
-        }
-
-        var remainingItems = items.Except(itemsWithHintPath);
-
-        return itemsWithHintPath
-            .Select(item => item.GetMetadata(HintPath))
-            .Union(remainingItems.Where(item => item != null)
-                .Select(item => item.ItemSpec)).ToArray();
-    }
-
-
-    /// <summary>
-    /// Gets the path to the path to the <code>dSPACE.Runtime.InteropServices.dll</code>
-    /// next to this assembly.
-    /// </summary>
-    /// <returns>The assembly file path.</returns>
-    private static string GetTargetRuntimeAssembly()
-    {
-        var assemblyPath = typeof(TlbExport).Assembly.Location;
-        var extension = Path.GetExtension(assemblyPath);
-        var fileBaseName = typeof(TlbExport).Namespace;
-        fileBaseName = Path.GetFileNameWithoutExtension(fileBaseName);
-        var fileName = fileBaseName + extension;
-        var assemblyDir = Path.GetDirectoryName(assemblyPath);
-
-        var targetAssemblyFile = fileName;
-
-        if (!string.IsNullOrWhiteSpace(assemblyDir))
-        {
-            targetAssemblyFile = Path.Combine(assemblyDir, fileName);
-        }
-
-        return targetAssemblyFile;
-    }
-
-
 }
