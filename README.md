@@ -272,24 +272,6 @@ The result should be a line as follows in your `.csproj` file:
 
 **Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 6.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
 
-#### Using the native build task
-
-The native build task is automatically selected, if a .NET 4.8 or .NET 6.0 assembly for Windows is being build using an x64 platform.
-
-#### Using the CLI based task
-
-The CLI task is automatically selected, if a .NET Standard 2.0 assembly is being build. It is also chosen if the target platform is set to x86.
-
-#### Enforcing the usage of the CLI
-
-It might be necessary to select the CLI based task. To do so, add the following property to your `.csproj` file:
-
-```XML
-<_DsComForceToolUsage>true</_DsComForceToolUsage>
-```
-
-This will enforce the usage of the DsCom as a command-line tool. Please note, that verbose logging will no longer be working.
-
 #### Enforcing to stop the build, if an error occurs
 
 The build tasks puts a warning to the build log, if the desired type library has not been created, even if the backend has reported a success.
@@ -309,7 +291,6 @@ The build task can be parameterized with the following [properties](https://lear
 | **Name**                                       | **Description**                                                                                |
 | ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                          |
-| _DsComForceToolUsage                           | Use DsCom Exe files to create the TLB <br/> Default value: `false`                             |
 | DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                     |
 | DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                       | 
 | DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false` |

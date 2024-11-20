@@ -22,7 +22,10 @@ jobs:
         run: dotnet restore
 
       - name: Check dotnet version
-        run: dotnet --version
+        run: |
+          dotnet --version
+          dotnet --list-runtimes
+          dotnet --list-sdks
         continue-on-error: false
 
       - name: Check code format (editorconfig)
