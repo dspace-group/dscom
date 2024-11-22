@@ -29,9 +29,28 @@ internal sealed class PropertySetMethodWriter : PropertyMethodWriter
         {
             if (MethodInfo.GetParameters().Any(p =>
              {
-                 return p.ParameterType == typeof(object) ||
-                 p.ParameterType.ToString() == typeof(IDispatch).FullName ||
-                     p.ParameterType.IsInterface;
+                 var type = p.ParameterType;
+
+                 // Object is not 'IsClass'
+                 if (type == typeof(object))
+                 {
+                     return true;
+                 }
+
+                 // every class except special ones (e.g. String)
+                 // are handles as references
+                 if (type.IsClass && !type.IsSpecialHandledClass())
+                 {
+                     return true;
+                 }
+
+                 // interfaces are same as classes
+                 if (type.IsInterface)
+                 {
+                     return true;
+                 }
+
+                 return false;
              }))
             {
                 InvokeKind = INVOKEKIND.INVOKE_PROPERTYPUTREF;
