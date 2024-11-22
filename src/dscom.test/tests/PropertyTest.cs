@@ -59,6 +59,79 @@ public class PropertyTest : BaseTest
         typeInfo!.ContainsFuncDescByName("TestProperty").Should().Be(true);
     }
 
+    [Fact]
+    public void PropertyInInterfaceWithComInterface_ShouldHavePutRef()
+    {
+        var result = CreateAssembly()
+                        .WithInterface("TestSourceInterface")
+                        .Build(out var testSourceInterfaceType)
+                       .WithInterface("TestInterface")
+                           .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsDual)
+                           .WithProperty("TestProperty", testSourceInterfaceType!)
+                           .Build()
+                       .Build()
+                   .Build();
+
+        //check for source-interface
+        var typeSourceInfo = result.TypeLib.GetTypeInfoByName("TestSourceInterface");
+        typeSourceInfo.Should().NotBeNull("TestSourceInterface not found");
+
+        //check for test-interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface not found");
+
+        //check for setter
+        using var funcDescByName = typeInfo!.GetFuncDescByName("TestProperty", invokeKind: INVOKEKIND.INVOKE_PROPERTYPUTREF);
+        funcDescByName.Should().NotBeNull();
+    }
+
+    [Theory]
+    [InlineData(typeof(byte), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(sbyte), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(short), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(ushort), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(uint), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(int), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(ulong), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(long), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(float), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(double), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(string), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(bool), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(char), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(object), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(object[]), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(System.Collections.IEnumerator), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(DateTime), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(Guid), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(System.Drawing.Color), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(decimal), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(Delegate), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(IntPtr), INVOKEKIND.INVOKE_PROPERTYPUT)]
+    [InlineData(typeof(IDispatch), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(IUnknown), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    public void SetterPropertyInInterface_ShouldHaveInvokeKind(Type type, INVOKEKIND invokeKind)
+    {
+        var result = CreateAssembly()
+                       .WithInterface("TestInterface")
+                           .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsDual)
+                           .WithProperty("TestProperty", type, true, false)
+                           .Build()
+                       .Build()
+                   .Build();
+
+        //check for interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        typeInfo.Should().NotBeNull("TestInterface not found");
+
+        //check for setter
+        using var funcDescByName = typeInfo!.GetFuncDescByName("TestProperty");
+        funcDescByName.Should().NotBeNull();
+
+        //check for invokekind
+        funcDescByName!.Value.invkind.Should().Be(invokeKind);
+    }
+
     [Theory]
     [InlineData(typeof(byte))]
     [InlineData(typeof(sbyte))]
