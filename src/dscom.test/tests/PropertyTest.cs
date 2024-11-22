@@ -128,7 +128,7 @@ public class PropertyTest : BaseTest
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestProperty");
         funcDescByName.Should().NotBeNull();
 
-        //heck for invokekind
+        //check for invokekind
         funcDescByName!.Value.invkind.Should().Be(invokeKind);
     }
 
