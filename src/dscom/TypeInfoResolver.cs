@@ -106,30 +106,36 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         }
         else
         {
-            var assembly = type.Assembly;
-            var identifier = assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId);
-
             retval = ResolveTypeInfo(type.GUID);
 
             if (retval == null)
             {
+                var assembly = type.Assembly;
+                var identifier = assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId);
+
                 var typeLib = GetTypeLibFromIdentifier(identifier);
                 if (typeLib == null)
                 {
+                    foreach (var additionalLib in _additionalLibs)
+                    {
+                        var name = assembly.GetName().Name ?? string.Empty;
+                        if (additionalLib.Contains(name))
+                        {
+                            AddTypeLib(additionalLib);
+                            retval = ResolveTypeInfo(type.GUID);
+                            break;
+                        }
+                    }
+
                     var notifySink = WriterContext.NotifySink;
                     if (notifySink != null)
                     {
                         if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
                         {
                             AddTypeLib(refTypeLib);
-                            typeLib = refTypeLib;
+                            retval = ResolveTypeInfo(type.GUID);
                         }
                     }
-                }
-
-                if (typeLib != null)
-                {
-                    retval = ResolveTypeInfo(type.GUID);
                 }
             }
         }
@@ -272,10 +278,4 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         OleAut32.LoadTypeLibEx(typeLibPath, REGKIND.NONE, out var typeLib).ThrowIfFailed($"Failed to load type library {typeLibPath}.");
         return AddTypeLib(typeLib);
     }
-
-    public void AddAdditionalTypeLibs()
-    {
-        _additionalLibs.ForEach(typeLib => AddTypeLib(typeLib));
-    }
-
 }
