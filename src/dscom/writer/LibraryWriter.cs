@@ -61,7 +61,6 @@ internal sealed class LibraryWriter : BaseWriter
             }
 
             Context.TypeInfoResolver.AddTypeLib((ITypeLib)typeLib);
-            Context.TypeInfoResolver.AddAdditionalTypeLibs();
 
             if (!string.IsNullOrEmpty(Context.Options.Out))
             {
