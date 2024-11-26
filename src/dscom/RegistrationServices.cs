@@ -283,6 +283,18 @@ public class RegistrationServices
     {
         static bool TypeMustBeRegistered(Type type)
         {
+            // Only public types are com visible
+            if (!type.IsPublic && !type.IsNestedPublic && !type.IsByRef)
+            {
+                return false;
+            }
+
+            // Type could be defined as not com visible
+            if (!type.IsComVisible())
+            {
+                return false;
+            }
+
             if (type.IsGenericType)
             {
                 return false;
