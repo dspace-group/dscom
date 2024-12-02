@@ -22,25 +22,20 @@ namespace dSPACE.Runtime.InteropServices;
 /// </summary>
 internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
 {
+    private readonly string[] _paths;
+
     private bool _disposedValue;
 
-    internal AssemblyResolver(TypeLibConverterOptions options) : base("dscom", isCollectible: options.ShouldEmbed())
+    internal AssemblyResolver(string[] paths, bool isCollectible)
+        : base("dscom", isCollectible)
     {
-        Options = options;
+        _paths = paths;
         Resolving += Context_Resolving;
     }
 
     private Assembly? Context_Resolving(AssemblyLoadContext context, AssemblyName name)
     {
-        var dir = Path.GetDirectoryName(Options.Assembly);
-
-        var asmPaths = Options.ASMPath;
-        if (Directory.Exists(dir))
-        {
-            asmPaths = asmPaths.Prepend(dir).ToArray();
-        }
-
-        foreach (var path in asmPaths)
+        foreach (var path in _paths)
         {
             var dllToLoad = Path.Combine(path, $"{name.Name}.dll");
             if (File.Exists(dllToLoad))
@@ -62,8 +57,6 @@ internal sealed class AssemblyResolver : AssemblyLoadContext, IDisposable
     {
         return LoadFromAssemblyPath(path);
     }
-
-    public TypeLibConverterOptions Options { get; }
 
     private void Dispose(bool disposing)
     {
