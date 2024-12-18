@@ -123,6 +123,11 @@ internal sealed class LibraryWriter : BaseWriter
             {
                 continue;
             }
+
+            if (type.IsImport)
+            {
+                continue;
+            }
             // Add this type to the unique names collection.
             UpdateUniqueNames(type);
 
