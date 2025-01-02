@@ -26,6 +26,8 @@ internal record struct ParameterItem(
 
 internal class DynamicParameterBuilder
 {
+    public int Count => _parameterItems.Count;
+
     private readonly List<ParameterItem> _parameterItems = new();
 
     private Tuple<Type, object?>[]? _paramAttributes;
@@ -53,12 +55,12 @@ internal class DynamicParameterBuilder
         _parameterItems.Add(parameter);
     }
 
-    public void AddParameters(MethodBuilder methodBuilder)
+    public void AddParameters(MethodBuilder methodBuilder, int index = 1)
     {
-        var index = 1;
-
-        foreach (var item in _parameterItems)
+        for (var iParameter = 0; iParameter < _parameterItems.Count; iParameter++)
         {
+            var item = _parameterItems[iParameter];
+
             var hasDefaultValue = item.DefaultValue != null;
 
             var parameterAttribute = item.ParameterAttributes;
@@ -68,15 +70,15 @@ internal class DynamicParameterBuilder
             if (_paramAttributes != null)
             {
                 //use parameter attributes
-                if ((_paramAttributes.Length > index - 1) && _paramAttributes.GetValue(index - 1) != null)
+                if ((_paramAttributes.Length > iParameter) && _paramAttributes.GetValue(iParameter) != null)
                 {
-                    var attributeParam = _paramAttributes[index - 1].Item2;
-                    var typeAttributeParam = _paramAttributes[index - 1].Item2 == null ? typeof(object) : _paramAttributes[index - 1].Item2?.GetType();
-                    var typeAttribute = _paramAttributes[index - 1].Item1;
+                    var attributeParam = _paramAttributes[iParameter].Item2;
+                    var typeAttributeParam = _paramAttributes[iParameter].Item2 == null ? typeof(object) : _paramAttributes[iParameter].Item2?.GetType();
+                    var typeAttribute = _paramAttributes[iParameter].Item1;
 
                     var attributeConstructor = attributeParam != null && typeAttributeParam != null ? typeAttribute.GetConstructor(new Type[] { typeAttributeParam }) : typeAttribute.GetConstructor(Array.Empty<Type>());
 
-                    _paramAttributesFieldValues.TryGetValue(index - 1, out var fields);
+                    _paramAttributesFieldValues.TryGetValue(iParameter, out var fields);
 
                     var attributeBuilder = attributeParam == null
                         ? new CustomAttributeBuilder(attributeConstructor!, Array.Empty<object>())
