@@ -15,7 +15,7 @@
 namespace dSPACE.Runtime.InteropServices;
 
 /// <summary>
-///  Represents the settings used by <see cref="TypeLibEmbedder"/>.
+///  Represents the settings used for registration of an assembly (like RegAsm.exe)
 /// </summary>
 public class RegisterAssemblySettings
 {
@@ -25,7 +25,7 @@ public class RegisterAssemblySettings
     public string TargetAssembly { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets a path to a directory with assemblies.
+    /// Specifies a directory containing assembly references.
     /// </summary>
     public string[] ASMPath { get; set; } = Array.Empty<string>();
 
@@ -40,7 +40,13 @@ public class RegisterAssemblySettings
     public bool TLB { get; set; }
 
     /// <summary>
-    /// Gets or sets the flag for registration with codebase
+    /// Gets or sets the flag for creating the codebase entry in the registry.
     /// </summary>
     public bool Codebase { get; set; }
+
+    /// <summary>
+    /// Gets or sets the flag for deregistration of the assembly
+    /// </summary>
+    public bool Unregister { get; set; }
+
 }

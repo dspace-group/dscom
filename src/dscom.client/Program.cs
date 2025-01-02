@@ -72,24 +72,25 @@ public static class ConsoleApp
             new Option<ushort>(new[] {"--index", "/index"}, () => 1, description:"Index to use for resource ID for the type library. If omitted, defaults to 1. Must be a positive integer from 1 to 65535.")
         };
 
-        var registerCommand = new Command("asmregister", "register assembly")
-        {
-            new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
-            new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string[]>(new[] { "--tblrefpath", "/tblrefpath"}, description: "Look for type library references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<bool>(new[] {"--TLB", "/TLB"}, description: "Will create and register a typelibrary for the given assembly"),
-            new Option<bool>(new[] {"--codebase", "/codebase"}, description: "Will register the assembly with codebase"),
-        };
+        var registerAssemblyCommand = new Command("regasm", "register assembly")
+            {
+                new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
+                new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<string[]>(new[] { "--tlbrefpath", "/tblrefpath"}, description: "Look for type library references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+                new Option<bool>(new[] {"--tlb", "/tlb"}, description: "Will create and register a typelibrary for the given assembly"),
+                new Option<bool>(new[] {"--codebase", "/codebase"}, description: "Will register the assembly with codebase"),
+                new Option<bool>(new[] {"--unregister", "/unregister"}, description: "Will unregister the assembly"),
+            };
 
         var rootCommand = new RootCommand
-        {
-            tlbexportCommand,
-            tlbdumpCommand,
-            tlbregisterCommand,
-            tlbunregisterCommand,
-            tlbembedCommand,
-            registerCommand
-        };
+            {
+                tlbexportCommand,
+                tlbdumpCommand,
+                tlbregisterCommand,
+                tlbunregisterCommand,
+                tlbembedCommand,
+                registerAssemblyCommand
+            };
 
         rootCommand.Description = $"dSPACE COM tools ({(Environment.Is64BitProcess ? "64Bit" : "32Bit")})";
 
@@ -98,7 +99,7 @@ public static class ConsoleApp
         ConfigureTLBRegisterHandler(tlbregisterCommand);
         ConfigureTLBUnRegisterHandler(tlbunregisterCommand);
         ConfigureTLBEmbedHandler(tlbembedCommand);
-        ConfigureAsmRegisterHandler(registerCommand);
+        ConfigureRegisterAssemblyHandler(registerAssemblyCommand);
 
         return rootCommand.Invoke(args);
     }
@@ -170,7 +171,7 @@ public static class ConsoleApp
     /// </summary>
     /// <param name="registerCommand"></param>
     /// <exception cref="FileNotFoundException"></exception>
-    private static void ConfigureAsmRegisterHandler(Command registerCommand)
+    private static void ConfigureRegisterAssemblyHandler(Command registerCommand)
     {
         registerCommand.Handler = CommandHandler.Create<RegisterAssemblySettings>(
             (options) =>
@@ -188,28 +189,45 @@ public static class ConsoleApp
 
                     var assembly = assemblyResolver.LoadAssembly(options.TargetAssembly);
 
-                    var lypeLibConvertOptions = new TypeLibConverterOptions()
-                    {
-                        ASMPath = paths!,
-
-                        TLBRefpath = options.TLBRefpath,
-
-                        Assembly = options.TargetAssembly,
-
-                        Out = Path.ChangeExtension(options.TargetAssembly, ".tlb")
-                    };
-
-                    if (options.TLB)
-                    {
-                        // Export TLB
-                        ExportTypeLibraryImpl(assembly, lypeLibConvertOptions);
-
-                        // Register TLB
-                        RegisterTypeLib(lypeLibConvertOptions.Out);
-                    }
-
                     var registrationService = new RegistrationServices();
-                    registrationService.RegisterAssembly(assembly, options.Codebase);
+
+                    if (options.Unregister)
+                    {
+                        // Unregister the assembly
+                        if (!registrationService.UnregisterAssembly(assembly))
+                        {
+                            return -1;
+                        }
+                    }
+                    else
+                    {
+                        var lypeLibConvertOptions = new TypeLibConverterOptions()
+                        {
+                            ASMPath = paths!,
+
+                            TLBRefpath = options.TLBRefpath,
+
+                            Assembly = options.TargetAssembly,
+
+                            Out = Path.ChangeExtension(options.TargetAssembly, ".tlb"),
+
+                            CreateMissingDependentTLBs = false
+                        };
+
+                        if (options.TLB)
+                        {
+                            // Export TLB
+                            ExportTypeLibraryImpl(assembly, lypeLibConvertOptions);
+
+                            // Register TLB
+                            RegisterTypeLib(lypeLibConvertOptions.Out);
+                        }
+
+                        if (!registrationService.RegisterAssembly(assembly, options.Codebase))
+                        {
+                            return -1;
+                        }
+                    }
 
                     return 0;
                 }
