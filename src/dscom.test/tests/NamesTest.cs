@@ -14,7 +14,6 @@
 
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.Attributes;
-using static dSPACE.Runtime.InteropServices.Tests.DynamicMethodBuilder;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 

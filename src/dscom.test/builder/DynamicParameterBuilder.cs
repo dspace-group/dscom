@@ -24,7 +24,7 @@ internal record struct ParameterItem(
         DefaultValue? DefaultValue = null
     );
 
-internal class DynamicParameterBuilder
+internal sealed class DynamicParameterBuilder
 {
     public int Count => _parameterItems.Count;
 
@@ -34,7 +34,7 @@ internal class DynamicParameterBuilder
 
     private readonly Dictionary<int, Tuple<FieldInfo[], object?[]>> _paramAttributesFieldValues = new();
 
-    public void AddParameterAttribute<T>(int parameterIndex, object value)
+    public void AddParameterAttribute<T>(int parameterIndex, object? value)
     {
         var attributes = _paramAttributes ?? new Tuple<Type, object?>[_parameterItems == null ? 0 : _parameterItems.Count];
         attributes[parameterIndex] = new(typeof(T), value);

@@ -212,7 +212,7 @@ public class MemIdTest : BaseTest
                             .Build()
                         .Build()
                     .Build();
-        
+
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Value");
         func.Should().NotBeNull("Value property should be available");
 

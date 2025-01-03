@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Reflection.Emit;
-using static dSPACE.Runtime.InteropServices.Tests.DynamicMethodBuilder;
-
 namespace dSPACE.Runtime.InteropServices.Tests;
 
 internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder>
@@ -32,7 +29,7 @@ internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder
 
     protected override AttributeTargets AttributeTarget => AttributeTargets.Method;
 
-    private readonly DynamicParameterBuilder parameterBuilder = new();
+    private readonly DynamicParameterBuilder _parameterBuilder = new();
 
     public DynamicMethodBuilder WithReturnType(Type type)
     {
@@ -53,13 +50,13 @@ internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder
 
     public DynamicMethodBuilder WithParameter(Type parameterType)
     {
-        parameterBuilder.AddParameter(new ParameterItem(parameterType, null));
+        _parameterBuilder.AddParameter(new ParameterItem(parameterType, null));
         return this;
     }
 
     public DynamicMethodBuilder WithParameter(ParameterItem parameterItem)
     {
-        parameterBuilder.AddParameter(parameterItem);
+        _parameterBuilder.AddParameter(parameterItem);
         return this;
     }
 
@@ -74,16 +71,16 @@ internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder
         return WithParameterCustomAttribute<T>(parameterIndex, null);
     }
 
-    public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex, object value)
+    public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex, object? value)
     {
-        parameterBuilder.AddParameterAttribute<T>(parameterIndex, value);
+        _parameterBuilder.AddParameterAttribute<T>(parameterIndex, value);
         return this;
     }
 
     public DynamicMethodBuilder WithParameterCustomAttribute<T>(int parameterIndex, object value, FieldInfo[] namedFields, object?[] fieldValues)
     {
-        parameterBuilder.AddParameterAttribute<T>(parameterIndex, value);
-        parameterBuilder.AddParameterCustomAttributeFieldValue(parameterIndex, namedFields, fieldValues);
+        _parameterBuilder.AddParameterAttribute<T>(parameterIndex, value);
+        _parameterBuilder.AddParameterCustomAttributeFieldValue(parameterIndex, namedFields, fieldValues);
         return this;
     }
 
@@ -91,7 +88,7 @@ internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder
     {
         var methodBuilder = DynamicTypeBuilder.TypeBuilder!.DefineMethod(Name,
               MethodAttributes.Abstract | MethodAttributes.Public | MethodAttributes.Virtual,
-              CallingConventions.HasThis, ReturnType, parameterBuilder.GetParameterTypes());
+              CallingConventions.HasThis, ReturnType, _parameterBuilder.GetParameterTypes());
 
         var returnParamBuilder = methodBuilder.DefineParameter(0, ParameterAttributes.Retval, null);
         if (ReturnTypeAttribute != null)
@@ -105,7 +102,7 @@ internal sealed class DynamicMethodBuilder : DynamicBuilder<DynamicMethodBuilder
             returnParamBuilder.SetCustomAttribute(attributeBuilder);
         }
 
-        parameterBuilder.AddParameters(methodBuilder);
+        _parameterBuilder.AddParameters(methodBuilder);
 
         foreach (var customAttributeBuilder in CustomAttributeBuilder)
         {
