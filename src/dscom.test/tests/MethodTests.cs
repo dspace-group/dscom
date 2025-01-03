@@ -314,7 +314,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface").WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
                             .WithMethod("TestMethod")
                                 .WithReturnType(typeof(void))
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Optional | ParameterAttributes.HasDefault, DefaultValue = new DynamicMethodBuilder.DefaultValue(value) })
+                                .WithParameter(new ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Optional | ParameterAttributes.HasDefault, DefaultValue = new DefaultValue(value) })
                             .Build()
                         .Build()
                      .Build();
@@ -949,7 +949,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIUnknown)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1010,7 +1010,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1071,7 +1071,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsDual)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType, ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1130,7 +1130,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIUnknown)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1182,7 +1182,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsIDispatch)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1234,7 +1234,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(ComInterfaceType.InterfaceIsDual)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = parameterType.MakeArrayType(), ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1272,7 +1272,7 @@ public class MethodTest : BaseTest
                         .WithInterface("TestInterface")
                             .WithCustomAttribute<InterfaceTypeAttribute>(comInterfaceType)
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem { Type = customInterface!.MakeArrayType().MakeByRefType(), ParameterAttributes = ParameterAttributes.Out })
+                                .WithParameter(new ParameterItem { Type = customInterface!.MakeArrayType().MakeByRefType(), ParameterAttributes = ParameterAttributes.Out })
                             .Build()
                         .Build()
                     .Build();
@@ -1367,10 +1367,10 @@ public class MethodTest : BaseTest
                         .WithInterface("CustomInterface").Build(out var customInterface)
                         .WithInterface("TestInterface")
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem()
+                                .WithParameter(new ParameterItem()
                                 {
                                     ParameterAttributes = ParameterAttributes.Optional | ParameterAttributes.HasDefault,
-                                    DefaultValue = new DynamicMethodBuilder.DefaultValue() { Value = null },
+                                    DefaultValue = new DefaultValue() { Value = null },
                                     Type = customInterface!.MakeArrayType(),
                                 })
                             .Build()
@@ -1425,10 +1425,10 @@ public class MethodTest : BaseTest
         var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}{defaultValue}"))
                         .WithInterface("TestInterface")
                             .WithMethod("TestMethod")
-                                .WithParameter(new DynamicMethodBuilder.ParameterItem()
+                                .WithParameter(new ParameterItem()
                                 {
                                     ParameterAttributes = ParameterAttributes.HasDefault,
-                                    DefaultValue = new DynamicMethodBuilder.DefaultValue() { Value = Convert.ChangeType(defaultValue, parameterType) },
+                                    DefaultValue = new DefaultValue() { Value = Convert.ChangeType(defaultValue, parameterType) },
                                     Type = parameterType,
                                 })
                             .Build()

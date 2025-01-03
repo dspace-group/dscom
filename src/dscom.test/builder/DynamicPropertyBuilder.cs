@@ -18,13 +18,11 @@ internal sealed class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBui
 {
     public DynamicPropertyBuilder(DynamicTypeBuilder dynamicTypeBuilder, string name, Type propertyType, bool isSettable = true, bool isGettable = true) : base(name)
     {
-        DynamicTypeBuilder = dynamicTypeBuilder;
+        _dynamicTypeBuilder = dynamicTypeBuilder;
         PropertyType = propertyType;
         IsSettable = isSettable;
         IsGettable = isGettable;
     }
-
-    public DynamicTypeBuilder DynamicTypeBuilder { get; }
 
     public Type PropertyType { get; }
 
@@ -32,65 +30,87 @@ internal sealed class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBui
 
     public bool IsGettable { get; }
 
-    public Tuple<Type, object>? ReturnTypeCustomAttributes { get; private set; }
+    private readonly DynamicTypeBuilder _dynamicTypeBuilder;
 
-    public Tuple<Type, object>? ParameterCustomAttributes { get; private set; }
+    private Tuple<Type, object>? _returnTypeCustomAttributes;
+
+    private Tuple<Type, object>? _parameterCustomAttributes;
 
     protected override AttributeTargets AttributeTarget => AttributeTargets.Property;
 
+    private readonly DynamicParameterBuilder _indexParameterBuilder = new();
+
+    private static readonly MethodAttributes _methodAttributes =
+        MethodAttributes.Public
+        | MethodAttributes.SpecialName
+        | MethodAttributes.HideBySig
+        | MethodAttributes.Abstract
+        | MethodAttributes.Virtual;
+
     public DynamicTypeBuilder CreateProperty()
     {
-        var propertyBuilder = DynamicTypeBuilder.TypeBuilder!.DefineProperty(Name, PropertyAttributes.None, CallingConventions.HasThis, PropertyType, null);
+        var propertyBuilder = _dynamicTypeBuilder.TypeBuilder!.DefineProperty(Name, PropertyAttributes.None, CallingConventions.HasThis, PropertyType, null);
 
         if (IsGettable)
         {
             var specialName = $"get_{Name}";
-            var getterMethdoBuilder = DynamicTypeBuilder.TypeBuilder.DefineMethod(specialName,
-                MethodAttributes.Public | MethodAttributes.SpecialName |
-                MethodAttributes.HideBySig | MethodAttributes.Abstract | MethodAttributes.Virtual,
+            var getterMethodBuilder = _dynamicTypeBuilder.TypeBuilder.DefineMethod(
+                specialName,
+                _methodAttributes,
                 CallingConventions.HasThis,
-                PropertyType, null);
+                PropertyType,
+                _indexParameterBuilder.GetParameterTypes());
 
-            if (ReturnTypeCustomAttributes != null)
+            _indexParameterBuilder.AddParameters(getterMethodBuilder, 0);
+
+            if (_returnTypeCustomAttributes != null)
             {
-                var attributeParam = ReturnTypeCustomAttributes.Item2;
-                var typeAttributeParam = ReturnTypeCustomAttributes.Item2.GetType();
-                var typeAttribute = ReturnTypeCustomAttributes.Item1;
+                var attributeParam = _returnTypeCustomAttributes.Item2;
+                var typeAttributeParam = _returnTypeCustomAttributes.Item2.GetType();
+                var typeAttribute = _returnTypeCustomAttributes.Item1;
                 var attributeConstructor = typeAttribute.GetConstructor(new Type[] { typeAttributeParam });
                 var attributeBuilder = new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam });
 
                 var returnValueParameterBuilder =
-                    getterMethdoBuilder.DefineParameter(0, ParameterAttributes.Retval, null);
-
+                    getterMethodBuilder.DefineParameter(_indexParameterBuilder.Count, ParameterAttributes.Retval, null);
                 returnValueParameterBuilder.SetCustomAttribute(attributeBuilder);
             }
 
-            propertyBuilder.SetGetMethod(getterMethdoBuilder);
+            propertyBuilder.SetGetMethod(getterMethodBuilder);
         }
+
         if (IsSettable)
         {
-            var specialName = $"set_{Name}";
-            var setterMethdoBuilder = DynamicTypeBuilder.TypeBuilder.DefineMethod(specialName,
-                MethodAttributes.Public | MethodAttributes.SpecialName |
-                MethodAttributes.HideBySig | MethodAttributes.Abstract | MethodAttributes.Virtual,
-                CallingConventions.HasThis,
-                null, new Type[] { PropertyType });
+            var parameterTypes = Enumerable
+                .Repeat(PropertyType, 1)
+                .Concat(_indexParameterBuilder.GetParameterTypes())
+                .ToArray();
 
-            if (ParameterCustomAttributes != null)
+            var specialName = $"set_{Name}";
+            var setterMethodBuilder = _dynamicTypeBuilder.TypeBuilder.DefineMethod(
+                specialName,
+                _methodAttributes,
+                CallingConventions.HasThis,
+                null,
+                parameterTypes);
+
+            _indexParameterBuilder.AddParameters(setterMethodBuilder, 1);
+
+            if (_parameterCustomAttributes != null)
             {
-                var attributeParam = ParameterCustomAttributes.Item2;
-                var typeAttributeParam = ParameterCustomAttributes.Item2.GetType();
-                var typeAttribute = ParameterCustomAttributes.Item1;
+                var attributeParam = _parameterCustomAttributes.Item2;
+                var typeAttributeParam = _parameterCustomAttributes.Item2.GetType();
+                var typeAttribute = _parameterCustomAttributes.Item1;
                 var attributeConstructor = typeAttribute.GetConstructor(new Type[] { typeAttributeParam });
                 var attributeBuilder = new CustomAttributeBuilder(attributeConstructor!, new object[] { attributeParam });
 
                 var returnValueParameterBuilder =
-                setterMethdoBuilder.DefineParameter(1, ParameterAttributes.HasFieldMarshal, null);
+                    setterMethodBuilder.DefineParameter(1, ParameterAttributes.HasFieldMarshal, null);
 
                 returnValueParameterBuilder.SetCustomAttribute(attributeBuilder);
             }
 
-            propertyBuilder.SetSetMethod(setterMethdoBuilder);
+            propertyBuilder.SetSetMethod(setterMethodBuilder);
         }
 
         foreach (var customAttributeBuilder in CustomAttributeBuilder)
@@ -98,25 +118,40 @@ internal sealed class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBui
             propertyBuilder.SetCustomAttribute(customAttributeBuilder);
         }
 
-        return DynamicTypeBuilder;
+        return _dynamicTypeBuilder;
     }
-
 
     public DynamicPropertyBuilder WithReturnTypeCustomAttribute<T>(object value)
     {
-        ReturnTypeCustomAttributes = new Tuple<Type, object>(typeof(T), value);
+        _returnTypeCustomAttributes = new Tuple<Type, object>(typeof(T), value);
         return this;
-
     }
 
     public DynamicPropertyBuilder WithParameterCustomAttribute<T>(object value)
+        where T : Attribute
     {
-        ParameterCustomAttributes = new Tuple<Type, object>(typeof(T), value);
+        _parameterCustomAttributes = new Tuple<Type, object>(typeof(T), value);
+        return this;
+    }
+
+    public DynamicPropertyBuilder WithIndexParameter<T>()
+    {
+        return WithIndexParameter(typeof(T));
+    }
+
+    public DynamicPropertyBuilder WithIndexParameter(Type parameterType)
+    {
+        return WithIndexParameter(new ParameterItem(parameterType, null));
+    }
+
+    public DynamicPropertyBuilder WithIndexParameter(ParameterItem parameterItem)
+    {
+        _indexParameterBuilder?.AddParameter(parameterItem);
         return this;
     }
 
     public DynamicTypeBuilder Build()
     {
-        return DynamicTypeBuilder;
+        return _dynamicTypeBuilder;
     }
 }

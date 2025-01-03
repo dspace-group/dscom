@@ -203,6 +203,23 @@ public class MemIdTest : BaseTest
     }
 
     [Fact]
+    public void ValueProperty_DispId0IsNotUsed()
+    {
+        var result = CreateAssembly()
+                        .WithInterface("TestInterface")
+                            .WithProperty("Value", typeof(string))
+                            .WithIndexParameter(typeof(string))
+                            .Build()
+                        .Build()
+                    .Build();
+
+        using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Value");
+        func.Should().NotBeNull("Value property should be available");
+
+        func!.Value.memid.Should().NotBe(0);
+    }
+
+    [Fact]
     public void ItemMethodWithDispIdAttributeValue123_DispId123IsUsed()
     {
         var result = CreateAssembly()

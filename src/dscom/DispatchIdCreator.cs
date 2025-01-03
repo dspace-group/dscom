@@ -110,7 +110,7 @@ internal sealed class DispatchIdCreator
         }
 
         // If DispId == 0 not used by any member, Value should take the 0 (if the DispId for the Value property is not explicit defined).
-        var valueItem = _dispIds.FirstOrDefault(z => z.MemberInfo.Name.Equals("Value", StringComparison.Ordinal));
+        var valueItem = _dispIds.FirstOrDefault(z => IsDefaultMemberInfo(z.MemberInfo));
         if (valueItem != null)
         {
             if (!_dispIds.Any(i => i.Id == 0) && !valueItem.ExplicitId.HasValue)
@@ -118,6 +118,29 @@ internal sealed class DispatchIdCreator
                 valueItem.ExplicitId = Constants.DISPIP_VALUE;
             }
         }
+    }
+
+    private static bool IsDefaultMemberInfo(MemberInfo memberInfo)
+    {
+        // Only Member with name 'value' are set to DispId(0) by default
+        if (!memberInfo.Name.Equals("Value", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        // Only Properties are considered
+        if (memberInfo is not PropertyInfo propertyInfo)
+        {
+            return false;
+        }
+
+        // Only Properties without a parameter
+        if (propertyInfo.GetIndexParameters().Length > 0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public sealed class IDInfo
