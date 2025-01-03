@@ -72,7 +72,7 @@ public static class ConsoleApp
             new Option<ushort>(new[] {"--index", "/index"}, () => 1, description:"Index to use for resource ID for the type library. If omitted, defaults to 1. Must be a positive integer from 1 to 65535.")
         };
 
-        var registerAssemblyCommand = new Command("regasm", "register assembly")
+        var registerAssemblyCommand = new Command("regasm", "Register an assembly")
             {
                 new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
                 new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},

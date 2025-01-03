@@ -12,9 +12,13 @@
 [![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
 [![Code Style Check](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml)
 
-The command line client `dscom` is a replacement for `tlbexp.exe` and creates and registers TLBs from .NET assemblies.  
+The command line client `dscom` is a replacement for `tlbexp.exe` and `RegAsm.exe`.  
+Among other things, you can create or register TLBs from .NET assemblies.  
+
 The `dSPACE.Runtime.InteropServices` library contains various classes and methods for COM.  
-It can be used in `net5+` or in `net48` projects. With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
+It can be used in `net5+` or in `net48` projects.  
+With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
+
 The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
 
 - [dSPACE COM tools](#dspace-com-tools)
@@ -57,7 +61,7 @@ This is where `dSPACE.Runtime.InteropServices` may be able to help.
 
 ## Command Line Client
 
-The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe` and `OleView` (View TypeLib).
+The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe`, `OleView` (View TypeLib) and `RegAsm.exe`.
 
 It supports the following features:
 
@@ -66,7 +70,9 @@ It supports the following features:
 - Convert a type library to `YAML` file
 - Register a type library
 - Unregister a type library
-- Embeds a type library into an existing assembly 
+- Embeds a type library into an existing assembly
+- Register an assembly (regasm.exe)
+- Unregister an assembly (regasm.exe)
 
 ### Installation
 
@@ -104,6 +110,7 @@ Commands:
   tlbregister <TypeLibrary>                      Register a type library
   tlbunregister <TypeLibrary>                    Unregister a type library
   tlbembed <SourceTypeLibrary> <TargetAssembly>  Embeds a source type library into a target file
+  regasm <TargetAssembly>                        Register an assembly
 ```
 
 ## Library
