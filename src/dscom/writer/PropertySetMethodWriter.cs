@@ -37,9 +37,9 @@ internal sealed class PropertySetMethodWriter : PropertyMethodWriter
                      return true;
                  }
 
-                 // every class except special ones (e.g. String)
+                 // every class except special ones (e.g. String) or SAFEARRAY
                  // are handles as references
-                 if (type.IsClass && !type.IsSpecialHandledClass())
+                 if (type.IsClass && !type.IsSpecialHandledClass() && !type.IsArray)
                  {
                      return true;
                  }

@@ -100,7 +100,7 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(bool), INVOKEKIND.INVOKE_PROPERTYPUT)]
     [InlineData(typeof(char), INVOKEKIND.INVOKE_PROPERTYPUT)]
     [InlineData(typeof(object), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
-    [InlineData(typeof(object[]), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
+    [InlineData(typeof(object[]), INVOKEKIND.INVOKE_PROPERTYPUT)]
     [InlineData(typeof(System.Collections.IEnumerator), INVOKEKIND.INVOKE_PROPERTYPUTREF)]
     [InlineData(typeof(DateTime), INVOKEKIND.INVOKE_PROPERTYPUT)]
     [InlineData(typeof(Guid), INVOKEKIND.INVOKE_PROPERTYPUT)]
