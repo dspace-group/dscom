@@ -116,14 +116,29 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 var typeLib = GetTypeLibFromIdentifier(identifier);
                 if (typeLib == null)
                 {
-                    foreach (var additionalLib in _additionalLibs)
+                    var name = assembly.GetName().Name ?? string.Empty;
+                    var additionalLibsWithMatchingName = _additionalLibs.Where(additionalLib => additionalLib.Contains(name));
+
+                    // At first we try to find a type library that matches the assembly name.
+                    foreach (var additionalLib in additionalLibsWithMatchingName)
                     {
-                        var name = assembly.GetName().Name ?? string.Empty;
-                        if (additionalLib.Contains(name))
+                        AddTypeLib(additionalLib);
+                        retval = ResolveTypeInfo(type.GUID);
+                        break;
+                    }
+
+                    // If no type was found in a type library with matching name we search in the remaining type libraries.
+                    if (retval == null)
+                    {
+                        var additionalLibsWithoutMatchingName = _additionalLibs.Except(additionalLibsWithMatchingName);
+                        foreach (var additionalLib in additionalLibsWithoutMatchingName)
                         {
                             AddTypeLib(additionalLib);
                             retval = ResolveTypeInfo(type.GUID);
-                            break;
+                            if (retval != null)
+                            {
+                                break;
+                            }
                         }
                     }
 
