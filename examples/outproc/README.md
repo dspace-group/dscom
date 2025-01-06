@@ -12,11 +12,13 @@ The new instance of the .NET type is registered as `MultipleUse`, which means th
 - .NET >= 8.0 SDK
 - Python => 3.9
 
-## Build and register the .NET server
+## Build the .NET server
 
 ```powershell
 dotnet publish
 ```
+
+## Register the .NET server
 
 Open a new PowerShell window **as an Administrator** and run the following command:  
 
