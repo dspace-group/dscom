@@ -1,16 +1,15 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-                {
+        {
             "name": ".NET Core Launch (console)",
-            "type": "clr",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}\\server\\dotnet6\\bin\\Debug\\net6.0-windows\\dotnet6.exe",
-            "args": ["/Embedding"],
+            "program": ".\\server\\bin\\Debug\\net8.0\\server.dll",
+            "args": [
+                "/regserver"
+            ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
