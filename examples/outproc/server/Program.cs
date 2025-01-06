@@ -12,30 +12,19 @@ internal sealed class Program
     private const string Title = "Greeter Application";
     private const string Description = "Greeter Demo Application";
 
-    private static int Main(string[] args)
+    private static void Main(string[] args)
     {
-        Console.WriteLine("Command-line arguments:");
-        foreach (var arg in args)
-        {
-            Console.WriteLine(arg);
-        }
-
         Console.WriteLine("OutProc COM server starting...");
-
 
         if (args.Length == 1)
         {
             if (args[0].Equals("/regserver", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-regserver", StringComparison.OrdinalIgnoreCase))
             {
-                // Register
-                Register();
-                return 0;
+                OutProcServer.Register<Greeter>(ProgId, Version, Title, Description);
             }
             else if (args[0].Equals("/unregserver", StringComparison.OrdinalIgnoreCase) || args[0].Equals("-unregserver", StringComparison.OrdinalIgnoreCase))
             {
-                // Unregister
-                Unregister();
-                return 0;
+                OutProcServer.Unregister<Greeter>(ProgId, Version);
             }
         }
 
@@ -57,17 +46,5 @@ internal sealed class Program
 
         Console.ReadLine();
         registration.UnregisterTypeForComClients(cookie);
-
-        return 0;
-    }
-
-    private static void Register()
-    {
-        OutProcServer.Register<Greeter>(ProgId, Version, Title, Description);
-    }
-
-    private static void Unregister()
-    {
-        OutProcServer.Unregister<Greeter>(ProgId, Version);
     }
 }

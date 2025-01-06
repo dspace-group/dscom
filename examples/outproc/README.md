@@ -12,13 +12,13 @@ The new instance of the .NET type is registered as `MultipleUse`, which means th
 - .NET >= 8.0 SDK
 - Python => 3.9
 
-## Run
+## Build and register the .NET server
 
 ```powershell
 dotnet publish
 ```
 
-Open a new PowerShell window **as an administrator** and run the following command:  
+Open a new PowerShell window **as an Administrator** and run the following command:  
 
 ```powershell
 .\server\bin\Release\net8.0\publish\server.exe /regserver
@@ -26,7 +26,7 @@ Open a new PowerShell window **as an administrator** and run the following comma
 
 Now the server is registered and ready to be used by COM clients.
 
-## Client
+## Run the python client
 
 Open a new PowerShell window as a regular user and run the following commands:  
 
@@ -40,4 +40,12 @@ Now you can run the client:
 
 ```cmd
 python .\client\client.py
+```
+
+## Unregister the .NET server
+
+Open a new PowerShell window **as an Administrator** and run the following command:  
+
+```powershell
+.\server\bin\Release\net8.0\publish\server.exe /unregserver
 ```
