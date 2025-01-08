@@ -67,8 +67,49 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         return typeInfo;
     }
 
+    /// <summary>
+    /// Resolve the <see cref="ITypeInfo"/> by a <see cref="Guid"/>. If the <see cref="ITypeInfo"/> is not
+    /// present yet, it will try to add the type library for the corresponding assembly.
+    /// </summary>
+    private ITypeInfo? ResolveTypeInfo(Type type, Guid guid)
+    {
+        // If the given type is not present in _types
+        // this means, that the typelib is not loaded yet
+        if (_types.TryGetValue(guid, out var typeInfo))
+        {
+            return typeInfo;
+        }
+
+        var assembly = type.Assembly;
+
+        foreach (var additionalLib in _additionalLibs)
+        {
+            var name = assembly.GetName().Name ?? string.Empty;
+            if (additionalLib.Contains(name))
+            {
+                AddTypeLib(additionalLib);
+                break;
+            }
+        }
+
+        var notifySink = WriterContext.NotifySink;
+        if (notifySink != null)
+        {
+            if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
+            {
+                AddTypeLib(refTypeLib);
+            }
+        }
+
+        // The dictionary will be updated in 'AddTypeLib'.
+        // Therefore it should be contain the typeinfo now.
+        _types.TryGetValue(guid, out typeInfo);
+        return typeInfo;
+    }
+
     public ITypeInfo? ResolveTypeInfo(Type type)
     {
+#pragma warning disable IDE0045 // In bedingten Ausdruck konvertieren
         if (_resolvedTypeInfos.TryGetValue(type, out var typeInfo))
         {
             return typeInfo;
@@ -102,61 +143,14 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         }
         else if (type.IsClass)
         {
-            retval = ResolveTypeInfo(MarshalExtension.GetClassInterfaceGuidForType(type));
+            retval = ResolveTypeInfo(type, MarshalExtension.GetClassInterfaceGuidForType(type));
         }
         else
         {
-            retval = ResolveTypeInfo(type.GUID);
-
-            if (retval == null)
-            {
-                var assembly = type.Assembly;
-                var identifier = assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId);
-
-                var typeLib = GetTypeLibFromIdentifier(identifier);
-                if (typeLib == null)
-                {
-                    var name = assembly.GetName().Name ?? string.Empty;
-                    var additionalLibsWithMatchingName = _additionalLibs
-                        .Where(additionalLib => Path.GetFileNameWithoutExtension(additionalLib).Equals(name, StringComparison.OrdinalIgnoreCase));
-
-                    // At first we try to find a type library that matches the assembly name.
-                    // We do this to limit the number of type libraries to load.
-                    // See https://github.com/dspace-group/dscom/issues/310
-                    foreach (var additionalLib in additionalLibsWithMatchingName)
-                    {
-                        AddTypeLib(additionalLib);
-                        retval = ResolveTypeInfo(type.GUID);
-                        break;
-                    }
-
-                    // If no type was found in a type library with matching name we search in the remaining type libraries.
-                    if (retval == null)
-                    {
-                        var additionalLibsWithoutMatchingName = _additionalLibs.Except(additionalLibsWithMatchingName);
-                        foreach (var additionalLib in additionalLibsWithoutMatchingName)
-                        {
-                            AddTypeLib(additionalLib);
-                            retval = ResolveTypeInfo(type.GUID);
-                            if (retval != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    var notifySink = WriterContext.NotifySink;
-                    if (notifySink != null)
-                    {
-                        if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
-                        {
-                            AddTypeLib(refTypeLib);
-                            retval = ResolveTypeInfo(type.GUID);
-                        }
-                    }
-                }
-            }
+            retval = ResolveTypeInfo(type, type.GUID);
         }
+#pragma warning restore IDE0045 // In bedingten Ausdruck konvertieren
+
         _resolvedTypeInfos[type] = retval;
         return retval;
     }
