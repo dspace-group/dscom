@@ -83,7 +83,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         var assembly = type.Assembly;
 
         // check if the type library is already present
-        var identifier = GetTypeLibFromIdentifier(assembly.GetLibIdentifier());
+        var identifier = GetTypeLibFromIdentifier(assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId));
         if (identifier is null)
         {
             foreach (var additionalLib in _additionalLibs)
