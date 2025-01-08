@@ -117,9 +117,12 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 if (typeLib == null)
                 {
                     var name = assembly.GetName().Name ?? string.Empty;
-                    var additionalLibsWithMatchingName = _additionalLibs.Where(additionalLib => additionalLib.Contains(name));
+                    var additionalLibsWithMatchingName = _additionalLibs
+                        .Where(additionalLib => Path.GetFileNameWithoutExtension(additionalLib).Equals(name, StringComparison.OrdinalIgnoreCase));
 
                     // At first we try to find a type library that matches the assembly name.
+                    // We do this to limit the number of type libraries to load.
+                    // See https://github.com/dspace-group/dscom/issues/310
                     foreach (var additionalLib in additionalLibsWithMatchingName)
                     {
                         AddTypeLib(additionalLib);
