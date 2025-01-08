@@ -40,6 +40,8 @@ public class TypeLibConverter
         var options = new TypeLibConverterSettings
         {
             Out = tlbFilePath,
+
+            TLBRefpath = new[] { Path.GetDirectoryName(tlbFilePath)! }
         };
 
         return ConvertAssemblyToTypeLib(assembly, options, notifySink);
