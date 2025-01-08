@@ -82,22 +82,27 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
         var assembly = type.Assembly;
 
-        foreach (var additionalLib in _additionalLibs)
+        // check if the type library is already present
+        var identifier = GetTypeLibFromIdentifier(assembly.GetLibIdentifier());
+        if (identifier is null)
         {
-            var name = assembly.GetName().Name ?? string.Empty;
-            if (additionalLib.Contains(name))
+            foreach (var additionalLib in _additionalLibs)
             {
-                AddTypeLib(additionalLib);
-                break;
+                var name = assembly.GetName().Name ?? string.Empty;
+                if (additionalLib.Contains(name))
+                {
+                    AddTypeLib(additionalLib);
+                    break;
+                }
             }
-        }
 
-        var notifySink = WriterContext.NotifySink;
-        if (notifySink != null)
-        {
-            if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
+            var notifySink = WriterContext.NotifySink;
+            if (notifySink != null)
             {
-                AddTypeLib(refTypeLib);
+                if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
+                {
+                    AddTypeLib(refTypeLib);
+                }
             }
         }
 
