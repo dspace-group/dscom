@@ -253,7 +253,7 @@ public class TypeLibTest : BaseTest
     [Fact]
     public void TypeLib_ShouldBeLoaded_By_Class()
     {
-        var assemblyA = CreateAssembly(new AssemblyName("FooBarA"), true)
+        CreateAssembly(new AssemblyName("FooBarA"), true)
             .WithClass("TestSourceClass")
                 .WithCustomAttribute(typeof(ClassInterfaceAttribute), ClassInterfaceType.AutoDispatch)
                 .Build(out var classType)
@@ -288,7 +288,7 @@ public class TypeLibTest : BaseTest
     [Fact]
     public void TypeLib_ShouldBeLoaded_By_Interface()
     {
-        var assemblyA = CreateAssembly(new AssemblyName("FooBarA"), true)
+        CreateAssembly(new AssemblyName("FooBarA"), true)
             .WithClass("TestSourceClass")
                 .WithCustomAttribute(typeof(ClassInterfaceAttribute), ClassInterfaceType.AutoDispatch)
                 .Build(out var classType)

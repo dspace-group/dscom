@@ -84,7 +84,7 @@ public class BaseTest
     private static string GenerateAssemblyName(AssemblyName assemblyName, string filePath, string testMethodName)
     {
         var name = $"{assemblyName.Name}_{assemblyName.Version?.Major}_{assemblyName.Version?.Minor}_{ValidChars.Replace(Path.GetFileNameWithoutExtension(filePath), "")}_{ValidChars.Replace(testMethodName, "")}";
-        
+
         return name.Substring(0, Math.Min(150, name.Length));
     }
 }
