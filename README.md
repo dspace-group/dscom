@@ -469,25 +469,25 @@ You need >= .NET 8.0 SDK and .NET Full Framework >= 4.8 SDK installed on your ma
 Before submitting a pull request, please note the following points:  
 
 1. **Code Formatting**  
-   Ensure the code is properly formatted using `dotnet format --verify-no-changes`.
+      Ensure the code is properly formatted using `dotnet format --verify-no-changes`.
 
 2. **Unit Tests**  
-  Run all tests with `dotnet test` and make sure all tests pass successfully.  
+      Run all tests with `dotnet test` and make sure all tests pass successfully.  
 
 3. **Writing Tests**  
-  We like to have unit tests 😊  
-  Write your own tests for any new features or bug fixes.
+      We like to have unit tests 😊  
+      Write your own tests for any new features or bug fixes.
 
 4. **Verifying the tlb generation**  
-  To generate a TLB with dscom is the most important feature of this project.  
-  Compare the output of `dscom` with that of `tlbexp`.  
-  Use `.\scripts\demo.bat` to generate a TLB with both `dscom` and `tlbexp`, and compare the outputs.  
-  This script will use `.\src\dscom.demo\assembly1\assembly1.csproj` to generate a TLB with both tools.  
+    To generate a TLB with dscom is the most important feature of this project.  
+    Compare the output of `dscom` with that of `tlbexp`.  
+    Use `.\scripts\demo.bat` to generate a TLB with both `dscom` and `tlbexp`, and compare the outputs.  
+    This script will use `.\src\dscom.demo\assembly1\assembly1.csproj` to    generate a TLB with both tools.
+  
+    The script will attempt to open VSCode to facilitate the file comparison.
 
-  The script will attempt to open VSCode to facilitate the file comparison.
-
-  Ensure tlbexp is installed on your machine.  
-  If you have Visual Studio installed, find tlbexp.exe in the `C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools` folder, or use the Developer Command Prompt for VS to run tlbexp.
+    Ensure tlbexp is installed on your machine.  
+    If you have Visual Studio installed, find tlbexp.exe in the `C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools` folder, or use the `Developer Command Prompt for VS` to run `tlbexp`.
 
 If you have any questions, feel free to ask in the issues section.
 
