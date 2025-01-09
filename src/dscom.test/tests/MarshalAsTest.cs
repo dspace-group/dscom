@@ -323,7 +323,7 @@ public class MarshalAsTest : BaseTest
             .Build();
         }
 
-        var result = interface2.Build().Build(true, true);
+        var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
         typeInfo.Should().NotBeNull("TestInterface should be generated");

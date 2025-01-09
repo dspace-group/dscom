@@ -52,8 +52,7 @@ public class BaseTest
 
         var name = GenerateAssemblyName(assemblyName, filepath, callerName);
 
-        var typeLibPath = Path.Combine(Dir, $"{name}.tlb");
-        return new DynamicAssemblyBuilder(name, assemblyBuilder, typeLibPath);
+        return new DynamicAssemblyBuilder(name, assemblyBuilder);
     }
 
     internal DynamicAssemblyBuilder CreateAssembly(AssemblyName name,
