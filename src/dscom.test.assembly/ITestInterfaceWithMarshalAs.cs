@@ -20,7 +20,7 @@ namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
 [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
-public interface IDemoInterfaceWithMarshalAs
+public interface ITestInterfaceWithMarshalAs
 {
     #region boolean
     void TestMethod_System_Boolean_Bool([MarshalAs(UnmanagedType.Bool)] bool Param1);

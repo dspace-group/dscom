@@ -18,7 +18,7 @@ namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-public interface IDemoInterfaceIUnknown
+public interface ITestInterfaceIUnknown
 {
     public byte MybyteProperty { get; set; }
     public sbyte MysbyteProperty { get; set; }

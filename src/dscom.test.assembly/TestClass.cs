@@ -14,7 +14,7 @@
 
 namespace dSPACE.Runtime.InteropServices.Test;
 
-public class DemoClass
+public class TestClass
 {
     private string _value = "test";
 

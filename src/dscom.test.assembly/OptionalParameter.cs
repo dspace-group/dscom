@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices.Testr;
 
 [ComVisible(true)]
-public interface ITestForOptionalParameter
+public interface IInterfaceWithOptionalParameter
 {
     public void Method1([Optional] int param1);
     public void Method2(int param1 = default);

@@ -17,8 +17,8 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
-[InterfaceType(ComInterfaceType.InterfaceIsDual)]
-public interface IDemoInterfaceDual
+[InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
+public interface ITestInterfaceDispatch
 {
     public byte MybyteProperty { get; set; }
     public sbyte MysbyteProperty { get; set; }

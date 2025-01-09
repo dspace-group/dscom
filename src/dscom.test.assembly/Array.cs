@@ -17,13 +17,13 @@ using System.Runtime.InteropServices;
 namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
-public interface IDemoArrayInterfaceUserDefine
+public interface ITestArrayInterfaceUserDefine
 {
-    bool TryGetValue(out IDemoArrayInterfaceUserDefine2[] value);
+    bool TryGetValue(out ITestArrayInterfaceUserDefine2[] value);
 }
 
 [ComVisible(true)]
-public interface IDemoArrayInterfaceUserDefine2
+public interface ITestArrayInterfaceUserDefine2
 {
 
 }

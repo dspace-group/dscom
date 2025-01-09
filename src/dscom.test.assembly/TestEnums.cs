@@ -13,25 +13,28 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-namespace dSPACE.Runtime.InteropServices.Test;
 
-[ComVisible(false)]
-public interface IDemoInterfaceComInvisible
+namespace dSPACE.Runtime.InteropServices.Test
 {
-    void DoSomething(IDemoInterfaceComInvisible param);
+    [ComVisible(true)]
+    public enum TestEnum
+    {
+        A,
+        B
+    }
 }
 
-[ComVisible(true)]
-public interface IDemoInterfaceComVisible
-{
-    void DoSomething(IDemoInterfaceComInvisible param);
-}
+/*
+In case of an enum with the same name in different namespaces, the enum name should be:
+dSPACE_Runtime_InteropServices_Tests_EnumNamespace2_TestEnum
+*/
 
-[ComVisible(true)]
-public interface IDemoInterfaceIndexerInvisible
+namespace dSPACE.Runtime.InteropServices.Tests.EnumNamespace2
 {
-    public string this[int x] { get; }
-
-    [ComVisible(false)]
-    public string this[string s] { get; }
+    [ComVisible(true)]
+    public enum TestEnum
+    {
+        A,
+        B
+    }
 }

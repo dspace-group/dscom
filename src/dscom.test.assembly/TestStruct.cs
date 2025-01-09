@@ -20,7 +20,7 @@ namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
 [StructLayout(LayoutKind.Sequential)]
-public struct DemoStruct
+public struct TestStruct
 {
     public byte System_Byte;
     public sbyte System_SByte;

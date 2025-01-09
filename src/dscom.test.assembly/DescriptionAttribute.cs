@@ -6,12 +6,12 @@ namespace dSPACE.Runtime.InteropServices.Test;
 [ComVisible(true)]
 public interface ITestForDescriptionAttribute
 {
-    int MyProperty1
+    int MyPropertyWihtDescriptionAttribute1
     {
         [Description("MyPropertyDescription1")]
         get; set;
     }
 
     [Description("MyPropertyDescription2")]
-    int MyProperty2 { get; set; }
+    int MyPropertyWihtDescriptionAttribute2 { get; set; }
 }

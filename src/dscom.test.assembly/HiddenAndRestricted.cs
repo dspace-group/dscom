@@ -18,63 +18,63 @@ using dSPACE.Runtime.InteropServices.Attributes;
 namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
-public interface IDemoInterfaceVisible
+public interface ITestInterfaceVisible
 {
-    void DoSomething(IDemoInterfaceVisible param);
+    void DoSomething(ITestInterfaceVisible param);
 }
 
 [
     ComVisible(true),
     Hidden
 ]
-public interface IDemoInterfaceHiddenImplicit
+public interface ITestInterfaceHiddenImplicit
 {
-    void DoSomething(IDemoInterfaceHiddenImplicit param);
+    void DoSomething(ITestInterfaceHiddenImplicit param);
 }
 
 [
     ComVisible(true),
     Hidden(true)
 ]
-public interface IDemoInterfaceHidden
+public interface ITestInterfaceHidden
 {
-    void DoSomething(IDemoInterfaceHidden param);
+    void DoSomething(ITestInterfaceHidden param);
 }
 
 [
     ComVisible(true),
     Hidden(true)
 ]
-public interface IDemoInterfaceVisibleExplicit
+public interface ITestInterfaceVisibleExplicit
 {
-    void DoSomething(IDemoInterfaceVisibleExplicit param);
+    void DoSomething(ITestInterfaceVisibleExplicit param);
 }
 
 [
     ComVisible(true),
     Restricted
 ]
-public interface IDemoInterfaceRestrictedImplicit
+public interface ITestInterfaceRestrictedImplicit
 {
-    void DoSomething(IDemoInterfaceRestrictedImplicit param);
+    void DoSomething(ITestInterfaceRestrictedImplicit param);
 }
 
 [
     ComVisible(true),
     Restricted(true)
 ]
-public interface IDemoInterfaceRestricted
+public interface ITestInterfaceRestricted
 {
-    void DoSomething(IDemoInterfaceRestricted param);
+    void DoSomething(ITestInterfaceRestricted param);
 }
 
 [
     ComVisible(true),
     Restricted(true)
 ]
-public interface IDemoInterfaceusableExplicit
+public interface ITestInterfaceusableExplicit
 {
-    void DoSomething(IDemoInterfaceusableExplicit param);
+    void DoSomething(ITestInterfaceusableExplicit param);
 }
 
 [
@@ -82,7 +82,7 @@ public interface IDemoInterfaceusableExplicit
     Hidden,
     Restricted
 ]
-public interface IDemoInterfaceHiddeAndRestricted
+public interface ITestInterfaceHiddeAndRestricted
 {
-    void DoSomething(IDemoInterfaceHiddeAndRestricted param);
+    void DoSomething(ITestInterfaceHiddeAndRestricted param);
 }
