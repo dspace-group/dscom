@@ -13,25 +13,17 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-namespace dSPACE.Runtime.InteropServices.DemoAssembly3;
 
-[ComVisible(false)]
-public interface IDemoInterfaceComInvisible
+namespace dSPACE.Runtime.InteropServices.Test;
+
+[ComVisible(true)]
+public interface IDemoArrayInterfaceUserDefine
 {
-    void DoSomething(IDemoInterfaceComInvisible param);
+    bool TryGetValue(out IDemoArrayInterfaceUserDefine2[] value);
 }
 
 [ComVisible(true)]
-public interface IDemoInterfaceComVisible
+public interface IDemoArrayInterfaceUserDefine2
 {
-    void DoSomething(IDemoInterfaceComInvisible param);
-}
 
-[ComVisible(true)]
-public interface IDemoInterfaceIndexerInvisible
-{
-    public string this[int x] { get; }
-
-    [ComVisible(false)]
-    public string this[string s] { get; }
 }

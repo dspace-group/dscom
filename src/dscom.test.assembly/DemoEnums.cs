@@ -13,18 +13,23 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.DemoAssembly2;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
-
-[ComVisible(Constants.DEFAULT_VISIBILITY)]
-public interface IDemoArrayInterfaceUserDefine
+namespace dSPACE.Runtime.InteropServices.Test
 {
-    bool TryGetValue(out IDemoArrayInterfaceUserDefine2[] value);
+    [ComVisible(true)]
+    public enum DemoEnum
+    {
+        A,
+        B
+    }
 }
 
-[ComVisible(Constants.DEFAULT_VISIBILITY)]
-public interface IDemoArrayInterfaceUserDefine2
+namespace dSPACE.Runtime.InteropServices.DemoAssembly1.EnumNamespace2
 {
-
+    [ComVisible(true)]
+    public enum DemoEnum
+    {
+        A,
+        B
+    }
 }

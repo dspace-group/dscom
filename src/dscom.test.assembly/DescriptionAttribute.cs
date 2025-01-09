@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly7;
+namespace dSPACE.Runtime.InteropServices.Test;
 
 [ComVisible(true)]
-public interface IDescriptionDemo
+public interface ITestForDescriptionAttribute
 {
     int MyProperty1
     {

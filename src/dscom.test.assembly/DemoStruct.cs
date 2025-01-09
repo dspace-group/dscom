@@ -15,11 +15,10 @@
 using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.DemoAssembly2;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
+namespace dSPACE.Runtime.InteropServices.Test;
 
-[ComVisible(Constants.DEFAULT_VISIBILITY)]
+[ComVisible(true)]
 [StructLayout(LayoutKind.Sequential)]
 public struct DemoStruct
 {

@@ -1,9 +1,9 @@
 using System.Runtime.InteropServices;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly6;
+namespace dSPACE.Runtime.InteropServices.Testr;
 
 [ComVisible(true)]
-public interface IOptionalParameter
+public interface ITestForOptionalParameter
 {
     public void Method1([Optional] int param1);
     public void Method2(int param1 = default);

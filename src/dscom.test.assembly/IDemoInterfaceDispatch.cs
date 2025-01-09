@@ -13,11 +13,10 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.DemoAssembly2;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
+namespace dSPACE.Runtime.InteropServices.Test;
 
-[ComVisible(Constants.DEFAULT_VISIBILITY)]
+[ComVisible(true)]
 [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
 public interface IDemoInterfaceDispatch
 {
@@ -149,6 +148,4 @@ public interface IDemoInterfaceDispatch
     public Guid MySystemGuidMethod2Param(Guid param1, Guid param2);
     public System.Drawing.Color MySystemDrawingColorMethod2Param(System.Drawing.Color param1, System.Drawing.Color param2);
     public decimal MySystemDecimalMethod2Param(decimal param1, decimal param2);
-
-    public IDemoInterface MyDemoInterfaceProperty { get; set; }
 }

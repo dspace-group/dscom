@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
+namespace dSPACE.Runtime.InteropServices.Test;
 
 public class DemoClass
 {

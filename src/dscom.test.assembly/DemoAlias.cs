@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.Attributes;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly4;
+namespace dSPACE.Runtime.InteropServices.Test;
 
 [
     ComVisible(true),

@@ -12,9 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly2;
+using System.Runtime.InteropServices;
+namespace dSPACE.Runtime.InteropServices.Test;
 
-public class Constants
+[ComVisible(false)]
+public interface IDemoInterfaceComInvisible
 {
-    public const bool DEFAULT_VISIBILITY = true;
+    void DoSomething(IDemoInterfaceComInvisible param);
+}
+
+[ComVisible(true)]
+public interface IDemoInterfaceComVisible
+{
+    void DoSomething(IDemoInterfaceComInvisible param);
+}
+
+[ComVisible(true)]
+public interface IDemoInterfaceIndexerInvisible
+{
+    public string this[int x] { get; }
+
+    [ComVisible(false)]
+    public string this[string s] { get; }
 }

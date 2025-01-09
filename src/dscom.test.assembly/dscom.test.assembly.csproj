@@ -6,12 +6,23 @@
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>dSPACE.Runtime.InteropServices.DemoAssembly2</RootNamespace>
-    <AssemblyName>dSPACE.Runtime.InteropServices.DemoAssembly2</AssemblyName>
+    <RootNamespace>dSPACE.Runtime.InteropServices.Test.Assembly</RootNamespace>
+    <AssemblyName>dSPACE.Runtime.InteropServices.Test.Assembly</AssemblyName>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;CS1591</NoWarn>
     <Platforms>AnyCPU;x86</Platforms>
+    <EnableComHosting>true</EnableComHosting>
   </PropertyGroup>
+
+  <!-- 
+  <ItemGroup>
+    <ComHostTypeLibrary Include="server.tlb" Id="1" />
+  </ItemGroup> 
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\dscom\dscom.csproj" />
+  </ItemGroup>
 
 </Project>
