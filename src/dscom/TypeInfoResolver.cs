@@ -86,13 +86,33 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         var identifier = GetTypeLibFromIdentifier(assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId));
         if (identifier is null)
         {
-            foreach (var additionalLib in _additionalLibs)
+            var name = assembly.GetName().Name ?? string.Empty;
+
+            var additionalLibsWithMatchingName = _additionalLibs
+                .Where(additionalLib => Path.GetFileNameWithoutExtension(additionalLib).Equals(name, StringComparison.OrdinalIgnoreCase));
+
+            // At first we try to find a type library that matches the assembly name.
+            // We do this to limit the number of type libraries to load.
+            // See https://github.com/dspace-group/dscom/issues/310
+            foreach (var additionalLib in additionalLibsWithMatchingName)
             {
-                var name = assembly.GetName().Name ?? string.Empty;
-                if (additionalLib.Contains(name))
+                AddTypeLib(additionalLib);
+                typeInfo = ResolveTypeInfo(type.GUID);
+                break;
+            }
+
+            // If no type was found in a type library with matching name we search in the remaining type libraries.
+            if (typeInfo == null)
+            {
+                var additionalLibsWithoutMatchingName = _additionalLibs.Except(additionalLibsWithMatchingName);
+                foreach (var additionalLib in additionalLibsWithoutMatchingName)
                 {
                     AddTypeLib(additionalLib);
-                    break;
+                    typeInfo = ResolveTypeInfo(type.GUID);
+                    if (typeInfo != null)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -102,6 +122,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
                 if (notifySink.ResolveRef(assembly) is ITypeLib refTypeLib)
                 {
                     AddTypeLib(refTypeLib);
+                    typeInfo = ResolveTypeInfo(type.GUID);
                 }
             }
         }
@@ -114,7 +135,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
     public ITypeInfo? ResolveTypeInfo(Type type)
     {
-#pragma warning disable IDE0045 // In bedingten Ausdruck konvertieren
+#pragma warning disable IDE0045 // Convert to conditional expression
         if (_resolvedTypeInfos.TryGetValue(type, out var typeInfo))
         {
             return typeInfo;
@@ -154,7 +175,7 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         {
             retval = ResolveTypeInfo(type, type.GUID);
         }
-#pragma warning restore IDE0045 // In bedingten Ausdruck konvertieren
+#pragma warning restore IDE0045 // Convert to conditional expression
 
         _resolvedTypeInfos[type] = retval;
         return retval;
