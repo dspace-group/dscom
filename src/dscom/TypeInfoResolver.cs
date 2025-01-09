@@ -135,6 +135,13 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
     public ITypeInfo? ResolveTypeInfo(Type type)
     {
+        // special handling for non com visible types and
+        // build-in-times. Otherwise it will try to load a typelib for string or object
+        if (type.IsGenericType || type.IsSpecialHandledClass())
+        {
+            return null;
+        }
+
 #pragma warning disable IDE0045 // Convert to conditional expression
         if (_resolvedTypeInfos.TryGetValue(type, out var typeInfo))
         {
@@ -142,7 +149,11 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         }
 
         ITypeInfo? retval;
-        if (type.FullName == "System.Collections.IEnumerator")
+        if (type.FullName == "System.Delegate")
+        {
+            retval = null;
+        }
+        else if (type.FullName == "System.Collections.IEnumerator")
         {
             retval = ResolveTypeInfo(new Guid(Guids.IID_IEnumVARIANT));
         }
