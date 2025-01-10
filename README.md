@@ -22,19 +22,17 @@ With the library you can register assemblies and classes for COM and programmati
 The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
 
 - [dSPACE COM tools](#dspace-com-tools)
-  - [Introducing](#introducing)
+  - [Introduction](#introduction)
   - [Command Line Client](#command-line-client)
     - [Installation](#installation)
     - [Usage](#usage)
   - [Library](#library)
     - [TypeLibConverter.ConvertAssemblyToTypeLib](#typelibconverterconvertassemblytotypelib)
+    - [TypeLibEmbedder.EmbedTypeLib](#typelibembedderembedtypelib)
     - [RegistrationServices.RegisterTypeForComClients](#registrationservicesregistertypeforcomclients)
     - [RegistrationServices.RegisterAssembly](#registrationservicesregisterassembly)
   - [Build Tasks](#build-tasks)
     - [Build task usage](#build-task-usage)
-      - [Using the native build task](#using-the-native-build-task)
-      - [Using the CLI based task](#using-the-cli-based-task)
-      - [Enforcing the usage of the CLI](#enforcing-the-usage-of-the-cli)
       - [Enforcing to stop the build, if an error occurs](#enforcing-to-stop-the-build-if-an-error-occurs)
     - [Parameters](#parameters)
     - [Example](#example)
@@ -44,6 +42,8 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
   - [Limitations](#limitations)
     - [RegisterAssembly](#registerassembly)
+    - [RegAsm](#regasm)
+  - [Contributing](#contributing)
 
 ## Introduction
 
@@ -186,11 +186,11 @@ public class TypeLibConverterCallback : ITypeLibExporterNotifySink
 
 ### TypeLibEmbedder.EmbedTypeLib
 
-.NET +6 introduced ability to embed type library into assemblies with the ComHostTypeLibrary property. However, using this is not fully compatible with the dscom build tools as it requires a type library to be already generated prior to the build. This class provides the implementation for embedding a type library into an assembly via Win32 API p/invoke calls. 
+.NET +6 introduced ability to embed type library into assemblies with the ComHostTypeLibrary property. However, using this is not fully compatible with the dscom build tools as it requires a type library to be already generated prior to the build. This class provides the implementation for embedding a type library into an assembly via Win32 API p/invoke calls.
 
 The class and method are static, so you only need to create a settings to provide parameter for the source type library and the target assembly for where the type library will be embedded.
 
-It is important to note that type libraries are _not_ bit-agnostic and therefore, it will not make sense to embed them in an AnyCPU assemblies. For .NET 5.0 and greater, that is not an issue since the generated *.comhost.dll are tied to a specific bitness. For .NET 4.8, it is strongly recommended that the assembly be built with either x64 or x86 rather than AnyCPU. 
+It is important to note that type libraries are _not_ bit-agnostic and therefore, it will not make sense to embed them in an AnyCPU assemblies. For .NET 5.0 and greater, that is not an issue since the generated *.comhost.dll are tied to a specific bitness. For .NET 4.8, it is strongly recommended that the assembly be built with either x64 or x86 rather than AnyCPU.
 
 ```csharp
 public static bool EmbedTypeLib(
@@ -297,9 +297,9 @@ The build task can be parameterized with the following [properties](https://lear
 
 | **Name**                                       | **Description**                                                                                |
 | ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| _DsComTlbExt                                   | Extension of the resulting type library. <br /> Default Value: `.tlb`                          |
+| _DsComTlbExt                                   | Extension of the resulting type library. <br/> Default Value: `.tlb`                           |
 | DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                     |
-| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                       | 
+| DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                       |
 | DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false` |
 | DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`          |
 | DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false` |
@@ -443,3 +443,52 @@ classextern forwarder System.Exception
 - InProc Registration only will take place, if a comhost assembly is present.
 - No CustomRegisterFunction Or CustomUnRegisterFunction Attribute support
 - No PrimaryInteropAssembly Support
+
+### RegAsm
+
+| feature | dscom |
+| -- | -- |
+| assemblyFile | **supported** |
+| codebase | **supported** |
+| registered | not supported |
+| asmpath | **supported** |
+| nologo | not supported |
+| regfile | not supported |
+| silent | not supported |
+| tlb | **supported** |
+| unregister | **supported** |
+| verbose | not supported |
+| help | **supported** |
+
+## Contributing
+
+We would be happy if you would like to contribute to this project.  
+
+We use VSCode as IDE, but feel free to use your preferred IDE.  
+You need >= .NET 8.0 SDK and .NET Full Framework >= 4.8 SDK installed on your machine.  
+Before submitting a pull request, please note the following points:  
+
+1. **Code Formatting**  
+      Ensure the code is properly formatted using `dotnet format --verify-no-changes`.
+
+2. **Unit Tests**  
+      Run all tests with `dotnet test` and make sure all tests pass successfully.  
+
+3. **Writing Tests**  
+      We like to have unit tests 😊  
+      Write your own tests for any new features or bug fixes.
+
+4. **Verifying the tlb generation**  
+    To generate a TLB with dscom is the most important feature of this project.  
+    Compare the output of `dscom` with that of `tlbexp`.  
+    Use `.\scripts\demo.bat` to generate a TLB with both `dscom` and `tlbexp`, and compare the outputs.  
+    This script will use `.\src\dscom.demo\assembly1\assembly1.csproj` to    generate a TLB with both tools.
+  
+    The script will attempt to open VSCode to facilitate the file comparison.
+
+    Ensure tlbexp is installed on your machine.  
+    If you have Visual Studio installed, find tlbexp.exe in the `C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools` folder, or use the `Developer Command Prompt for VS` to run `tlbexp`.
+
+If you have any questions, feel free to ask in the issues section.
+
+Thank you for your contribution ❤️
