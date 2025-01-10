@@ -1,5 +1,3 @@
-// Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,9 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly2;
+using System.Runtime.InteropServices;
 
-public interface IDemoInterface
+namespace dSPACE.Runtime.InteropServices.Test;
+
+[ComVisible(true)]
+public interface IDependentTestInterface
 {
 
 }

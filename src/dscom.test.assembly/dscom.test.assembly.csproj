@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU;x86</Platforms>
+    <RootNamespace>dSPACE.Runtime.InteropServices.Test.Assembly</RootNamespace>
+    <AssemblyName>dSPACE.Runtime.InteropServices.Test.Assembly</AssemblyName>
+    <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;CS1591</NoWarn>
+    <EnableComHosting>true</EnableComHosting>
+  </PropertyGroup>
+
+  <!-- 
+  <ItemGroup>
+    <ComHostTypeLibrary Include="server.tlb" Id="1" />
+  </ItemGroup> 
+  -->
+  
+  <ItemGroup>
+    <ProjectReference Include="..\dscom\dscom.csproj" />
+    <ProjectReference Include="..\dscom.test.assembly.dependency\dscom.test.assembly.dependency.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -12,4 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace System.Net.Http;
+using System.Runtime.InteropServices;
+
+namespace dSPACE.Runtime.InteropServices.Test;
+
+[ComVisible(true)]
+public interface ITestArrayInterfaceUserDefine
+{
+    bool TryGetValue(out ITestArrayInterfaceUserDefine2[] value);
+}
+
+[ComVisible(true)]
+public interface ITestArrayInterfaceUserDefine2
+{
+
+}

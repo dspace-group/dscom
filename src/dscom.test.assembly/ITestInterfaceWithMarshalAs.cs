@@ -15,13 +15,12 @@
 using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using dSPACE.Runtime.InteropServices.DemoAssembly2;
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly1;
+namespace dSPACE.Runtime.InteropServices.Test;
 
-[ComVisible(Constants.DEFAULT_VISIBILITY)]
+[ComVisible(true)]
 [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
-public interface IDemoInterfaceWithMarshalAs
+public interface ITestInterfaceWithMarshalAs
 {
     #region boolean
     void TestMethod_System_Boolean_Bool([MarshalAs(UnmanagedType.Bool)] bool Param1);

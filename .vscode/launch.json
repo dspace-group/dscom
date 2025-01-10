@@ -10,8 +10,8 @@
             "args": [
                 "tlbexport",
                 "/verbose",
-                "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.DemoAssembly1.dll",
-                "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb"
+                "${workspaceFolder}/src/dscom.test.assembly/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.Test.Assembly.dll",
+                "/out:${workspaceFolder}/src/dscom.test.assembly/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.Test.Assembly.tlb"
             ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -25,10 +25,10 @@
             "program": "${workspaceFolder}/src/dscom.client/bin/Debug/net8.0/dscom.dll",
             "args": [
                 "tlbdump",
-                "${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.DemoAssembly1.tlb",
-                "/out:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.DemoAssembly1.yaml",
-                "/tlbrefpath:${workspaceFolder}/src/dscom.demo/assembly1/bin/Debug/net8.0/",
-                "/filterregex=\\.file\\="
+                "${workspaceFolder}/src/dscom.test.assembly/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.Test.Assembly.tlb",
+                "/out:${workspaceFolder}/src/dscom.test.assembly/bin/Debug/net8.0/dSPACE.Runtime.InteropServices.Test.Assembly.yaml",
+                "/tlbrefpath:${workspaceFolder}/src/dscom.test.assembly/bin/Debug/net8.0/",
+                "/filterregex=/\.file\\="
             ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

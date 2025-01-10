@@ -1,5 +1,3 @@
-// Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,4 +10,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace System.Net.Http;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+
+namespace dSPACE.Runtime.InteropServices.Test;
+
+[ComVisible(true)]
+public interface ITestForDescriptionAttribute
+{
+    int MyPropertyWihtDescriptionAttribute1
+    {
+        [Description("MyPropertyDescription1")]
+        get; set;
+    }
+
+    [Description("MyPropertyDescription2")]
+    int MyPropertyWihtDescriptionAttribute2 { get; set; }
+}

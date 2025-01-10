@@ -12,9 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.DemoAssembly2;
+using System.Runtime.InteropServices;
 
-public class Constants
+namespace dSPACE.Runtime.InteropServices.Test
 {
-    public const bool DEFAULT_VISIBILITY = true;
+    [ComVisible(true)]
+    public enum TestEnum
+    {
+        A,
+        B
+    }
+}
+
+/*
+In case of an enum with the same name in different namespaces, the enum name should be:
+dSPACE_Runtime_InteropServices_Tests_EnumNamespace2_TestEnum
+*/
+
+namespace dSPACE.Runtime.InteropServices.Tests.EnumNamespace2
+{
+    [ComVisible(true)]
+    public enum TestEnum
+    {
+        A,
+        B
+    }
 }

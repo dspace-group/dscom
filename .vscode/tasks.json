@@ -40,7 +40,7 @@
         },
         {
             "label": "demo",
-            "command": "scripts\\demo.bat",
+            "command": "scripts\\test.assembly.bat",
             "type": "shell",
             "args": [],
             "problemMatcher": "$msCompile"

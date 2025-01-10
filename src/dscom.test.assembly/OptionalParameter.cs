@@ -1,5 +1,3 @@
-// Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,25 +11,14 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-namespace dSPACE.Runtime.InteropServices.DemoAssembly3;
 
-[ComVisible(false)]
-public interface IDemoInterfaceComInvisible
-{
-    void DoSomething(IDemoInterfaceComInvisible param);
-}
+namespace dSPACE.Runtime.InteropServices.Testr;
 
 [ComVisible(true)]
-public interface IDemoInterfaceComVisible
+public interface IInterfaceWithOptionalParameter
 {
-    void DoSomething(IDemoInterfaceComInvisible param);
-}
-
-[ComVisible(true)]
-public interface IDemoInterfaceIndexerInvisible
-{
-    public string this[int x] { get; }
-
-    [ComVisible(false)]
-    public string this[string s] { get; }
+    public void Method1([Optional] int param1);
+    public void Method2(int param1 = default);
+    public void Method3(int param1 = 123);
+    public void Method4(int param1);
 }

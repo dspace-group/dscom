@@ -20,11 +20,9 @@ public class CompileReleaseFixture
 
     public string DSComPath { get; private set; } = string.Empty;
 
-    public string DemoProjectAssembly1Path { get; private set; } = string.Empty;
+    public string TestAssemblyPath { get; private set; } = string.Empty;
 
-    public string DemoProjectAssembly2Path { get; private set; } = string.Empty;
-
-    public string DemoProjectAssembly3Path { get; private set; } = string.Empty;
+    public string TestAssemblyDependencyPath { get; private set; } = string.Empty;
 
     public CompileReleaseFixture()
     {
@@ -51,11 +49,25 @@ public class CompileReleaseFixture
 #endif
 
         // Path to descom.exe
-        DSComPath = Path.Combine(Workdir, "src", "dscom.client", "bin", configuration, "net6.0", "dscom.exe");
+        DSComPath = Path.Combine(Workdir, "src", "dscom.client", "bin", configuration, "net8.0", "dscom.exe");
+
+        if (!File.Exists(DSComPath))
+        {
+            throw new FileNotFoundException("dscom.exe not found. Please build all projects before running the tests.", DSComPath);
+        }
 
         // Path to dscom.demo assemblies
-        DemoProjectAssembly1Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly1", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly1.dll");
-        DemoProjectAssembly2Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly2", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly2.dll");
-        DemoProjectAssembly3Path = Path.Combine(Workdir, "src", "dscom.demo", "assembly3", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.DemoAssembly3.dll");
+        TestAssemblyPath = Path.Combine(Workdir, "src", "dscom.test.assembly", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.Test.Assembly.dll");
+        TestAssemblyDependencyPath = Path.Combine(Workdir, "src", "dscom.test.assembly.dependency", "bin", configuration, frameworkVersion, "dSPACE.Runtime.InteropServices.Test.Assembly.Dependency.dll");
+
+        if (!File.Exists(TestAssemblyPath))
+        {
+            throw new FileNotFoundException($"The test assembly {TestAssemblyPath} not found. Please build all projects before running the tests.", TestAssemblyPath);
+        }
+
+        if (!File.Exists(TestAssemblyDependencyPath))
+        {
+            throw new FileNotFoundException($"The test assembly {TestAssemblyDependencyPath} not found. Please build all projects before running the tests.", TestAssemblyPath);
+        }
     }
 }
