@@ -42,6 +42,11 @@ public class TypeLibConverter
             Out = tlbFilePath,
         };
 
+        if (!string.IsNullOrEmpty(tlbFilePath))
+        {
+            options.TLBRefpath = new[] { Path.GetDirectoryName(tlbFilePath)! };
+        }
+
         return ConvertAssemblyToTypeLib(assembly, options, notifySink);
     }
 

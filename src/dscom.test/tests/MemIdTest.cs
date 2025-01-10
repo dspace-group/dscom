@@ -89,7 +89,7 @@ public class MemIdTest : BaseTest
                             .WithMethod("Method1").WithReturnType<string>().WithCustomAttribute<DispIdAttribute>(dispIdStart + 1).Build()
                             .WithMethod("Method2").WithReturnType<string>().Build()
                         .Build()
-                    .Build(true, true);
+                    .Build();
 
         using var method1 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method1");
         using var method2 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method2");

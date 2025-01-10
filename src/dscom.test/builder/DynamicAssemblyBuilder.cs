@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
 internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBuilder>
 {
-    public DynamicAssemblyBuilder(string name, AssemblyBuilder assemblyBuilder, string path) : base(name)
+    public DynamicAssemblyBuilder(string name, AssemblyBuilder assemblyBuilder) : base(name)
     {
-        TypeLibPath = path;
         AssemblyBuilder = assemblyBuilder;
         ModuleBuilder = CreateModuleBuilder();
         AppDomain.CurrentDomain.AssemblyResolve += ResolveEventHandler;
@@ -29,13 +27,13 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
 
     private List<DynamicTypeBuilder> DynamicTypeBuilder { get; } = new List<DynamicTypeBuilder>();
 
-    private string TypeLibPath { get; }
-
     public ModuleBuilder ModuleBuilder { get; set; }
 
     public AssemblyBuilder AssemblyBuilder { get; set; }
 
     public Assembly Assembly => ModuleBuilder.Assembly;
+
+    private readonly List<DynamicAssemblyBuilderResult> _dependencies = new();
 
     protected override AttributeTargets AttributeTarget => AttributeTargets.Assembly;
 
@@ -49,7 +47,7 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
         return null;
     }
 
-    public DynamicAssemblyBuilderResult Build(bool storeOnDisk = true, bool skipTlbExeCall = false, bool useComAlias = false)
+    public DynamicAssemblyBuilderResult Build(bool useComAlias = false)
     {
         foreach (var customAttributeBuilder in CustomAttributeBuilder)
         {
@@ -58,42 +56,23 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
 
         DynamicTypeBuilder.ForEach(dynamicTypeBuilder => dynamicTypeBuilder.CreateType());
 
-        // Only supported for .NET Framework
-        if (!skipTlbExeCall)
-        {
-            CreateDLLAndCreateTLBWithTlbExe();
-        }
-
         var typeLibConverter = new TypeLibConverter();
         var assembly = ModuleBuilder.Assembly;
-        var tlbFilePath = storeOnDisk ? TypeLibPath : string.Empty;
-        var typeLibExporterNotifySink = new TypeLibExporterNotifySink(useComAlias ? assembly : null);
-        if (typeLibConverter.ConvertAssemblyToTypeLib(assembly, tlbFilePath, typeLibExporterNotifySink) is not ITypeLib2 typelib)
+        var typeLibExporterNotifySink = new TypeLibExporterNotifySink(useComAlias ? assembly : null, _dependencies);
+        if (typeLibConverter.ConvertAssemblyToTypeLib(assembly, string.Empty, typeLibExporterNotifySink) is not ITypeLib2 typelib)
         {
             throw new COMException("Cannot create type library for this dynamic assembly");
-        }
-
-        if (storeOnDisk && typelib is ICreateTypeLib2 createTypeLib2)
-        {
-            createTypeLib2.SaveAllChanges().ThrowIfFailed($"Failed to save type library {tlbFilePath}.");
-        }
-
-        if (storeOnDisk)
-        {
-            var options = new TypeLibTextConverterSettings()
-            {
-                Out = $"{TypeLibPath}.yaml",
-                TypeLibrary = TypeLibPath,
-                FilterRegex = new string[] { "file" }
-            };
-
-            var typeLibConvert = new TypeLibConverter();
-            typeLibConvert.ConvertTypeLibToText(options);
         }
 
         AppDomain.CurrentDomain.AssemblyResolve -= ResolveEventHandler;
 
         return new DynamicAssemblyBuilderResult(typelib, ModuleBuilder.Assembly, typeLibExporterNotifySink);
+    }
+
+    internal DynamicAssemblyBuilder AddDependency(DynamicAssemblyBuilderResult assembly)
+    {
+        _dependencies.Add(assembly);
+        return this;
     }
 
     internal DynamicTypeBuilder WithInterface(string interfaceName)
@@ -140,56 +119,8 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
         DynamicTypeBuilder.Remove(toCreate);
     }
 
-    [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Compatibility")]
-    private void CreateDLLAndCreateTLBWithTlbExe()
-    {
-#if NETFRAMEWORK && DEBUG
-
-        var dllPath = $"{TypeLibPath}.dll";
-
-        AssemblyBuilder.Save(Path.GetFileName($"{TypeLibPath}.dll"));
-
-        var tlbexpexePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\TlbExp.exe");
-
-        if (File.Exists(tlbexpexePath))
-        {
-            var process = new System.Diagnostics.Process();
-            process.StartInfo.FileName = tlbexpexePath;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = false;
-            process.StartInfo.RedirectStandardError = false;
-            process.StartInfo.Arguments = $"{dllPath} /win64 /out:{dllPath}.tlbexp.tlb";
-            process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Maximized;
-
-            process.Start();
-
-            process.WaitForExit();
-        }
-
-        var options = new TypeLibTextConverterSettings()
-        {
-            Out = $"{dllPath}.tlbexp.tlb.yaml",
-            TypeLibrary = $"{dllPath}.tlbexp.tlb"
-        };
-
-        if (File.Exists(options.TypeLibrary))
-        {
-            var typeLibConvert = new TypeLibConverter();
-            typeLibConvert.ConvertTypeLibToText(options);
-        }
-
-#endif
-    }
-
-#if NETFRAMEWORK
-    private ModuleBuilder CreateModuleBuilder()
-    {
-        return AssemblyBuilder.DefineDynamicModule("DynamicTestModule", $"{Path.GetFileName($"{TypeLibPath}.dll")}");
-    }
-#else
     private ModuleBuilder CreateModuleBuilder()
     {
         return AssemblyBuilder.DefineDynamicModule("DynamicTestModule"); ;
     }
-#endif
 }
