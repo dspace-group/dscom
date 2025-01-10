@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dscom.build", "src\dscom.bu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dscom.test.assembly", "src\dscom.test.assembly\dscom.test.assembly.csproj", "{5DA2D3FD-601D-40D3-B89A-872FDF9D8D8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dscom.test.assembly.dependency", "src\dscom.test.assembly.dependency\dscom.test.assembly.dependency.csproj", "{E3DF576A-C10A-4557-AB80-E4D0166243E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,14 @@ Global
 		{5DA2D3FD-601D-40D3-B89A-872FDF9D8D8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5DA2D3FD-601D-40D3-B89A-872FDF9D8D8B}.Release|x86.ActiveCfg = Release|x86
 		{5DA2D3FD-601D-40D3-B89A-872FDF9D8D8B}.Release|x86.Build.0 = Release|x86
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Debug|x86.ActiveCfg = Debug|x86
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Debug|x86.Build.0 = Debug|x86
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Release|x86.ActiveCfg = Release|x86
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +83,7 @@ Global
 		{5B402A1B-18B1-4D88-804A-BC0E58EF3730} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 		{F8F68E57-CFFE-4EA5-9C1A-2CD9223B5D85} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 		{5DA2D3FD-601D-40D3-B89A-872FDF9D8D8B} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
+		{E3DF576A-C10A-4557-AB80-E4D0166243E8} = {0A2E33B4-9DF7-4199-BC39-B0FC9C99FA97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F23D9EA-A9D9-4CE5-94B5-050A9B68CA1C}

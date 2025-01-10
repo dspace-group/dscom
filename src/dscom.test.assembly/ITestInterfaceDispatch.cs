@@ -148,4 +148,5 @@ public interface ITestInterfaceDispatch
     public Guid MySystemGuidMethod2Param(Guid param1, Guid param2);
     public System.Drawing.Color MySystemDrawingColorMethod2Param(System.Drawing.Color param1, System.Drawing.Color param2);
     public decimal MySystemDecimalMethod2Param(decimal param1, decimal param2);
+    public IDependentTestInterface MyIDependentTestInterfaceMethod();
 }

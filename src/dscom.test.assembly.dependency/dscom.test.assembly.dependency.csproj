@@ -6,8 +6,8 @@
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>dSPACE.Runtime.InteropServices.Test.Assembly</RootNamespace>
-    <AssemblyName>dSPACE.Runtime.InteropServices.Test.Assembly</AssemblyName>
+    <RootNamespace>dSPACE.Runtime.InteropServices.Test.Assembly.Dependency</RootNamespace>
+    <AssemblyName>dSPACE.Runtime.InteropServices.Test.Assembly.Dependency</AssemblyName>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -15,16 +15,5 @@
     <Platforms>AnyCPU;x86</Platforms>
     <EnableComHosting>true</EnableComHosting>
   </PropertyGroup>
-
-  <!-- 
-  <ItemGroup>
-    <ComHostTypeLibrary Include="server.tlb" Id="1" />
-  </ItemGroup> 
-  -->
-  
-  <ItemGroup>
-    <ProjectReference Include="..\dscom\dscom.csproj" />
-    <ProjectReference Include="..\dscom.test.assembly.dependency\dscom.test.assembly.dependency.csproj" />
-  </ItemGroup>
 
 </Project>
