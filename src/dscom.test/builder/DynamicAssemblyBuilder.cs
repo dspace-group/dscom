@@ -33,6 +33,8 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
 
     public Assembly Assembly => ModuleBuilder.Assembly;
 
+    private readonly List<DynamicAssemblyBuilderResult> _dependencies = new();
+
     protected override AttributeTargets AttributeTarget => AttributeTargets.Assembly;
 
     private Assembly? ResolveEventHandler(object? sender, ResolveEventArgs args)
@@ -56,7 +58,7 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
 
         var typeLibConverter = new TypeLibConverter();
         var assembly = ModuleBuilder.Assembly;
-        var typeLibExporterNotifySink = new TypeLibExporterNotifySink(useComAlias ? assembly : null);
+        var typeLibExporterNotifySink = new TypeLibExporterNotifySink(useComAlias ? assembly : null, _dependencies);
         if (typeLibConverter.ConvertAssemblyToTypeLib(assembly, string.Empty, typeLibExporterNotifySink) is not ITypeLib2 typelib)
         {
             throw new COMException("Cannot create type library for this dynamic assembly");
@@ -65,6 +67,12 @@ internal sealed class DynamicAssemblyBuilder : DynamicBuilder<DynamicAssemblyBui
         AppDomain.CurrentDomain.AssemblyResolve -= ResolveEventHandler;
 
         return new DynamicAssemblyBuilderResult(typelib, ModuleBuilder.Assembly, typeLibExporterNotifySink);
+    }
+
+    internal DynamicAssemblyBuilder AddDependency(DynamicAssemblyBuilderResult assembly)
+    {
+        _dependencies.Add(assembly);
+        return this;
     }
 
     internal DynamicTypeBuilder WithInterface(string interfaceName)

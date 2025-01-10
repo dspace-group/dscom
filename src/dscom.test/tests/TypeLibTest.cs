@@ -249,4 +249,76 @@ public class TypeLibTest : BaseTest
 
         docString.Should().Be("Test");
     }
+
+    [Fact]
+    public void TypeLib_ShouldBeLoaded_By_Class()
+    {
+        var assemblyA = CreateAssembly(new AssemblyName("AssemblyA"))
+            .WithClass("TestSourceClass")
+                .WithCustomAttribute(typeof(ClassInterfaceAttribute), ClassInterfaceType.AutoDispatch)
+                .Build(out var classType)
+            .WithInterface("ITestSourceInterface")
+                .Build(out var interfaceType)
+            .Build();
+
+        var assemblyB = CreateAssembly(new AssemblyName("AssemblyB"))
+            .AddDependency(assemblyA)
+            .WithInterface("TestClassB")
+                .WithProperty("Some", classType!).Build()
+                .WithProperty("Other", interfaceType!).Build()
+                .Build()
+            .Build();
+
+        // check for class
+        var typeInfo = assemblyB.TypeLib.GetTypeInfoByName("TestClassB");
+        typeInfo.Should().NotBeNull("TestClassB not found");
+
+        // check for 'some' property
+        using var some_property_funcdesc = typeInfo!.GetFuncDescByName("Some");
+        some_property_funcdesc.Should().NotBeNull();
+
+        some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+
+        // check for 'other' property
+        using var other_property_funcdesc = typeInfo!.GetFuncDescByName("Other");
+        other_property_funcdesc.Should().NotBeNull();
+
+        other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+    }
+
+    [Fact]
+    public void TypeLib_ShouldBeLoaded_By_Interface()
+    {
+        var assemblyA = CreateAssembly(new AssemblyName("AssemblyA"))
+            .WithClass("TestSourceClass")
+                .WithCustomAttribute(typeof(ClassInterfaceAttribute), ClassInterfaceType.AutoDispatch)
+                .Build(out var classType)
+            .WithInterface("ITestSourceInterface")
+                .Build(out var interfaceType)
+            .Build();
+
+        var assemblyB = CreateAssembly(new AssemblyName("AssemblyB"))
+            .AddDependency(assemblyA)
+            .WithInterface("TestClassB")
+                .WithProperty("Other", interfaceType!).Build()
+                .WithProperty("Some", classType!).Build()
+                .Build()
+            .Build();
+
+        // check for class
+        var typeInfo = assemblyB.TypeLib.GetTypeInfoByName("TestClassB");
+        typeInfo.Should().NotBeNull("TestClassB not found");
+
+        // check for 'other' property
+        using var other_property_funcdesc = typeInfo!.GetFuncDescByName("Other");
+        other_property_funcdesc.Should().NotBeNull();
+
+        other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+
+        // check for 'some' property
+        using var some_property_funcdesc = typeInfo!.GetFuncDescByName("Some");
+        some_property_funcdesc.Should().NotBeNull();
+
+        some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+    }
 }
