@@ -44,7 +44,7 @@ public interface IEnumAlias
     ComVisible(true),
     Guid("4FF2FE65-E157-4EED-A42D-D10B6B891C22"),
     ClassInterface(ClassInterfaceType.None),
-    ProgId("DemoAssembly4.EnumAlias")
+    ProgId("dSPACE.Test.EnumAlias")
 ]
 public class EnumAlias : IEnumAlias
 {
