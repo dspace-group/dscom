@@ -3,16 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>10.0</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x86</Platforms>
     <RootNamespace>dSPACE.Runtime.InteropServices.Test.Assembly.Dependency</RootNamespace>
     <AssemblyName>dSPACE.Runtime.InteropServices.Test.Assembly.Dependency</AssemblyName>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <AnalysisMode>Recommended</AnalysisMode>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>CA1416;CA1401;CA1707;CA1720;CA1711;CA2201;CA1200;CA5351;CS0618;CA1305;CS1591</NoWarn>
-    <Platforms>AnyCPU;x86</Platforms>
     <EnableComHosting>true</EnableComHosting>
   </PropertyGroup>
 
