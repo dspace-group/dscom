@@ -14,12 +14,16 @@
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
-public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
+internal sealed class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExporterNameProvider
 {
     private readonly Assembly? _assembly;
-    public TypeLibExporterNotifySink(Assembly? assembly)
+
+    private readonly IReadOnlyCollection<DynamicAssemblyBuilderResult> _dependencies;
+
+    public TypeLibExporterNotifySink(Assembly? assembly, IReadOnlyCollection<DynamicAssemblyBuilderResult> dependencies)
     {
         _assembly = assembly;
+        _dependencies = dependencies;
     }
 
     public List<ReportedEvent> ReportedEvents { get; } = new List<ReportedEvent>();
@@ -29,9 +33,13 @@ public class TypeLibExporterNotifySink : ITypeLibExporterNotifySink, ITypeLibExp
         ReportedEvents.Add(new ReportedEvent() { EventKind = eventKind, EventCode = eventCode, EventMsg = eventMsg });
     }
 
-    public object ResolveRef(Assembly assembly)
+    public object? ResolveRef(Assembly assembly)
     {
-        return null!;
+        // resolve the dynamic assemblies, if necessary, because they could
+        // not be find in the filesystem, see TypeInfoResolver.ResolveTypeInfo(Type, Guid)
+        return _dependencies
+            .FirstOrDefault(result => result.Assembly.FullName == assembly.FullName)?
+            .TypeLib;
     }
 
     public INameResolver GetNameResolver()

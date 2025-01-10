@@ -78,7 +78,7 @@ public class RegistrationServicesTest : BaseTest
                 _guidOfiClassFactory);
         });
 
-        exception.Message.Should().StartWith("Class not registered");
+        exception.HResult.Should().Be(HRESULT.REGDB_E_CLASSNOTREG);
     }
 
     [Fact]
@@ -147,8 +147,7 @@ public class RegistrationServicesTest : BaseTest
                 _guidOfiClassFactory);
         });
 
-        exception.Message.Should().StartWith("Class not registered");
-
+        exception.HResult.Should().Be(HRESULT.REGDB_E_CLASSNOTREG);
         registrationServices.UnregisterTypeForComClients(cookie);
     }
 

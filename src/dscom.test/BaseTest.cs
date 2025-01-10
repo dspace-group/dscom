@@ -18,59 +18,29 @@ namespace dSPACE.Runtime.InteropServices.Tests;
 
 public class BaseTest
 {
-    static BaseTest()
-    {
-        var dynamic_output = Path.Combine(Directory.GetCurrentDirectory(), "dynamic");
-
-        var dynamic_output_dir = new DirectoryInfo(dynamic_output);
-
-        // remove existing files, for a fresh restart
-        if (dynamic_output_dir.Exists)
-        {
-            dynamic_output_dir.Delete(true);
-        }
-
-        dynamic_output_dir.Create();
-
-        Dir = dynamic_output_dir.FullName;
-    }
-
-    private static string Dir { get; }
-
     protected static Regex ValidChars { get; } = new("[^a-zA-Z0-9_]");
 
-    internal DynamicAssemblyBuilder CreateAssembly([CallerMemberName] string callerName = "",
-                                                   [CallerFilePath] string filepath = "")
+    internal DynamicAssemblyBuilder CreateAssembly([CallerMemberName] string callerName = "")
     {
-        return CreateAssembly(CreateAssemblyName(callerName, string.Empty, 0, 0), false, callerName, filepath);
+        return CreateAssembly(CreateAssemblyName(callerName, string.Empty, 0, 0));
+    }
+
+    internal DynamicAssemblyBuilder CreateAssembly(AssemblyName name)
+    {
+        return CreateAssembly(name, Array.Empty<CustomAttributeBuilder>());
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Compatibility")]
     internal DynamicAssemblyBuilder CreateAssembly(AssemblyName assemblyName,
-                                                   CustomAttributeBuilder[] customAttributeBuilders,
-                                                   bool assemblyNameAsFilename = false,
-                                                   [CallerMemberName] string callerName = "",
-                                                   [CallerFilePath] string filepath = "")
+                                                   CustomAttributeBuilder[] customAttributeBuilders)
     {
 #if NETFRAMEWORK
-        var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave, Dir, true, customAttributeBuilders);
+        var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave, customAttributeBuilders);
 #else
         var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run, customAttributeBuilders);
 #endif
 
-        var name = assemblyNameAsFilename
-            ? assemblyName.Name!
-            : GenerateAssemblyName(assemblyName, filepath, callerName);
-
-        return new DynamicAssemblyBuilder(name, assemblyBuilder);
-    }
-
-    internal DynamicAssemblyBuilder CreateAssembly(AssemblyName name,
-                                                   bool assemblyNameAsFilename = false,
-                                                   [CallerMemberName] string callerName = "",
-                                                   [CallerFilePath] string filepath = "")
-    {
-        return CreateAssembly(name, Array.Empty<CustomAttributeBuilder>(), assemblyNameAsFilename, callerName, filepath);
+        return new DynamicAssemblyBuilder(assemblyName.Name!, assemblyBuilder);
     }
 
     protected static AssemblyName CreateAssemblyName([CallerMemberName] string assemblyName = "", string assemblyNameSuffix = "", int major = 0, int minor = 0)
@@ -78,12 +48,5 @@ public class BaseTest
         assemblyName = ValidChars.Replace(assemblyName, string.Empty);
         assemblyNameSuffix = ValidChars.Replace(assemblyNameSuffix, string.Empty);
         return new AssemblyName($"Dynamic{assemblyName.GetHashCode()}{assemblyNameSuffix}") { Version = new Version(major, minor) };
-    }
-
-    private static string GenerateAssemblyName(AssemblyName assemblyName, string filePath, string testMethodName)
-    {
-        var name = $"{assemblyName.Name}_{assemblyName.Version?.Major}_{assemblyName.Version?.Minor}_{ValidChars.Replace(Path.GetFileNameWithoutExtension(filePath), "")}_{ValidChars.Replace(testMethodName, "")}";
-
-        return name.Substring(0, Math.Min(150, name.Length));
     }
 }

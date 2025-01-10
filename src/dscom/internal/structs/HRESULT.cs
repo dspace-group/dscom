@@ -139,4 +139,7 @@ public struct HRESULT
 
     [SuppressMessage("Microsoft.Style", "IDE1006", Justification = "")]
     public const int CLASS_E_NOAGGREGATION = unchecked((int)0x80040110);
+
+    [SuppressMessage("Microsoft.Style", "IDE1006", Justification = "")]
+    public const int REGDB_E_CLASSNOTREG = unchecked((int)0x80040154);
 }
