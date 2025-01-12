@@ -51,7 +51,6 @@ public class CLITestEmbed : CLITestBase
         GC.WaitForPendingFinalizers();
     }
 
-    [StaFact]
     public void TlbEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
@@ -68,7 +67,6 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [StaFact]
     public void TlbEmbedAssemblyWithArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
@@ -84,7 +82,6 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [StaFact]
     public void TlbEmbedAssemblyWithArbitraryTlbAndArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
@@ -100,7 +97,6 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [StaFact]
     public void TlbEmbedAssemblyWithMultipleTypeLibraries_ExitCodeAre0AndTlbsAreEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);

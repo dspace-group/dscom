@@ -30,6 +30,7 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>, IDispo
     internal string DSComPath { get; set; } = string.Empty;
 
     internal string TestAssemblyTemporyTlbFilePath { get; }
+
     internal string TestAssemblyTemporyYamlFilePath { get; }
 
     internal string TestAssemblyPath { get; }
@@ -37,6 +38,10 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>, IDispo
     internal string TestAssemblyDependencyPath { get; }
 
     internal string TestAssemblyDependencyTemporyTlbFilePath { get; }
+
+    internal string TestAssemblTestDirectoryPath { get; }
+
+    internal string TestAssemblyDependencyTestDirectoryPath { get; }
 
     public CLITestBase(CompileReleaseFixture compileFixture)
     {
@@ -57,9 +62,15 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>, IDispo
             throw new DirectoryNotFoundException("Output directory not found.");
         }
 
-        TestAssemblyTemporyTlbFilePath = Path.Combine(testAssemblyDirectoryPath, Path.GetFileNameWithoutExtension(TestAssemblyPath) + "-" + Guid.NewGuid().ToString() + ".tlb");
+        TestAssemblTestDirectoryPath = Path.Combine(testAssemblyDirectoryPath, Guid.NewGuid().ToString());
+        TestAssemblyDependencyTestDirectoryPath = Path.Combine(testAssemblyDependencyDirectoryPath, Guid.NewGuid().ToString());
+
+        Directory.CreateDirectory(TestAssemblTestDirectoryPath);
+        Directory.CreateDirectory(TestAssemblyDependencyTestDirectoryPath);
+
+        TestAssemblyTemporyTlbFilePath = Path.Combine(TestAssemblTestDirectoryPath, Path.GetFileNameWithoutExtension(TestAssemblyPath) + ".tlb");
         TestAssemblyTemporyYamlFilePath = TestAssemblyTemporyTlbFilePath.Replace(".tlb", ".yaml");
-        TestAssemblyDependencyTemporyTlbFilePath = Path.Combine(testAssemblyDependencyDirectoryPath, Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath) + "-" + Guid.NewGuid().ToString() + ".tlb");
+        TestAssemblyDependencyTemporyTlbFilePath = Path.Combine(TestAssemblyDependencyTestDirectoryPath, Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath) + ".tlb");
     }
 
     internal static ProcessOutput Execute(string filename, params string[] args)
@@ -109,19 +120,14 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>, IDispo
     {
         if (disposing)
         {
-            if (File.Exists(TestAssemblyTemporyTlbFilePath))
+            if (Directory.Exists(TestAssemblTestDirectoryPath))
             {
-                File.Delete(TestAssemblyTemporyTlbFilePath);
+                Directory.Delete(TestAssemblTestDirectoryPath, true);
             }
 
-            if (File.Exists(TestAssemblyDependencyTemporyTlbFilePath))
+            if (Directory.Exists(TestAssemblyDependencyTestDirectoryPath))
             {
-                File.Delete(TestAssemblyDependencyTemporyTlbFilePath);
-            }
-
-            if (File.Exists(TestAssemblyTemporyYamlFilePath))
-            {
-                File.Delete(TestAssemblyTemporyYamlFilePath);
+                Directory.Delete(TestAssemblyDependencyTestDirectoryPath, true);
             }
         }
     }

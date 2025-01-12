@@ -22,7 +22,6 @@ public class CLITest : CLITestBase
 {
     public CLITest(CompileReleaseFixture compileFixture) : base(compileFixture) { }
 
-    [StaFact]
     public void CallWithoutCommandOrOption_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath);
@@ -32,7 +31,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void CallWithoutCommandABC_ExitCodeIs1AndStdOutIsHelpStringAndStdErrIsUsed()
     {
         var result = Execute(DSComPath, "ABC");
@@ -42,7 +40,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("Unrecognized command or argument 'ABC'");
     }
 
-    [StaFact]
     public void CallWithVersionOption_VersionIsAssemblyInformationalVersionAttributeValue()
     {
         var assemblyInformationalVersion = typeof(TypeLibConverter).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
@@ -54,7 +51,6 @@ public class CLITest : CLITestBase
         versionFromLib.Should().StartWith(result.StdOut.Trim());
     }
 
-    [StaFact]
     public void CallWithHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "--help");
@@ -62,7 +58,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void TlbExportAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbexport", "--help");
@@ -70,7 +65,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void TlbDumpAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbdump", "--help");
@@ -78,7 +72,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void TlbRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbregister", "--help");
@@ -86,7 +79,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void TlbUnRegisterAndHelpOption_StdOutIsHelpStringAndExitCodeIsZero()
     {
         var result = Execute(DSComPath, "tlbunregister", "--help");
@@ -94,7 +86,6 @@ public class CLITest : CLITestBase
         result.StdOut.Trim().Should().Contain("Description");
     }
 
-    [StaFact]
     public void TlbUnRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbunregister", "abc");
@@ -102,7 +93,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [StaFact]
     public void TlbRegisterAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbregister", "abc");
@@ -110,7 +100,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [StaFact]
     public void TlbDumpAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbdump", "abc");
@@ -118,7 +107,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [StaFact]
     public void TlbExportAndFileNotExist_StdErrIsFileNotFoundAndExitCodeIs1()
     {
         var result = Execute(DSComPath, "tlbexport", "abc");
@@ -126,46 +114,38 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().Contain("not found");
     }
 
-    [StaFact]
     public void TlbExportAndDemoAssemblyAndCallWithTlbDump_ExitCodeIs0AndTlbIsAvailableAndValid()
     {
-        var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
-        var yamlFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.yaml";
-
-        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
-        var yamlFilePath = Path.Combine(Environment.CurrentDirectory, yamlFileName);
-        var dependentTlbPath = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
+        var dependentFileName = Path.GetFileName(TestAssemblyDependencyTemporyTlbFilePath);
+        var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TestAssemblyTemporyTlbFilePath);
         result.ExitCode.Should().Be(0);
 
-        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(TestAssemblyTemporyTlbFilePath).Should().BeTrue($"File {TestAssemblyTemporyTlbFilePath} should be available.");
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
 
-        var dumpResult = Execute(DSComPath, "tlbdump", tlbFilePath);
+        var dumpResult = Execute(DSComPath, "tlbdump", TestAssemblyTemporyTlbFilePath, "--out", TestAssemblyTemporyYamlFilePath);
         dumpResult.ExitCode.Should().Be(0);
 
-        File.Exists(yamlFilePath).Should().BeTrue($"File {yamlFilePath} should be available.");
+        File.Exists(TestAssemblyTemporyYamlFilePath).Should().BeTrue($"File {TestAssemblyTemporyYamlFilePath} should be available.");
     }
 
-    [StaFact]
     public void TlbExportAndEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
 
-        var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
-
-        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
-        var dependentTlbPath = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
+        var dependentFileName = Path.GetFileName(TestAssemblyDependencyTemporyTlbFilePath);
+        var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, $"--embed {embedPath}", "--out", TestAssemblyTemporyTlbFilePath);
         result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
 
-        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
+        File.Exists(TestAssemblyTemporyTlbFilePath).Should().BeTrue($"File {TestAssemblyTemporyTlbFilePath} should be available.");
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
 
         OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib);
-        OleAut32.LoadTypeLibEx(tlbFilePath, REGKIND.NONE, out var sourceTypeLib);
+        OleAut32.LoadTypeLibEx(TestAssemblyTemporyTlbFilePath, REGKIND.NONE, out var sourceTypeLib);
 
         embeddedTypeLib.GetDocumentation(-1, out var embeddedTypeLibName, out _, out _, out _);
         sourceTypeLib.GetDocumentation(-1, out var sourceTypeLibName, out _, out _, out _);
@@ -173,7 +153,6 @@ public class CLITest : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
-    [StaFact]
     public void TlbExportCreateMissingDependentTLBsFalseAndOverrideTlbId_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
@@ -191,7 +170,6 @@ public class CLITest : CLITestBase
         File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
     }
 
-    [StaFact]
     public void TlbExportCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--out", TestAssemblyTemporyTlbFilePath);
@@ -204,26 +182,22 @@ public class CLITest : CLITestBase
         result.StdErr.Should().Contain(Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath));
     }
 
-    [StaFact]
     public void TlbExportCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
-        var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
-        var dependentFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
-        var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
-        var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
+        var dependentFileName = Path.GetFileName(TestAssemblyDependencyTemporyTlbFilePath);
+        var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
 
-        var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "true", "--out", TestAssemblyTemporyTlbFilePath);
+        var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--out", TestAssemblyTemporyTlbFilePath);
         result.ExitCode.Should().Be(0);
 
-        File.Exists(tlbFilePath).Should().BeTrue($"File {tlbFilePath} should be available.");
-        File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
+        File.Exists(TestAssemblyTemporyTlbFilePath).Should().BeTrue($"File {TestAssemblyTemporyTlbFilePath} should be available.");
+        File.Exists(TestAssemblyDependencyTemporyTlbFilePath).Should().BeFalse($"File {dependentTlbPath} should be available.");
     }
 
-    [StaFact]
     public void TlbExportCreateMissingDependentTLBsNoValue_ExitCodeIs0()
     {
-        var dependentFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
-        var dependentTlbPath = Path.Combine(Environment.CurrentDirectory, dependentFileName);
+        var dependentFileName = Path.GetFileName(TestAssemblyDependencyTemporyTlbFilePath);
+        var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "--out", TestAssemblyTemporyTlbFilePath);
         result.ExitCode.Should().Be(0);
@@ -232,7 +206,6 @@ public class CLITest : CLITestBase
         File.Exists(dependentTlbPath).Should().BeTrue($"File {dependentTlbPath} should be available.");
     }
 
-    [StaFact]
     public void TlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--silent", "--out", TestAssemblyTemporyTlbFilePath);
@@ -244,7 +217,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().BeNullOrEmpty();
     }
 
-    [StaFact]
     public void TlbExportAndOptionSilenceTX801311A6andTX0013116F_StdOutAndStdErrIsEmpty()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--silence", "TX801311A6", "--silence", "TX0013116F", "--out", TestAssemblyTemporyTlbFilePath);
@@ -256,7 +228,6 @@ public class CLITest : CLITestBase
         result.StdErr.Trim().Should().BeNullOrEmpty();
     }
 
-    [StaFact]
     public void TlbExportAndOptionOverrideTLBId_TLBIdIsCorrect()
     {
         var guid = Guid.NewGuid();
