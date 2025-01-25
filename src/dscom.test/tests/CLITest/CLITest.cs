@@ -122,13 +122,11 @@ public class CLITest : CLITestBase
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TestAssemblyTemporyTlbFilePath);
         Assert.Equal(0, result.ExitCode);
-
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
         Assert.True(File.Exists(dependentTlbPath));
 
         var dumpResult = Execute(DSComPath, "tlbdump", TestAssemblyTemporyTlbFilePath, "--out", TestAssemblyTemporyYamlFilePath);
         Assert.Equal(0, dumpResult.ExitCode);
-
         Assert.True(File.Exists(TestAssemblyTemporyYamlFilePath));
     }
 
@@ -158,7 +156,6 @@ public class CLITest : CLITestBase
     {
         var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
         var tlbFilePath = Path.Combine(Environment.CurrentDirectory, tlbFileName);
-
         var parameters = new[] { "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--overridetlbid", "12345678-1234-1234-1234-123456789012" };
 
         var result = Execute(DSComPath, parameters);
@@ -170,11 +167,10 @@ public class CLITest : CLITestBase
     public void TlbExportCreateMissingDependentTLBsFalse_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--out", TestAssemblyTemporyTlbFilePath);
-        Assert.Equal(0, result.ExitCode);
 
+        Assert.Equal(0, result.ExitCode);
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
         Assert.False(File.Exists(TestAssemblyDependencyTemporyTlbFilePath));
-
         Assert.Contains("auto generation of dependent type libs is disabled", result.StdErr);
         Assert.Contains(Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath), result.StdErr);
     }
@@ -182,8 +178,8 @@ public class CLITest : CLITestBase
     public void TlbExportCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--out", TestAssemblyTemporyTlbFilePath);
-        Assert.Equal(0, result.ExitCode);
 
+        Assert.Equal(0, result.ExitCode);
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
         Assert.False(File.Exists(TestAssemblyDependencyTemporyTlbFilePath));
     }
@@ -194,8 +190,8 @@ public class CLITest : CLITestBase
         var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "--out", TestAssemblyTemporyTlbFilePath);
-        Assert.Equal(0, result.ExitCode);
 
+        Assert.Equal(0, result.ExitCode);
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
         Assert.True(File.Exists(dependentTlbPath));
     }
@@ -203,10 +199,9 @@ public class CLITest : CLITestBase
     public void TlbExportAndOptionSilent_StdOutAndStdErrIsEmpty()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--silent", "--out", TestAssemblyTemporyTlbFilePath);
+
         Assert.Equal(0, result.ExitCode);
-
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
-
         Assert.True(string.IsNullOrEmpty(result.StdOut.Trim()));
         Assert.True(string.IsNullOrEmpty(result.StdErr.Trim()));
     }
@@ -214,10 +209,9 @@ public class CLITest : CLITestBase
     public void TlbExportAndOptionSilenceTX801311A6andTX0013116F_StdOutAndStdErrIsEmpty()
     {
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--silence", "TX801311A6", "--silence", "TX0013116F", "--out", TestAssemblyTemporyTlbFilePath);
+
         Assert.Equal(0, result.ExitCode);
-
         Assert.True(File.Exists(TestAssemblyTemporyTlbFilePath));
-
         Assert.True(string.IsNullOrEmpty(result.StdOut.Trim()));
         Assert.True(string.IsNullOrEmpty(result.StdErr.Trim()));
     }
@@ -233,7 +227,6 @@ public class CLITest : CLITestBase
 
         var dumpResult = Execute(DSComPath, "tlbdump", TestAssemblyTemporyTlbFilePath, "/out", TestAssemblyTemporyYamlFilePath);
         Assert.Equal(0, dumpResult.ExitCode);
-
         Assert.True(File.Exists(TestAssemblyTemporyYamlFilePath));
 
         var yamlContent = File.ReadAllText(TestAssemblyTemporyYamlFilePath);
