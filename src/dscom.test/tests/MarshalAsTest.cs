@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using System.Security.Principal;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -39,7 +41,7 @@ public class MarshalAsTest : BaseTest
         var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var kv in MarshalHelper.UnmanagedTypeMapDict)
         {
@@ -49,16 +51,16 @@ public class MarshalAsTest : BaseTest
             if (kv.Value == null)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDesc);
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDesc);
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
+                Assert.Equal(kv.Value, firstParam.tdesc.GetVarEnum());
             }
         }
     }
@@ -83,7 +85,7 @@ public class MarshalAsTest : BaseTest
         var result = type.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var kv in MarshalHelper.UnmanagedTypeMapDict)
         {
@@ -95,16 +97,16 @@ public class MarshalAsTest : BaseTest
             if (kv.Value == null)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDescSet.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDescSet);
             }
             else
             {
                 // Is is supported
-                funcDescSet.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDescSet);
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
+                Assert.Equal(kv.Value, firstParam.tdesc.GetVarEnum());
             }
 
             // Check getter
@@ -113,26 +115,26 @@ public class MarshalAsTest : BaseTest
             if (kv.Value == null)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDescGet.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDescGet);
             }
             else
             {
                 // Is is supported
-                funcDescGet.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDescGet);
 
                 if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)
                 {
                     // Return type should be VT_HRESULT
-                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return type of {methodName} should be available {kv.Value}");
+                    Assert.Equal(VarEnum.VT_HRESULT, funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum());
 
                     // check first parameter
                     var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-                    firstParam.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
+                    Assert.Equal(kv.Value, firstParam.tdesc.GetVarEnum());
                 }
                 else
                 {
                     // Check return value
-                    funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"Return type of {methodName} should be available {kv.Value}");
+                    Assert.Equal(kv.Value, funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum());
                 }
             }
         }
@@ -156,7 +158,7 @@ public class MarshalAsTest : BaseTest
         var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var kv in MarshalHelper.UnmanagedTypeMapDict)
         {
@@ -166,23 +168,23 @@ public class MarshalAsTest : BaseTest
             if (kv.Value == null)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDesc);
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDesc);
 
                 // return value should be VT_HRESULT
-                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT, $"Return value of {methodName} should be available and VarEnum.VT_HRESULT");
+                Assert.Equal(VarEnum.VT_HRESULT, funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum());
 
                 // first parameter should be VT_PTR
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
+                Assert.Equal(VarEnum.VT_PTR, firstParam.tdesc.GetVarEnum());
 
                 // first parameter inner type
                 var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(firstParam.tdesc.lpValue);
-                subtypeDesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
+                Assert.Equal(kv.Value, subtypeDesc.GetVarEnum());
             }
         }
     }
@@ -237,14 +239,13 @@ public class MarshalAsTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
+
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull("TestMethod should be available");
-        funcDesc!.Value.cParams.Should().Be(0);
-
-        funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(varEnumType, $"First Parameter type of TestMethod should be {varEnumType}");
-
-        result.TypeLibExporterNotifySink.ReportedEvents.Count.Should().Be(1);
+        Assert.NotNull(funcDesc);
+        Assert.Equal(0, funcDesc!.Value.cParams);
+        Assert.Equal(varEnumType, funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum());
+        Assert.Single(result.TypeLibExporterNotifySink.ReportedEvents);
     }
 
     [Theory]
@@ -266,7 +267,7 @@ public class MarshalAsTest : BaseTest
         var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var kv in MarshalHelper.UnmanagedTypeMapDict)
         {
@@ -276,15 +277,15 @@ public class MarshalAsTest : BaseTest
             if (kv.Value == null)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDesc);
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDesc);
 
                 // check return value
-                funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(kv.Value, $"First parameter of {methodName} should be available {kv.Value}");
+                Assert.Equal(kv.Value, funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum());
             }
         }
     }
@@ -326,13 +327,13 @@ public class MarshalAsTest : BaseTest
         var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var kv in MarshalHelper.UnmanagedTypeMapDict)
         {
             var methodName = ValidChars.Replace($"TestMethod_ArrayIs_{kv.Key.Type}_SubTypeIs_{enumSubType}_Expected_SAFEARRAY", "_");
             using var funcDesc = typeInfo!.GetFuncDescByName(methodName);
-            funcDesc.Should().BeNull();
+            Assert.Null(funcDesc);
         }
     }
 
@@ -406,7 +407,7 @@ public class MarshalAsTest : BaseTest
         var result = interface2.Build().Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         foreach (var parameterType in MarshalHelper.UnmanagedTypeMapDict.Keys.Select(y => y.Type).Distinct())
         {
@@ -417,16 +418,16 @@ public class MarshalAsTest : BaseTest
             if (parameterType.IsArray)
             {
                 // Is not supported TLBX_E_BAD_NATIVETYPE
-                funcDesc.Should().BeNull($"{methodName} should not no be available");
+                Assert.Null(funcDesc);
             }
             else
             {
                 // Is is supported
-                funcDesc.Should().NotBeNull($"{methodName} should be available");
+                Assert.NotNull(funcDesc);
 
                 // check first parameter
                 var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-                firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_SAFEARRAY, $"First parameter of {methodName} should be available VarEnum.VT_SAFEARRAY");
+                Assert.Equal(VarEnum.VT_SAFEARRAY, firstParam.tdesc.GetVarEnum());
                 var firstParamSub = Marshal.PtrToStructure<ELEMDESC>(firstParam.tdesc.lpValue);
                 if (firstParamSub.tdesc.lpValue != IntPtr.Zero && firstParamSub.tdesc.GetVarEnum() == VarEnum.VT_PTR)
                 {
@@ -434,11 +435,11 @@ public class MarshalAsTest : BaseTest
                 }
                 if (enumSubType is VarEnum.VT_USERDEFINED or VarEnum.VT_EMPTY)
                 {
-                    firstParamSub.tdesc.GetVarEnum().Should().Be(MarshalHelper.TypeToVarEnum(parameterType), $"Sub parameter of {methodName} should be {MarshalHelper.TypeToVarEnum(parameterType)}");
+                    Assert.Equal(MarshalHelper.TypeToVarEnum(parameterType), firstParamSub.tdesc.GetVarEnum());
                 }
                 else
                 {
-                    firstParamSub.tdesc.GetVarEnum().Should().Be(enumSubType, $"Sub parameter of {methodName} should be {enumSubType}");
+                    Assert.Equal(enumSubType, firstParamSub.tdesc.GetVarEnum());
                 }
             }
         }
@@ -475,7 +476,7 @@ public class MarshalAsTest : BaseTest
         var result = builder.Build().Build();
 
         var typeinfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeinfo.Should().NotBeNull();
+        Assert.NotNull(typeinfo);
 
         foreach (UnmanagedType value in Enum.GetValues(typeof(UnmanagedType)))
         {
@@ -490,22 +491,22 @@ public class MarshalAsTest : BaseTest
             var methodName = $"TestMethod_{value}";
             var funcDesc = typeinfo!.GetFuncDescByName(methodName);
 
-            funcDesc.Should().NotBeNull();
+            Assert.NotNull(funcDesc);
 
             // return value should be VT_PTR
-            funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"Return value of {methodName} should be available and VarEnum.VT_HRESULT");
+            Assert.Equal(VarEnum.VT_PTR, funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum());
 
             // return value inner type should VT_USERDEFINED
             var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(funcDesc!.Value.elemdescFunc.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
+            Assert.Equal(VarEnum.VT_USERDEFINED, subtypeDesc.GetVarEnum());
 
             // first parameter should be VT_PTR
             var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-            firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
+            Assert.Equal(VarEnum.VT_PTR, firstParam.tdesc.GetVarEnum());
 
             // first parameter inner type should be VT_USERDEFINED
             subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(firstParam.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"First parameter of {methodName} should be available VarEnum.VT_PTR");
+            Assert.Equal(VarEnum.VT_USERDEFINED, subtypeDesc.GetVarEnum());
         }
     }
 
@@ -526,9 +527,9 @@ public class MarshalAsTest : BaseTest
                         .Build();
 
         var type = result.TypeLib.GetTypeInfoByName("TestInterface");
-        type.Should().NotBeNull();
+        Assert.NotNull(type);
 
-        type!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
+        Assert.NotNull(type!.GetFuncDescByName("TestMethod"));
     }
 
     [Theory]
@@ -560,32 +561,32 @@ public class MarshalAsTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface should be generated");
+        Assert.NotNull(typeInfo);
 
         // Check setter
         using var funcDescSet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF);
 
         // check first parameter
         var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-        firstParam.tdesc.GetVarEnum().Should().Be(resultType);
+        Assert.Equal(resultType, firstParam.tdesc.GetVarEnum());
 
         // Check getter
         using var funcDescGet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYGET);
-        funcDescGet.Should().NotBeNull();
+        Assert.NotNull(funcDescGet);
 
         if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)
         {
             // Return type should be VT_HRESULT
-            funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_HRESULT);
+            Assert.Equal(VarEnum.VT_HRESULT, funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum());
 
             // check first parameter
             firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDescSet!.Value.lprgelemdescParam);
-            firstParam.tdesc.GetVarEnum().Should().Be(resultType);
+            Assert.Equal(resultType, firstParam.tdesc.GetVarEnum());
         }
         else
         {
             // Check return value
-            funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(resultType);
+            Assert.Equal(resultType, funcDescGet!.Value.elemdescFunc.tdesc.GetVarEnum());
         }
     }
 
@@ -618,14 +619,14 @@ public class MarshalAsTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         // Check setter
         using var funcDescSet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF);
-        funcDescSet.Should().BeNull();
+        Assert.Null(funcDescSet);
 
         // Check getter
         using var funcDescGet = typeInfo!.GetFuncDescByName("TestProperty", INVOKEKIND.INVOKE_PROPERTYGET);
-        funcDescGet.Should().BeNull();
+        Assert.Null(funcDescGet);
     }
 }

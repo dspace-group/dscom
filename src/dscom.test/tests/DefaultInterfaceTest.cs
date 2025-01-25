@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -33,18 +34,18 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(0, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(0, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("_TestClass");
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal("_TestClass", name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 
     [Fact]
@@ -59,18 +60,18 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(TestInterface);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal(TestInterface, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 
     [Fact]
@@ -88,18 +89,18 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(0, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(0, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("TestInterface1");
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal("TestInterface1", name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 
     [Fact]
@@ -116,18 +117,18 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("DerivedClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(0, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(0, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be("_DerivedClass");
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal("_DerivedClass", name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 
     [Fact]
@@ -146,18 +147,18 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("DerivedClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(3);
+        Assert.Equal(3, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(BaseInterface);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal(BaseInterface, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 
     [Fact]
@@ -176,17 +177,17 @@ public class DefaultInterfaceTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("DerivedClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(InterfaceName);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
+        Assert.Equal(InterfaceName, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
     }
 }

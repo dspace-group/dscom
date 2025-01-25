@@ -14,6 +14,7 @@
 
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -39,13 +40,13 @@ public class EnumTest : BaseTest
             .Build();
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("TestEnum");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
 
         var kv = typeLibInfo!.GetAllEnumValues();
 
-        kv.Should().Contain(new KeyValuePair<string, object>("TestEnum_A", 1));
-        kv.Should().Contain(new KeyValuePair<string, object>("TestEnum_B", 20));
-        kv.Should().Contain(new KeyValuePair<string, object>("TestEnum_C", 50));
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_A", 1), kv);
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_B", 20), kv);
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_C", 50), kv);
     }
 
     [Fact]
@@ -61,7 +62,7 @@ public class EnumTest : BaseTest
             .Build();
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("TestEnum");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
     }
 
     [Fact]
@@ -79,20 +80,20 @@ public class EnumTest : BaseTest
             .Build();
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namespace1_TestEnum");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace1_TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace1_TestEnum_B");
-        kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_B");
+        Assert.Contains("dspace_test_namespace1_TestEnum_A", kv.ToList().Select(kv => kv.Key));
+        Assert.Contains("dspace_test_namespace1_TestEnum_B", kv.ToList().Select(kv => kv.Key));
+        Assert.DoesNotContain("TestEnum_A", kv.ToList().Select(kv => kv.Key));
+        Assert.DoesNotContain("TestEnum_B", kv.ToList().Select(kv => kv.Key));
 
         typeLibInfo = result.TypeLib.GetTypeInfoByName("dspace_test_namespace2_TestEnum");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         kv = typeLibInfo!.GetAllEnumValues();
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace2_TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().Contain("dspace_test_namespace2_TestEnum_B");
-        kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_A");
-        kv.ToList().Select(kv => kv.Key).Should().NotContain("TestEnum_B");
+        Assert.Contains("dspace_test_namespace2_TestEnum_A", kv.ToList().Select(kv => kv.Key));
+        Assert.Contains("dspace_test_namespace2_TestEnum_B", kv.ToList().Select(kv => kv.Key));
+        Assert.DoesNotContain("TestEnum_A", kv.ToList().Select(kv => kv.Key));
+        Assert.DoesNotContain("TestEnum_B", kv.ToList().Select(kv => kv.Key));
     }
 
     [Fact]
@@ -106,19 +107,19 @@ public class EnumTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestEnum");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var attribute = typeInfo!.GetTypeInfoAttributes();
-        attribute.Should().NotBeNull();
+        Assert.NotNull(attribute);
         var count = attribute!.Value.cVars;
-        count.Should().Be(2);
+        Assert.Equal(2, count);
         typeInfo!.GetVarDesc(0, out var ppVarDesc0);
         try
         {
             var varDesc = Marshal.PtrToStructure<VARDESC>(ppVarDesc0);
-            varDesc.varkind.Should().Be(VARKIND.VAR_CONST);
+            Assert.Equal(VARKIND.VAR_CONST, varDesc.varkind);
             typeInfo!.GetDocumentation(varDesc.memid, out _, out var strDocString, out _, out _);
-            strDocString.Should().Be("TestDescription_A");
+            Assert.Equal("TestDescription_A", strDocString);
         }
         finally
         {
@@ -129,9 +130,9 @@ public class EnumTest : BaseTest
         try
         {
             var varDesc = Marshal.PtrToStructure<VARDESC>(ppVarDesc1);
-            varDesc.varkind.Should().Be(VARKIND.VAR_CONST);
+            Assert.Equal(VARKIND.VAR_CONST, varDesc.varkind);
             typeInfo!.GetDocumentation(varDesc.memid, out _, out var strDocString, out _, out _);
-            strDocString.Should().Be("TestDescription_B");
+            Assert.Equal("TestDescription_B", strDocString);
         }
         finally
         {

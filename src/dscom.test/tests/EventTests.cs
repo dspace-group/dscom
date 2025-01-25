@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 using System.Runtime.InteropServices;
-
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -32,20 +32,20 @@ public class EventTests : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface1, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
     }
 
     [Fact]
@@ -59,20 +59,20 @@ public class EventTests : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
-        typeAttr!.Value.cImplTypes.Should().Be(2);
+        Assert.Equal(2, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface1, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
     }
 
     [Fact]
@@ -88,28 +88,28 @@ public class EventTests : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
-        typeAttr!.Value.cImplTypes.Should().Be(3);
+        Assert.Equal(3, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface1, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
 
         typeInfo!.GetRefTypeOfImplType(2, out href);
         typeInfo.GetRefTypeInfo(href, out refTypeInfo);
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be(EventInterface2);
-        pImplTypeFlags.Should().Be(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface2, name);
+        Assert.Equal(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE, pImplTypeFlags);
     }
 
     [Fact]
@@ -123,28 +123,28 @@ public class EventTests : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
-        typeAttr!.Value.cImplTypes.Should().Be(3);
+        Assert.Equal(3, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().Be(0);
+        Assert.Equal(EventInterface1, name);
+        Assert.Equal(0, (int)pImplTypeFlags);
 
         typeInfo!.GetRefTypeOfImplType(2, out href);
         typeInfo.GetRefTypeInfo(href, out refTypeInfo);
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface1, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
     }
 
     [Fact]
@@ -163,27 +163,27 @@ public class EventTests : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass2");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
-        typeAttr!.Value.cImplTypes.Should().Be(3);
+        Assert.Equal(3, typeAttr!.Value.cImplTypes);
 
         typeInfo!.GetRefTypeOfImplType(1, out var href);
         typeInfo.GetRefTypeInfo(href, out var refTypeInfo);
         typeInfo.GetImplTypeFlags(1, out var pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out var name, out _, out _, out _);
 
-        name.Should().Be(EventInterface2);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-        pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface2, name);
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+        Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
 
         typeInfo!.GetRefTypeOfImplType(2, out href);
         typeInfo.GetRefTypeInfo(href, out refTypeInfo);
         typeInfo.GetImplTypeFlags(2, out pImplTypeFlags);
         refTypeInfo.GetDocumentation(-1, out name, out _, out _, out _);
 
-        name.Should().Be(EventInterface1);
-        pImplTypeFlags.Should().Be(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+        Assert.Equal(EventInterface1, name);
+        Assert.Equal(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE, pImplTypeFlags);
     }
 }

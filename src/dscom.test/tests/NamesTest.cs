@@ -14,6 +14,7 @@
 
 using System.Runtime.InteropServices;
 using dSPACE.Runtime.InteropServices.Attributes;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -36,18 +37,18 @@ public class NamesTest : BaseTest
             .Build();
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
         typeLibInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key.StartsWith("TOUPPERCASE"));
+        Assert.All(kv, z => Assert.StartsWith("TOUPPERCASE", z.Key));
 
         typeLibInfo = result.TypeLib.GetTypeInfoByName("TOLOWERCASE");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
         typeLibInfo = result.TypeLib.GetTypeInfoByName("tolowercase");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key.StartsWith("tolowercase"));
+        Assert.All(kv, z => Assert.StartsWith("tolowercase", z.Key));
     }
 
     [Fact]
@@ -64,11 +65,11 @@ public class NamesTest : BaseTest
             .Build(useComAlias: true);
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
         typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key.StartsWith("froofroo"));
+        Assert.All(kv, z => Assert.StartsWith("froofroo", z.Key));
     }
 
     [Fact]
@@ -85,11 +86,11 @@ public class NamesTest : BaseTest
             .Build(useComAlias: true);
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
         typeLibInfo = result.TypeLib.GetTypeInfoByName("froofroo");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
+        Assert.All(kv, z => Assert.Contains(z.Key, new[] { "fizz", "buzz", "fizzbuzz" }));
     }
 
     [Fact]
@@ -112,26 +113,25 @@ public class NamesTest : BaseTest
             .Build(useComAlias: true);
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("_enumAlias");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
 
         var funcDescValue = typeLibInfo!.GetFuncDescByName("getFruit");
-        funcDescValue!.Value.Should().NotBeNull();
+        Assert.NotNull(funcDescValue);
         var funcDesc = funcDescValue.Value;
 
         var elemDescParam = funcDesc.GetParameter(0)!.Value;
         var paramDesc = elemDescParam.desc.paramdesc;
-        paramDesc.Should().NotBeNull();
 
         // the lpVarValue points to a PARAMDESCEX, but we don't care about the size, so dereference the VARIANTARG
         // structure directly at the offset'd address.
         var varValue = Marshal.GetObjectForNativeVariant(paramDesc.lpVarValue + sizeof(ulong));
-        varValue.Should().Be(20);
+        Assert.Equal(20, varValue);
 
         typeLibInfo!.GetRefTypeInfo(funcDesc.elemdescFunc.tdesc.lpValue.ExtractInt32(), out var returnType);
-        returnType.GetName().Should().Be("froofroo");
+        Assert.Equal("froofroo", returnType.GetName());
 
         typeLibInfo.GetRefTypeInfo(elemDescParam.tdesc.lpValue.ExtractInt32(), out var paramType);
-        paramType.GetName().Should().Be("froofroo");
+        Assert.Equal("froofroo", paramType.GetName());
     }
 
     [Fact]
@@ -147,11 +147,11 @@ public class NamesTest : BaseTest
             .Build(useComAlias: true);
 
         var typeLibInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
-        typeLibInfo.Should().BeNull();
+        Assert.Null(typeLibInfo);
         typeLibInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeLibInfo.Should().NotBeNull();
+        Assert.NotNull(typeLibInfo);
         var kv = typeLibInfo!.GetAllEnumValues();
-        kv.Should().OnlyContain(z => z.Key == "fizz" || z.Key == "buzz" || z.Key == "fizzbuzz");
+        Assert.All(kv, z => Assert.Contains(z.Key, new[] { "fizz", "buzz", "fizzbuzz" }));
     }
 
     [Fact]
@@ -165,14 +165,14 @@ public class NamesTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("touppercase");
-        typeInfo.Should().BeNull("touppercase found");
+        Assert.Null(typeInfo);
         typeInfo = result.TypeLib.GetTypeInfoByName("TOUPPERCASE");
-        typeInfo.Should().NotBeNull("TOUPPERCASE not found");
+        Assert.NotNull(typeInfo);
 
         typeInfo = result.TypeLib.GetTypeInfoByName("TOLOWERCASE");
-        typeInfo.Should().BeNull("TOLOWERCASE case found");
+        Assert.Null(typeInfo);
         typeInfo = result.TypeLib.GetTypeInfoByName("tolowercase");
-        typeInfo.Should().NotBeNull("tolowercase not found");
+        Assert.NotNull(typeInfo);
     }
 
     [Fact]
@@ -204,14 +204,14 @@ public class NamesTest : BaseTest
                     .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
-        typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(2);
-        typeInfo!.GetFuncDescByName("TestMethod_2").Should().NotBeNull("TestMethod_2 should be available");
-        typeInfo!.GetFuncDescByName("TestMethod_2")!.Value.cParams.Should().Be(4);
-        typeInfo!.GetFuncDescByName("TestMethod_3").Should().BeNull("TestMethod_3 should not be available");
-        typeInfo!.GetFuncDescByName("TestMethod_4").Should().BeNull("TestMethod_4 should not be available");
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod"));
+        Assert.Equal(2, typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams);
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod_2"));
+        Assert.Equal(4, typeInfo!.GetFuncDescByName("TestMethod_2")!.Value.cParams);
+        Assert.Null(typeInfo!.GetFuncDescByName("TestMethod_3"));
+        Assert.Null(typeInfo!.GetFuncDescByName("TestMethod_4"));
     }
 
     [Fact]
@@ -236,14 +236,14 @@ public class NamesTest : BaseTest
                     .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
-        typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(1);
-        typeInfo!.GetFuncDescByName("TestMethod_3").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams.Should().Be(3);
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod"));
+        Assert.Equal(1, typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams);
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod_3"));
+        Assert.Equal(3, typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams);
 
-        typeInfo!.GetFuncDescByName("TestMethod_2").Should().BeNull("TestMethod should not be available");
+        Assert.Null(typeInfo!.GetFuncDescByName("TestMethod_2"));
     }
 
     [Fact]
@@ -266,13 +266,13 @@ public class NamesTest : BaseTest
                     .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
-        typeInfo!.GetFuncDescByName("TestMethod").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams.Should().Be(1);
-        typeInfo!.GetFuncDescByName("TestMethod_3").Should().NotBeNull("TestMethod should be available");
-        typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams.Should().Be(3);
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod"));
+        Assert.Equal(1, typeInfo!.GetFuncDescByName("TestMethod")!.Value.cParams);
+        Assert.NotNull(typeInfo!.GetFuncDescByName("TestMethod_3"));
+        Assert.Equal(3, typeInfo!.GetFuncDescByName("TestMethod_3")!.Value.cParams);
 
-        typeInfo!.GetFuncDescByName("TestMethod_2").Should().BeNull("TestMethod should not be available");
+        Assert.Null(typeInfo!.GetFuncDescByName("TestMethod_2"));
     }
 }

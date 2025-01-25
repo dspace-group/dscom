@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -28,15 +29,14 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, attributes!.Value.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
-
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -49,14 +49,14 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, attributes!.Value.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -68,14 +68,14 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, attributes!.Value.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -88,13 +88,13 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
         typeInfo!.GetDocumentation(-1, out _, out var strDocString, out _, out _);
-        strDocString.Should().NotBeNull();
-        strDocString.Should().BeEquivalentTo("Description");
+        Assert.NotNull(strDocString);
+        Assert.Equal("Description", strDocString);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -107,14 +107,14 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.wTypeFlags.Should().Be(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE, attributes!.Value.wTypeFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -127,14 +127,14 @@ public class InterfaceTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.wTypeFlags.Should().Be(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE | TYPEFLAGS.TYPEFLAG_FDUAL);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEFLAGS.TYPEFLAG_FDISPATCHABLE | TYPEFLAGS.TYPEFLAG_FDUAL, attributes!.Value.wTypeFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -162,16 +162,16 @@ public class InterfaceTest : BaseTest
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
 
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         typeInfo!.GetRefTypeOfImplType(0, out var href);
         typeInfo!.GetRefTypeInfo(href, out var ppTI);
         ppTI.GetDocumentation(-1, out var refTypeName, out _, out _, out _);
 
-        refTypeName.Should().Be(expectedTypeString);
+        Assert.Equal(expectedTypeString, refTypeName);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -186,12 +186,11 @@ public class InterfaceTest : BaseTest
                         .Build()
                     .Build();
 
-        result.TypeLib.GetTypeInfoByName("Namespace1_TestInterface").Should().NotBeNull();
-        result.TypeLib.GetTypeInfoByName("Namespace2_TestInterface").Should().NotBeNull();
-
-        result.TypeLib.GetTypeInfoByName("TestInterface").Should().BeNull();
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("Namespace1_TestInterface"));
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("Namespace2_TestInterface"));
+        Assert.Null(result.TypeLib.GetTypeInfoByName("TestInterface"));
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 }

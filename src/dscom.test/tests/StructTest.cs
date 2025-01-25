@@ -14,6 +14,7 @@
 
 using System.Collections;
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -86,20 +87,20 @@ public class StructTest : BaseTest
     {
         var fieldName = ValidChars.Replace($"Field_{type}", "_");
         var testStruct = AssemblyBuilderResult.TypeLib.GetTypeInfoByName(StructName);
-        testStruct.Should().NotBeNull($"Struct {StructName} should exist");
+        Assert.NotNull(testStruct);
 
         // Check field exist
         using var vardesc = testStruct!.GetVarDescByName(fieldName);
-        vardesc.Should().NotBeNull($"Field {fieldName} should exist in struct {StructName}");
+        Assert.NotNull(vardesc);
 
         // Check field type
-        vardesc!.Value.elemdescVar.tdesc.GetVarEnum().Should().Be(expectedType, $"Field {fieldName} should be {expectedType}");
+        Assert.Equal(expectedType, vardesc!.Value.elemdescVar.tdesc.GetVarEnum());
 
         // Check field sub type
         if (expectedSubType != null)
         {
             var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(vardesc!.Value.elemdescVar.tdesc.lpValue);
-            subtypeDesc.GetVarEnum().Should().Be(expectedSubType, $"Field {fieldName} inner type should be {expectedSubType}");
+            Assert.Equal(expectedSubType, subtypeDesc.GetVarEnum());
         }
     }
 
@@ -107,11 +108,11 @@ public class StructTest : BaseTest
     public void StructWithFields_SizeIs136()
     {
         var testStruct = AssemblyBuilderResult.TypeLib.GetTypeInfoByName(StructName);
-        testStruct.Should().NotBeNull($"Struct {StructName} should exist");
+        Assert.NotNull(testStruct);
 
         using var attributes = testStruct!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.cbSizeInstance.Should().Be(136);
+        Assert.Equal(136, attributes!.Value.cbSizeInstance);
     }
 }
