@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.Tests;
-
 using Xunit;
 
+namespace dSPACE.Runtime.InteropServices.Tests;
 /// <summary>
 /// The basic CLI tests to run.
 /// </summary>
@@ -163,9 +162,8 @@ public class CLITest : CLITestBase
         var parameters = new[] { "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--overridetlbid", "12345678-1234-1234-1234-123456789012" };
 
         var result = Execute(DSComPath, parameters);
-        Assert.Equal(0, result.ExitCode);
-        var fileName = Path.GetFileNameWithoutExtension(TestAssemblyPath);
 
+        Assert.Equal(0, result.ExitCode);
         Assert.True(File.Exists(tlbFilePath));
     }
 
@@ -183,9 +181,6 @@ public class CLITest : CLITestBase
 
     public void TlbExportCreateMissingDependentTLBsTrue_ExitCodeIs0AndTlbIsAvailableAndDependentTlbIsNot()
     {
-        var dependentFileName = Path.GetFileName(TestAssemblyDependencyTemporyTlbFilePath);
-        var dependentTlbPath = Path.Combine(Path.GetDirectoryName(TestAssemblyTemporyTlbFilePath)!, dependentFileName);
-
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--createmissingdependenttlbs", "false", "--out", TestAssemblyTemporyTlbFilePath);
         Assert.Equal(0, result.ExitCode);
 
