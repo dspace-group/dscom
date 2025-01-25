@@ -20,7 +20,6 @@ global using System.Reflection;
 global using System.Reflection.Emit;
 global using System.Runtime.CompilerServices;
 global using System.Text.RegularExpressions;
-global using FluentAssertions;
 global using Xunit;
 
 #pragma warning disable CS8019

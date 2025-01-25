@@ -15,6 +15,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -32,12 +33,12 @@ public class MethodTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("GetEnumerator");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_FUNC);
-        releasableFuncDesc!.Value.memid.Should().Be(-4);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_FUNC, releasableFuncDesc!.Value.invkind);
+        Assert.Equal(-4, releasableFuncDesc!.Value.memid);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -57,13 +58,13 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // Search for method
-        typeInfo!.ContainsFuncDescByName("TestMethod").Should().Be(true);
+        Assert.True(typeInfo!.ContainsFuncDescByName("TestMethod"));
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -89,17 +90,17 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // Get and check TestMethod
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
         // Check if return type if void
-        funcDesc!.Value.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_VOID);
+        Assert.Equal((short)VarEnum.VT_VOID, funcDesc!.Value.elemdescFunc.tdesc.vt);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
 
     }
 
@@ -139,30 +140,30 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // type should be Ptr
         var ptr = parameter!.Value.tdesc;
-        ptr.vt.Should().Be((short)VarEnum.VT_PTR);
+        Assert.Equal((short)VarEnum.VT_PTR, ptr.vt);
 
         // Ptr type should be the final typ
         var value = Marshal.PtrToStructure<TYPEDESC>(ptr.lpValue);
-        value.GetVarEnum().Should().Be(returnType.GetVarEnum());
+        Assert.Equal(returnType.GetVarEnum(), value.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -201,17 +202,17 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(returnType.GetShortVarEnum());
+        Assert.Equal(returnType.GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -251,18 +252,18 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         typeInfo!.GetFuncDesc(7, out var ppFuncDesc);
-        ppFuncDesc.Should().NotBe(IntPtr.Zero);
+        Assert.NotEqual(IntPtr.Zero, ppFuncDesc);
 
         var funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(returnType.GetShortVarEnum());
-        funcDesc.cParams.Should().Be(0);
+        Assert.Equal(returnType.GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
+        Assert.Equal(0, funcDesc.cParams);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -278,19 +279,19 @@ public class MethodTest : BaseTest
                     .Build();
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         typeInfo!.GetDocumentation(funcDesc.memid, out var methodString, out var docString, out var helpContext, out var helpFile);
-        docString.Should().NotBeNull();
-        docString.Should().BeEquivalentTo("Description");
+        Assert.NotNull(docString);
+        Assert.Equal("Description", docString);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -321,26 +322,25 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
-        funcDesc!.Value.lprgelemdescParam.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
         var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc.Value.lprgelemdescParam);
-        firstParam.tdesc.vt.Should().Be(parameterType.GetShortVarEnum());
+        Assert.Equal(parameterType.GetShortVarEnum(), firstParam.tdesc.vt);
         if (value != null)
         {
-            firstParam.desc.paramdesc.lpVarValue.Should().NotBe(IntPtr.Zero);
+            Assert.NotEqual(IntPtr.Zero, firstParam.desc.paramdesc.lpVarValue);
             var defaultValue = Marshal.GetObjectForNativeVariant(firstParam.desc.paramdesc.lpVarValue + 8);
-            defaultValue.Should().NotBeNull();
-            defaultValue!.GetType().Should().Be(acceptedReturnType);
-            defaultValue!.Should().Be(Convert.ChangeType(value, acceptedReturnType, CultureInfo.InvariantCulture));
+            Assert.NotNull(defaultValue);
+            Assert.Equal(acceptedReturnType, defaultValue!.GetType());
+            Assert.Equal(Convert.ChangeType(value, acceptedReturnType, CultureInfo.InvariantCulture), defaultValue);
         }
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -362,29 +362,26 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
-        funcDesc!.Value.elemdescFunc.tdesc.vt.Should().Be(createdEnumType!.GetShortVarEnum());
-        funcDesc!.Value.elemdescFunc.tdesc.lpValue.Should().NotBeNull();
-        funcDesc!.Value.cParams.Should().Be(0);
+        Assert.Equal(createdEnumType!.GetShortVarEnum(), funcDesc!.Value.elemdescFunc.tdesc.vt);
+        Assert.Equal(0, funcDesc!.Value.cParams);
 
         ((ITypeInfo64Bit)typeInfo!).GetRefTypeInfo(funcDesc!.Value.elemdescFunc.tdesc.lpValue, out var typeInfoEnum);
-        typeInfoEnum.Should().NotBeNull();
+        Assert.NotNull(typeInfoEnum);
         typeInfoEnum.GetDocumentation(-1, out var strName, out var strDocString, out var dwHelpContext, out var strHelpFile);
-        strName.Should().NotBeNull();
-        strName.Should().BeEquivalentTo("TestEnum");
+        Assert.NotNull(strName);
+        Assert.Equal("TestEnum", strName);
         typeInfoEnum.GetTypeAttr(out var ppTypeAttr);
-        ppTypeAttr.Should().NotBeNull();
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
-        typeAttr.Should().NotBeNull();
-        typeAttr.typekind.Should().Be(TYPEKIND.TKIND_ENUM);
+        Assert.Equal(TYPEKIND.TKIND_ENUM, typeAttr.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -407,33 +404,28 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
-        funcDesc!.Value.Should().NotBeNull();
-        funcDesc!.Value.cParams.Should().Be(1);
-        funcDesc!.Value.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc!.Value.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
 
-        parameter.tdesc.vt.Should().Be(createdEnumType!.GetShortVarEnum());
-        parameter.tdesc.lpValue.Should().NotBeNull();
+        Assert.Equal(createdEnumType!.GetShortVarEnum(), parameter.tdesc.vt);
 
         ((ITypeInfo64Bit)typeInfo!).GetRefTypeInfo(parameter.tdesc.lpValue, out var typeInfoEnum);
-        typeInfoEnum.Should().NotBeNull();
+        Assert.NotNull(typeInfoEnum);
         typeInfoEnum.GetDocumentation(-1, out var strName, out var strDocString, out var dwHelpContext, out var strHelpFile);
-        strName.Should().NotBeNull();
-        strName.Should().BeEquivalentTo("TestEnum");
+        Assert.NotNull(strName);
+        Assert.Equal("TestEnum", strName);
         typeInfoEnum.GetTypeAttr(out var ppTypeAttr);
-        ppTypeAttr.Should().NotBeNull();
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
-        typeAttr.Should().NotBeNull();
-        typeAttr.typekind.Should().Be(TYPEKIND.TKIND_ENUM);
+        Assert.Equal(TYPEKIND.TKIND_ENUM, typeAttr.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -452,31 +444,28 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //Check mathod
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
-        funcDesc!.Value.elemdescFunc.tdesc.vt.Should().Be(createdInterfaceType!.GetShortVarEnum());
-        funcDesc!.Value.elemdescFunc.tdesc.lpValue.Should().NotBeNull();
-        funcDesc!.Value.cParams.Should().Be(0);
+        Assert.Equal(createdInterfaceType!.GetShortVarEnum(), funcDesc!.Value.elemdescFunc.tdesc.vt);
+        Assert.Equal(0, funcDesc!.Value.cParams);
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(funcDesc!.Value.elemdescFunc.tdesc.lpValue);
-        typeDesc.vt.Should().Be((short)VarEnum.VT_USERDEFINED);
+        Assert.Equal((short)VarEnum.VT_USERDEFINED, typeDesc.vt);
         ((ITypeInfo64Bit)typeInfo!).GetRefTypeInfo(typeDesc.lpValue, out var typeInfoEnum);
-        typeInfoEnum.Should().NotBeNull();
+        Assert.NotNull(typeInfoEnum);
         typeInfoEnum.GetDocumentation(-1, out var strName, out var strDocString, out var dwHelpContext, out var strHelpFile);
-        strName.Should().NotBeNull();
-        strName.Should().BeEquivalentTo("ReferencedInterface");
+        Assert.NotNull(strName);
+        Assert.Equal("ReferencedInterface", strName);
         typeInfoEnum.GetTypeAttr(out var ppTypeAttr);
-        ppTypeAttr.Should().NotBeNull();
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
-        typeAttr.Should().NotBeNull();
-        typeAttr.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, typeAttr.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -496,36 +485,31 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var releasableFuncDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        releasableFuncDesc.Should().NotBeNull();
+        Assert.NotNull(releasableFuncDesc);
         var funcDesc = releasableFuncDesc!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        parameter.tdesc.vt.Should().Be(createdInterfaceType!.GetShortVarEnum());
-        parameter.tdesc.lpValue.Should().NotBeNull();
+        Assert.Equal(createdInterfaceType!.GetShortVarEnum(), parameter.tdesc.vt);
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        typeDesc.vt.Should().Be((short)VarEnum.VT_USERDEFINED);
+        Assert.Equal((short)VarEnum.VT_USERDEFINED, typeDesc.vt);
         ((ITypeInfo64Bit)typeInfo!).GetRefTypeInfo(typeDesc.lpValue, out var typeInfoEnum);
-        typeInfoEnum.Should().NotBeNull();
+        Assert.NotNull(typeInfoEnum);
         typeInfoEnum.GetDocumentation(-1, out var strName, out var strDocString, out var dwHelpContext, out var strHelpFile);
-        strName.Should().NotBeNull();
-        strName.Should().BeEquivalentTo("ReferencedInterface");
+        Assert.NotNull(strName);
+        Assert.Equal("ReferencedInterface", strName);
         typeInfoEnum.GetTypeAttr(out var ppTypeAttr);
-        ppTypeAttr.Should().NotBeNull();
         var typeAttr = Marshal.PtrToStructure<TYPEATTR>(ppTypeAttr);
-        typeAttr.Should().NotBeNull();
-        typeAttr.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, typeAttr.typekind);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -543,22 +527,21 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(typeof(string[]).GetShortVarEnum());
-        funcDesc.elemdescFunc.tdesc.lpValue.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(0);
+        Assert.Equal(typeof(string[]).GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
+        Assert.Equal(0, funcDesc.cParams);
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(funcDesc.elemdescFunc.tdesc.lpValue);
-        typeDesc.vt.Should().Be(typeof(string).GetShortVarEnum());
+        Assert.Equal(typeof(string).GetShortVarEnum(), typeDesc.vt);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -577,26 +560,23 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        parameter.tdesc!.GetVarEnum().Should().Be(typeof(string[]).GetVarEnum());
-        parameter.tdesc.lpValue.Should().NotBeNull();
+        Assert.Equal(typeof(string[]).GetVarEnum(), parameter.tdesc!.GetVarEnum());
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        typeDesc.GetVarEnum().Should().Be(typeof(string).GetVarEnum());
+        Assert.Equal(typeof(string).GetVarEnum(), typeDesc.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -618,16 +598,16 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // Check method
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
-        funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+        Assert.Equal(VarEnum.VT_UNKNOWN, funcDesc!.Value.elemdescFunc.tdesc.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -654,16 +634,16 @@ public class MethodTest : BaseTest
                     .Build();
 
         using var method1 = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod");
-        method1.Should().NotBeNull();
+        Assert.NotNull(method1);
 
         using var method2 = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod_2");
-        method1.Should().NotBeNull();
+        Assert.NotNull(method2);
 
         using var method3 = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod_3");
-        method1.Should().NotBeNull();
+        Assert.NotNull(method3);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -685,16 +665,16 @@ public class MethodTest : BaseTest
                     .Build();
 
         using var function = result.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("TestMethod");
-        function.Should().NotBeNull();
+        Assert.NotNull(function);
 
         var parameter = function!.Value.GetParameter(0);
-        parameter.Should().NotBeNull("Parameter should be present");
+        Assert.NotNull(parameter);
 
-        parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT | PARAMFLAG.PARAMFLAG_FIN);
-        parameter!.Value.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(PARAMFLAG.PARAMFLAG_FOUT | PARAMFLAG.PARAMFLAG_FIN, parameter!.Value.desc.paramdesc.wParamFlags);
+        Assert.Equal(VarEnum.VT_PTR, parameter!.Value.tdesc.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -715,35 +695,32 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        parameter.tdesc.vt.Should().Be((short)VarEnum.VT_SAFEARRAY);
-        parameter.tdesc.lpValue.Should().NotBeNull();
+        Assert.Equal((short)VarEnum.VT_SAFEARRAY, parameter.tdesc.vt);
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        typeDesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal((short)VarEnum.VT_PTR, typeDesc.vt);
 
         var typeDescUserDefined = Marshal.PtrToStructure<TYPEDESC>(typeDesc.lpValue);
-        typeDescUserDefined.vt.Should().Be((short)VarEnum.VT_USERDEFINED);
+        Assert.Equal((short)VarEnum.VT_USERDEFINED, typeDescUserDefined.vt);
 
         var typeInfo64Bit = (ITypeInfo64Bit)typeInfo!;
         typeInfo64Bit.GetRefTypeInfo(typeDescUserDefined.lpValue, out var refTypeInfo64Bit);
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
-        typeInfoName.Should().Be("TestInterfaceUsedInParameter");
+        Assert.Equal("TestInterfaceUsedInParameter", typeInfoName);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
 
@@ -764,37 +741,35 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        parameter.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(VarEnum.VT_PTR, parameter.tdesc.GetVarEnum());
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        typeDesc.GetVarEnum().Should().Be(VarEnum.VT_SAFEARRAY);
+        Assert.Equal(VarEnum.VT_SAFEARRAY, typeDesc.GetVarEnum());
 
         var typeDesc2 = Marshal.PtrToStructure<TYPEDESC>(typeDesc.lpValue);
-        typeDesc2.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(VarEnum.VT_PTR, typeDesc2.GetVarEnum());
 
         var typeDesc3 = Marshal.PtrToStructure<TYPEDESC>(typeDesc2.lpValue);
-        typeDesc3.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED);
+        Assert.Equal(VarEnum.VT_USERDEFINED, typeDesc3.GetVarEnum());
 
         var typeInfo64Bit = (ITypeInfo64Bit)typeInfo!;
         typeInfo64Bit.GetRefTypeInfo(typeDesc3.lpValue, out var refTypeInfo64Bit);
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
-        typeInfoName.Should().Be("TestInterfaceReturnValue");
+        Assert.Equal("TestInterfaceReturnValue", typeInfoName);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -814,35 +789,32 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        ((VarEnum)parameter.tdesc.vt).Should().Be(VarEnum.VT_SAFEARRAY);
-        parameter.tdesc.lpValue.Should().NotBeNull();
+        Assert.Equal(VarEnum.VT_SAFEARRAY, (VarEnum)parameter.tdesc.vt);
 
         var typeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        ((VarEnum)typeDesc.vt).Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(VarEnum.VT_PTR, (VarEnum)typeDesc.vt);
 
         var typeDescUserDefined = Marshal.PtrToStructure<TYPEDESC>(typeDesc.lpValue);
-        ((VarEnum)typeDescUserDefined.vt).Should().Be(VarEnum.VT_USERDEFINED);
+        Assert.Equal(VarEnum.VT_USERDEFINED, (VarEnum)typeDescUserDefined.vt);
 
         var typeInfo64Bit = (ITypeInfo64Bit)typeInfo!;
         typeInfo64Bit.GetRefTypeInfo(typeDescUserDefined.lpValue, out var refTypeInfo64Bit);
         refTypeInfo64Bit.GetDocumentation(-1, out var typeInfoName, out var docString, out var helpContext, out var helpFile);
 
-        typeInfoName.Should().Be("TestInterfaceUsedInParameter");
+        Assert.Equal("TestInterfaceUsedInParameter", typeInfoName);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -865,22 +837,21 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
 
         // Get first parameter
-        funcDescByName!.Value.cParams.Should().Be(1);
-        funcDescByName!.Value.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDescByName!.Value.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDescByName!.Value.lprgelemdescParam);
 
         //First parameter should be VT_UNKNOWN
-        parameter.tdesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+        Assert.Equal(VarEnum.VT_UNKNOWN, parameter.tdesc.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().ContainSingle(x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
+        Assert.Single(result.TypeLibExporterNotifySink.ReportedEvents, x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
     }
 
     [Fact]
@@ -900,24 +871,23 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("ReturnInvisibleInterface");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.Should().NotBeNull();
-        funcDesc.cParams.Should().Be(1);
-        funcDesc.lprgelemdescParam.Should().NotBeNull();
+        Assert.Equal(1, funcDesc.cParams);
         var parameter = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
 
-        parameter.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(VarEnum.VT_PTR, parameter.tdesc.GetVarEnum());
         var childTypeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter.tdesc.lpValue);
-        childTypeDesc.GetVarEnum().Should().Be(VarEnum.VT_UNKNOWN);
+
+        Assert.Equal(VarEnum.VT_UNKNOWN, childTypeDesc.GetVarEnum());
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().ContainSingle(x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
+        Assert.Single(result.TypeLibExporterNotifySink.ReportedEvents, x => x.EventKind == ExporterEventKind.NOTIF_CONVERTWARNING);
     }
 
     [Theory]
@@ -956,29 +926,29 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // type should be Ptr
         var ptr = parameter!.Value.tdesc;
-        ptr.GetVarEnum().Should().Be(parameterType.GetVarEnum());
+        Assert.Equal(parameterType.GetVarEnum(), ptr.GetVarEnum());
 
-        parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
-        parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+        Assert.Equal(IDLFLAG.IDLFLAG_FOUT, parameter!.Value.desc.idldesc.wIDLFlags);
+        Assert.Equal(PARAMFLAG.PARAMFLAG_FOUT, parameter!.Value.desc.paramdesc.wParamFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1017,29 +987,29 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // type should be Ptr
         var ptr = parameter!.Value.tdesc;
-        ptr.GetVarEnum().Should().Be(parameterType.GetVarEnum());
+        Assert.Equal(parameterType.GetVarEnum(), ptr.GetVarEnum());
 
-        parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
-        parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+        Assert.Equal(IDLFLAG.IDLFLAG_FOUT, parameter!.Value.desc.idldesc.wIDLFlags);
+        Assert.Equal(PARAMFLAG.PARAMFLAG_FOUT, parameter!.Value.desc.paramdesc.wParamFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1078,29 +1048,29 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // type should be Ptr
         var ptr = parameter!.Value.tdesc;
-        ptr.GetVarEnum().Should().Be(parameterType.GetVarEnum());
+        Assert.Equal(parameterType.GetVarEnum(), ptr.GetVarEnum());
 
-        parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FOUT);
-        parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FOUT);
+        Assert.Equal(IDLFLAG.IDLFLAG_FOUT, parameter!.Value.desc.idldesc.wIDLFlags);
+        Assert.Equal(PARAMFLAG.PARAMFLAG_FOUT, parameter!.Value.desc.paramdesc.wParamFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1123,6 +1093,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
     [InlineData(typeof(IntPtr))]
     public void InterfaceIsIUnknownWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
@@ -1137,22 +1108,22 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1175,6 +1146,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
     [InlineData(typeof(IntPtr))]
     public void InterfaceIsIDispatchWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
@@ -1189,22 +1161,22 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1227,6 +1199,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
     [InlineData(typeof(IntPtr))]
     public void InterfaceIsDualWithMethodWithArrayOutParameter_OutParameterIsCorrect(Type parameterType)
     {
@@ -1241,22 +1214,22 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1279,22 +1252,22 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1317,6 +1290,7 @@ public class MethodTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
+    [InlineData(typeof(Delegate))]
     [InlineData(typeof(IntPtr))]
     public void InterfaceIsDualWithMethodWithRefParameter_RefParameterIsCorrect(Type parameterType)
     {
@@ -1331,33 +1305,33 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
-        parameter!.Value.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR);
+        Assert.Equal(VarEnum.VT_PTR, parameter!.Value.tdesc.GetVarEnum());
 
         var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(parameter!.Value.tdesc.lpValue);
-        subtypeDesc.GetVarEnum().Should().Be(parameterType.GetVarEnum());
+        Assert.Equal(parameterType.GetVarEnum(), subtypeDesc.GetVarEnum());
 
         if (parameterType.IsEnum || parameterType.IsInterface)
         {
             var subsubtypeDesc = Marshal.PtrToStructure<TYPEDESC>(subtypeDesc.lpValue);
-            subsubtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED);
+            Assert.Equal(VarEnum.VT_USERDEFINED, subsubtypeDesc.GetVarEnum());
         }
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -1378,12 +1352,12 @@ public class MethodTest : BaseTest
                     .Build();
 
         var type = result.TypeLib.GetTypeInfoByName("TestInterface");
-        type.Should().NotBeNull();
+        Assert.NotNull(type);
 
-        type!.GetFuncDescByName("TestMethod").Should().NotBeNull();
+        Assert.NotNull(type!.GetFuncDescByName("TestMethod"));
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Fact]
@@ -1398,14 +1372,14 @@ public class MethodTest : BaseTest
                     .Build();
 
         var type = result.TypeLib.GetTypeInfoByName("TestInterface");
-        type.Should().NotBeNull();
+        Assert.NotNull(type);
 
-        type!.GetFuncDescByName("AddRef").Should().NotBeNull();
-        type!.GetFuncDescByName("AddRef_2").Should().NotBeNull();
-        type!.GetFuncDescByName("AddRef_3").Should().BeNull();
+        Assert.NotNull(type!.GetFuncDescByName("AddRef"));
+        Assert.NotNull(type!.GetFuncDescByName("AddRef_2"));
+        Assert.Null(type!.GetFuncDescByName("AddRef_3"));
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1437,25 +1411,24 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDesc = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDesc.Should().NotBeNull();
-        funcDesc!.Value.lprgelemdescParam.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
         // Get first parameter
         var parameter = funcDesc!.Value.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
         // Check type
         var typeDesc = parameter!.Value.tdesc;
-        typeDesc.GetVarEnum().Should().Be(parameterType.GetVarEnum());
+        Assert.Equal(parameterType.GetVarEnum(), typeDesc.GetVarEnum());
 
-        parameter!.Value.desc.paramdesc.wParamFlags.Should().Be(PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FHASDEFAULT);
+        Assert.Equal(PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FHASDEFAULT, parameter!.Value.desc.paramdesc.wParamFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -1491,23 +1464,23 @@ public class MethodTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
         // Check number of parameters
-        funcDesc.cParams.Should().Be(1);
+        Assert.Equal(1, funcDesc.cParams);
 
         // Get first parameter
         var parameter = funcDesc.GetParameter(0);
-        parameter.Should().NotBeNull();
+        Assert.NotNull(parameter);
 
-        parameter!.Value.desc.idldesc.wIDLFlags.Should().Be(IDLFLAG.IDLFLAG_FIN);
+        Assert.Equal(IDLFLAG.IDLFLAG_FIN, parameter!.Value.desc.idldesc.wIDLFlags);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 }

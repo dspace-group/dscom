@@ -76,7 +76,7 @@ public static class Extensions
     public static DisposableStruct<VARDESC>? GetVarDescByName(this ITypeInfo2 typeInfo, string name)
     {
         using var attributes = typeInfo.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
         int numberOfVars = attributes!.Value.cVars;
         for (var i = 0; i < numberOfVars; i++)
@@ -113,8 +113,7 @@ public static class Extensions
     {
         typeInfo.GetTypeAttr(out var ppTypAttr);
 
-        using var attribute = typeInfo.GetTypeInfoAttributes();
-        attribute.Should().NotBeNull();
+        using var attribute = typeInfo.GetTypeInfoAttributes() ?? throw new InvalidOperationException("TypeInfo attributes should not be null.");
         int numberOfFunction = attribute!.Value.cFuncs;
         for (var i = 0; i < numberOfFunction; i++)
         {
@@ -154,8 +153,7 @@ public static class Extensions
     public static KeyValuePair<string, object>[] GetAllEnumValues(this ITypeInfo2 typeInfo)
     {
         var retVal = new List<KeyValuePair<string, object>>();
-        using var attribute = typeInfo.GetTypeInfoAttributes();
-        attribute.Should().NotBeNull();
+        using var attribute = typeInfo.GetTypeInfoAttributes() ?? throw new InvalidOperationException("TypeInfo attributes should not be null.");
         var count = attribute!.Value.cVars;
         for (short i = 0; i < count; i++)
         {

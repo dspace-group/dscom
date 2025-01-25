@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -33,11 +34,11 @@ public class ClassTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull("TestClass not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_COCLASS);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_COCLASS, attributes!.Value.typekind);
     }
 
     [Fact]
@@ -52,11 +53,11 @@ public class ClassTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull("TestClass not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_COCLASS);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_COCLASS, attributes!.Value.typekind);
 
         var index = 0;
         while (index < 2)
@@ -64,7 +65,7 @@ public class ClassTest : BaseTest
             typeInfo!.GetRefTypeOfImplType(index, out var href);
             typeInfo!.GetRefTypeInfo(href, out var ppTI);
             ppTI.GetDocumentation(-1, out var refTypeName, out var refTypeDocString, out var refTypeHelpContext, out var refTypeHelpFile);
-            refTypeName.Should().BeOneOf(InterfaceTest, "_TestClass");
+            Assert.Contains(refTypeName, new[] { InterfaceTest, "_TestClass" });
             index++;
         }
     }
@@ -78,11 +79,11 @@ public class ClassTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull("TestClass not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_COCLASS);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_COCLASS, attributes!.Value.typekind);
     }
 
     [Fact]
@@ -94,11 +95,11 @@ public class ClassTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("_TestClass");
-        typeInfo.Should().NotBeNull("_TestClass not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, attributes!.Value.typekind);
     }
 
     [Fact]
@@ -111,7 +112,7 @@ public class ClassTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("_TestClass");
-        typeInfo.Should().BeNull("_TestClass found");
+        Assert.Null(typeInfo);
     }
 
     [Fact]
@@ -124,11 +125,11 @@ public class ClassTest : BaseTest
                         .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("_TestClass");
-        typeInfo.Should().NotBeNull("_TestClass not found");
+        Assert.NotNull(typeInfo);
 
         using var attributes = typeInfo!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.typekind.Should().Be(TYPEKIND.TKIND_DISPATCH);
+        Assert.NotNull(attributes);
+        Assert.Equal(TYPEKIND.TKIND_DISPATCH, attributes!.Value.typekind);
     }
 
     [Fact]
@@ -152,13 +153,13 @@ public class ClassTest : BaseTest
                 .Build();
 
         var classInterface = result.TypeLib.GetTypeInfoByName("_TestClass");
-        classInterface.Should().NotBeNull();
+        Assert.NotNull(classInterface);
 
         using var attribute = classInterface!.GetTypeInfoAttributes();
-        attribute.Should().NotBeNull();
+        Assert.NotNull(attribute);
 
-        attribute!.Value.wMajorVerNum.Should().Be(0);
-        attribute!.Value.wMinorVerNum.Should().Be(0);
+        Assert.Equal(0, attribute!.Value.wMajorVerNum);
+        Assert.Equal(0, attribute!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -170,7 +171,7 @@ public class ClassTest : BaseTest
                     .Build()
                 .Build();
 
-        result.TypeLib.GetTypeInfoCount().Should().Be(0, "Generic CoClass should be ignored");
+        Assert.Equal(0, result.TypeLib.GetTypeInfoCount());
     }
 
     [Fact]
@@ -186,7 +187,7 @@ public class ClassTest : BaseTest
                 .Build()
             .Build();
 
-        result.TypeLib.GetTypeInfoCount().Should().Be(1, "Generic CoClass should be ignored, Derived class should be created.");
+        Assert.Equal(1, result.TypeLib.GetTypeInfoCount());
     }
 
     [Fact]
@@ -199,7 +200,7 @@ public class ClassTest : BaseTest
                     .Build()
                 .Build();
 
-        result.TypeLib.GetTypeInfoCount().Should().Be(0);
+        Assert.Equal(0, result.TypeLib.GetTypeInfoCount());
     }
 
     [Fact]
@@ -216,7 +217,7 @@ public class ClassTest : BaseTest
                 .Build()
             .Build();
 
-        result.TypeLib.GetTypeInfoCount().Should().Be(1, "Derived class should be created.");
+        Assert.Equal(1, result.TypeLib.GetTypeInfoCount());
     }
 
     [Fact]
@@ -236,23 +237,23 @@ public class ClassTest : BaseTest
             .Build();
 
         var type = result.TypeLib.GetTypeInfoByName("TestInterface");
-        type.Should().NotBeNull();
+        Assert.NotNull(type);
 
         var funcDesc = type!.GetFuncDescByName("TestMethod");
-        funcDesc!.Should().NotBeNull();
+        Assert.NotNull(funcDesc);
 
         var firstParam = Marshal.PtrToStructure<ELEMDESC>(funcDesc!.Value.lprgelemdescParam);
-        firstParam.tdesc.GetVarEnum().Should().Be(VarEnum.VT_PTR, $"First parameter of TestMethod should be VT_PTR");
+        Assert.Equal(VarEnum.VT_PTR, firstParam.tdesc.GetVarEnum());
 
         var subtypeDesc = Marshal.PtrToStructure<TYPEDESC>(firstParam.tdesc.lpValue);
-        subtypeDesc.GetVarEnum().Should().Be(VarEnum.VT_USERDEFINED, $"Inner type of first parameter of TestMethod should be availble VarEnum.VT_USERDEFINED");
+        Assert.Equal(VarEnum.VT_USERDEFINED, subtypeDesc.GetVarEnum());
 
         var hrefType = subtypeDesc.lpValue;
 
         var typeInfo64Bit = (ITypeInfo64Bit)type!;
         typeInfo64Bit.GetRefTypeInfo(hrefType, out var refTypeInfo64Bit);
         refTypeInfo64Bit.GetDocumentation(-1, out var name, out _, out _, out _);
-        name.Should().Be(CustomInterface);
+        Assert.Equal(CustomInterface, name);
     }
 
     [Fact]
@@ -272,7 +273,7 @@ public class ClassTest : BaseTest
             .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("CustomClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
@@ -286,11 +287,11 @@ public class ClassTest : BaseTest
 
             if (name == "CustomInterface1")
             {
-                pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT, "First interface should be the default interface");
+                Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
             }
             else
             {
-                pImplTypeFlags.Should().NotHaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT, "Only first interface should be the default interface");
+                Assert.False(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
             }
         }
     }
@@ -306,7 +307,7 @@ public class ClassTest : BaseTest
                 .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
@@ -322,12 +323,12 @@ public class ClassTest : BaseTest
             if (name == SourceInterfaces)
             {
                 found = true;
-                pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT);
-                pImplTypeFlags.Should().HaveFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE);
+                Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT));
+                Assert.True(pImplTypeFlags.HasFlag(IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE));
             }
         }
 
-        found.Should().BeTrue("SourceInterfaces should is available as IMPLTYPEFLAG_FDEFAULT and IMPLTYPEFLAG_FSOURCE");
+        Assert.True(found);
     }
 
     [Fact]
@@ -341,7 +342,7 @@ public class ClassTest : BaseTest
                 .Build();
 
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestClass");
-        typeInfo.Should().NotBeNull();
+        Assert.NotNull(typeInfo);
 
         using var typeAttr = typeInfo!.GetTypeInfoAttributes();
 
@@ -372,8 +373,8 @@ public class ClassTest : BaseTest
             }
         }
 
-        found.Should().Be(2, "SourceInterfaces should be availble two times");
-        foundIMPLTYPEFLAGFDEFAULT.Should().Be(1, "Multiple IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE found");
-        foundIMPLTYPEFLAGFSOURCE.Should().Be(1, "Multiple IMPLTYPEFLAGS.IMPLTYPEFLAG_FDEFAULT found");
+        Assert.Equal(2, found);
+        Assert.Equal(1, foundIMPLTYPEFLAGFDEFAULT);
+        Assert.Equal(1, foundIMPLTYPEFLAGFSOURCE);
     }
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -45,7 +46,7 @@ public class ComVisibilityTest : BaseTest
         var result = typebuilder.Build().Build();
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
 
-        (typeInfo != null).Should().Be(interfaceCreated);
+        Assert.Equal(interfaceCreated, typeInfo != null);
     }
 
     [Fact]
@@ -60,7 +61,7 @@ public class ComVisibilityTest : BaseTest
                     .Build();
 
         using var property = result.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("TestProperty");
-        property.Should().BeNull("Property is ComVisible=false and should not be visible");
+        Assert.Null(property);
     }
 
     [Fact]
@@ -76,6 +77,6 @@ public class ComVisibilityTest : BaseTest
                     .Build();
 
         using var property = result.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("TestMethod");
-        property.Should().BeNull("Method is ComVisible=false and should not be visible");
+        Assert.Null(property);
     }
 }

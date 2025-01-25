@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -29,10 +30,10 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wMajorVerNum.Should().Be(999);
-        attributes!.Value.wMinorVerNum.Should().Be(888);
+        Assert.Equal(999, attributes!.Value.wMajorVerNum);
+        Assert.Equal(888, attributes!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -44,10 +45,10 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wMajorVerNum.Should().Be(777);
-        attributes!.Value.wMinorVerNum.Should().Be(666);
+        Assert.Equal(777, attributes!.Value.wMajorVerNum);
+        Assert.Equal(666, attributes!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -61,10 +62,10 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wMajorVerNum.Should().Be(555);
-        attributes!.Value.wMinorVerNum.Should().Be(444);
+        Assert.Equal(555, attributes!.Value.wMajorVerNum);
+        Assert.Equal(444, attributes!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -74,9 +75,9 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wLibFlags.Should().Be(0);
+        Assert.Equal(0, (int)attributes!.Value.wLibFlags);
     }
 
     [Fact]
@@ -86,9 +87,9 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.syskind.Should().Be(SYSKIND.SYS_WIN64);
+        Assert.Equal(SYSKIND.SYS_WIN64, attributes!.Value.syskind);
     }
 
     [Fact]
@@ -98,9 +99,9 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.lcid.Should().Be(0);
+        Assert.Equal(0, attributes!.Value.lcid);
     }
 
     [Fact]
@@ -115,7 +116,7 @@ public class TypeLibTest : BaseTest
         Assert.NotNull(pVarVal);
         var customDataString = pVarVal.ToString();
 
-        customDataString.Should().Be(builder.AssemblyBuilder.ToString());
+        Assert.Equal(builder.AssemblyBuilder.ToString(), customDataString);
     }
 
     [Fact]
@@ -125,7 +126,7 @@ public class TypeLibTest : BaseTest
         var result = builder.Build();
         result.TypeLib.GetDocumentation(-1, out var strTypeLibName, out _, out _, out _);
 
-        strTypeLibName.Should().Be(builder.Assembly.GetName().Name);
+        Assert.Equal(builder.Assembly.GetName().Name, strTypeLibName);
     }
 
     [Fact]
@@ -134,15 +135,15 @@ public class TypeLibTest : BaseTest
         var firstresult = CreateAssembly(CreateAssemblyName(minor: 1, major: 0)).Build();
 
         using var firstattributes = firstresult.TypeLib.GetTypeLibAttributes();
-        firstattributes.Should().NotBeNull();
+        Assert.NotNull(firstattributes);
         var firstGuid = firstattributes!.Value.guid;
 
         var secondresult = CreateAssembly(CreateAssemblyName(minor: 2, major: 0)).Build();
         using var secondattributes = secondresult.TypeLib.GetTypeLibAttributes();
-        secondattributes.Should().NotBeNull();
+        Assert.NotNull(secondattributes);
         var secondGuid = secondattributes!.Value.guid;
 
-        secondGuid.Should().NotBe(firstGuid);
+        Assert.NotEqual(firstGuid, secondGuid);
     }
 
     [Fact]
@@ -151,15 +152,15 @@ public class TypeLibTest : BaseTest
         var firstresult = CreateAssembly(CreateAssemblyName(minor: 1, major: 0)).Build();
 
         using var firstattributes = firstresult.TypeLib.GetTypeLibAttributes();
-        firstattributes.Should().NotBeNull();
+        Assert.NotNull(firstattributes);
         var firstGuid = firstattributes!.Value.guid;
 
         var secondresult = CreateAssembly(CreateAssemblyName(minor: 1, major: 1)).Build();
         using var secondattributes = secondresult.TypeLib.GetTypeLibAttributes();
-        secondattributes.Should().NotBeNull();
+        Assert.NotNull(secondattributes);
 
         var secondGuid = secondattributes!.Value.guid;
-        secondGuid.Should().NotBe(firstGuid);
+        Assert.NotEqual(firstGuid, secondGuid);
     }
 
     [Fact]
@@ -168,10 +169,10 @@ public class TypeLibTest : BaseTest
         var result = CreateAssembly(CreateAssemblyName(major: 3, minor: 4)).Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wMajorVerNum.Should().Be(3);
-        attributes!.Value.wMinorVerNum.Should().Be(4);
+        Assert.Equal(3, attributes!.Value.wMajorVerNum);
+        Assert.Equal(4, attributes!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -180,10 +181,10 @@ public class TypeLibTest : BaseTest
         var result = CreateAssembly().Build();
 
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wMajorVerNum.Should().Be(1);
-        attributes!.Value.wMinorVerNum.Should().Be(0);
+        Assert.Equal(1, attributes!.Value.wMajorVerNum);
+        Assert.Equal(0, attributes!.Value.wMinorVerNum);
     }
 
     [Fact]
@@ -191,9 +192,9 @@ public class TypeLibTest : BaseTest
     {
         var result = CreateAssembly().Build(false);
         using var attributes = result.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
 
-        attributes!.Value.wLibFlags.Should().Be(0);
+        Assert.Equal(0, (int)attributes!.Value.wLibFlags);
     }
 
     [Fact]
@@ -202,15 +203,15 @@ public class TypeLibTest : BaseTest
         var firstresult = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: "1")).Build();
 
         using var firstattributes = firstresult.TypeLib.GetTypeLibAttributes();
-        firstattributes.Should().NotBeNull();
+        Assert.NotNull(firstattributes);
         var firstGuid = firstattributes!.Value.guid;
 
         var secondresult = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: "2")).Build();
         using var secondattributes = secondresult.TypeLib.GetTypeLibAttributes();
-        secondattributes.Should().NotBeNull();
+        Assert.NotNull(secondattributes);
         var secondGuid = secondattributes!.Value.guid;
 
-        secondGuid.Should().NotBe(firstGuid);
+        Assert.NotEqual(firstGuid, secondGuid);
     }
 
     [Fact]
@@ -227,18 +228,18 @@ public class TypeLibTest : BaseTest
             new CustomAttributeBuilder[] { customAttributeBuilder }).Build();
 
         using var attributes = firstresult.TypeLib.GetTypeLibAttributes();
-        attributes.Should().NotBeNull();
+        Assert.NotNull(attributes);
         var firstGuid = attributes!.Value.guid;
 
         var secondresult = CreateAssembly(
             CreateAssemblyName(major: 3, minor: 4),
             new CustomAttributeBuilder[] { customAttributeBuilder }).Build();
         using var secondattributes = secondresult.TypeLib.GetTypeLibAttributes();
-        secondattributes.Should().NotBeNull();
+        Assert.NotNull(secondattributes);
         var secondGuid = secondattributes!.Value.guid;
 
-        firstGuid.Should().Be(new Guid(guidString));
-        secondGuid.Should().Be(new Guid(guidString));
+        Assert.Equal(new Guid(guidString), firstGuid);
+        Assert.Equal(new Guid(guidString), secondGuid);
     }
 
     [Fact]
@@ -247,7 +248,7 @@ public class TypeLibTest : BaseTest
         var result = CreateAssembly().WithCustomAttribute<AssemblyDescriptionAttribute>("Test").Build();
         result.TypeLib.GetDocumentation(-1, out _, out var docString, out _, out _);
 
-        docString.Should().Be("Test");
+        Assert.Equal("Test", docString);
     }
 
     [Fact]
@@ -271,19 +272,19 @@ public class TypeLibTest : BaseTest
 
         // check for class
         var typeInfo = assemblyB.TypeLib.GetTypeInfoByName("TestClassB");
-        typeInfo.Should().NotBeNull("TestClassB not found");
+        Assert.NotNull(typeInfo);
 
         // check for 'some' property
         using var some_property_funcdesc = typeInfo!.GetFuncDescByName("Some");
-        some_property_funcdesc.Should().NotBeNull();
+        Assert.NotNull(some_property_funcdesc);
 
-        some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+        Assert.Equal((short)VarEnum.VT_PTR, some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt);
 
         // check for 'other' property
         using var other_property_funcdesc = typeInfo!.GetFuncDescByName("Other");
-        other_property_funcdesc.Should().NotBeNull();
+        Assert.NotNull(other_property_funcdesc);
 
-        other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+        Assert.Equal((short)VarEnum.VT_PTR, other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt);
     }
 
     [Fact]
@@ -307,18 +308,18 @@ public class TypeLibTest : BaseTest
 
         // check for class
         var typeInfo = assemblyB.TypeLib.GetTypeInfoByName("TestClassB");
-        typeInfo.Should().NotBeNull("TestClassB not found");
+        Assert.NotNull(typeInfo);
 
         // check for 'other' property
         using var other_property_funcdesc = typeInfo!.GetFuncDescByName("Other");
-        other_property_funcdesc.Should().NotBeNull();
+        Assert.NotNull(other_property_funcdesc);
 
-        other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+        Assert.Equal((short)VarEnum.VT_PTR, other_property_funcdesc!.Value!.elemdescFunc.tdesc.vt);
 
         // check for 'some' property
         using var some_property_funcdesc = typeInfo!.GetFuncDescByName("Some");
-        some_property_funcdesc.Should().NotBeNull();
+        Assert.NotNull(some_property_funcdesc);
 
-        some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_PTR, "type is known");
+        Assert.Equal((short)VarEnum.VT_PTR, some_property_funcdesc!.Value!.elemdescFunc.tdesc.vt);
     }
 }

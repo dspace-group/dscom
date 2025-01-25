@@ -14,6 +14,7 @@
 
 using System.Diagnostics;
 using System.Text;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -106,7 +107,7 @@ public abstract class CLITestBase : IClassFixture<CompileReleaseFixture>, IDispo
     internal static string GetEmbeddedPath(string sourceAssemblyFile)
     {
         var embedFile = Path.Combine(Path.GetDirectoryName(sourceAssemblyFile) ?? string.Empty, Path.GetFileNameWithoutExtension(sourceAssemblyFile) + ".comhost" + Path.GetExtension(sourceAssemblyFile));
-        File.Exists(embedFile).Should().BeTrue($"File {embedFile} must exist prior to running the test.");
+        Assert.True(File.Exists(embedFile));
         return embedFile;
     }
 

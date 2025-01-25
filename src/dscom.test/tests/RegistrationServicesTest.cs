@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -42,13 +43,13 @@ public class RegistrationServicesTest : BaseTest
             _guidOfiClassFactory) as IClassFactory;
 
         // Create instance of IRegistrationServicesTestInterface
-        classFactory.Should().NotBeNull();
+        Assert.NotNull(classFactory);
         classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject);
 
         // IRegistrationServicesTestInterface should be available
         var testInstance = Marshal.GetObjectForIUnknown(ppvObject) as IRegistrationServicesTestInterface;
-        testInstance.Should().NotBeNull();
-        testInstance!.GetSuccessString().Should().Be("Success");
+        Assert.NotNull(testInstance);
+        Assert.Equal("Success", testInstance!.GetSuccessString());
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
@@ -62,11 +63,10 @@ public class RegistrationServicesTest : BaseTest
             ComTypes.RegistrationClassContext.LocalServer,
             ComTypes.RegistrationConnectionType.MultipleUse);
 
-        Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+        Assert.NotNull(Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
             (uint)ComTypes.RegistrationClassContext.LocalServer,
             IntPtr.Zero,
-            _guidOfiClassFactory)
-                .Should().NotBeNull().And.BeAssignableTo<IClassFactory>();
+            _guidOfiClassFactory));
 
         registrationServices.UnregisterTypeForComClients(cookie);
 
@@ -78,7 +78,7 @@ public class RegistrationServicesTest : BaseTest
                 _guidOfiClassFactory);
         });
 
-        exception.HResult.Should().Be(HRESULT.REGDB_E_CLASSNOTREG);
+        Assert.Equal(HRESULT.REGDB_E_CLASSNOTREG, exception.HResult);
     }
 
     [Fact]
@@ -94,22 +94,21 @@ public class RegistrationServicesTest : BaseTest
             _guidOfiClassFactory) as IClassFactory;
 
         // Create instance of IRegistrationServicesTestInterface
-        classFactory.Should().NotBeNull();
+        Assert.NotNull(classFactory);
         classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject1);
         var testInstance1 = Marshal.GetObjectForIUnknown(ppvObject1) as IRegistrationServicesTestInterface;
-        testInstance1.Should().NotBeNull();
+        Assert.NotNull(testInstance1);
         var pid1 = testInstance1!.GetPid();
 
-        classFactory.Should().NotBeNull();
         classFactory!.CreateInstance(null!, ref _guidOfRegistrationServicesTestInterface, out var ppvObject2);
         var testInstance2 = Marshal.GetObjectForIUnknown(ppvObject2) as IRegistrationServicesTestInterface;
-        testInstance2.Should().NotBeNull();
+        Assert.NotNull(testInstance2);
         var pid2 = testInstance2!.GetPid();
 
         // In case of a InprocServer this test is actually unnecessary, because the test uses the unit test runtime process
-        pid2.Should().NotBe(0);
-        pid2.Should().NotBe(0);
-        pid1.Should().Be(pid2);
+        Assert.NotEqual(0, pid2);
+        Assert.NotEqual(0, pid2);
+        Assert.Equal(pid1, pid2);
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
@@ -125,7 +124,7 @@ public class RegistrationServicesTest : BaseTest
 
         // this is not testable in a InprocServer. Only check if RegisterTypeForComClients returns a cookie
 
-        cookie.Should().NotBe(0);
+        Assert.NotEqual(0, cookie);
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
@@ -147,7 +146,7 @@ public class RegistrationServicesTest : BaseTest
                 _guidOfiClassFactory);
         });
 
-        exception.HResult.Should().Be(HRESULT.REGDB_E_CLASSNOTREG);
+        Assert.Equal(HRESULT.REGDB_E_CLASSNOTREG, exception.HResult);
         registrationServices.UnregisterTypeForComClients(cookie);
     }
 
@@ -159,13 +158,12 @@ public class RegistrationServicesTest : BaseTest
             ComTypes.RegistrationClassContext.LocalServer,
             ComTypes.RegistrationConnectionType.Suspended);
 
-        Ole32.CoResumeClassObjects().Should().Be(HRESULT.S_OK);
+        Assert.Equal(HRESULT.S_OK, Ole32.CoResumeClassObjects());
 
-        Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
+        Assert.NotNull(Ole32.CoGetClassObject(_guidOfRegistrationServicesTestClass,
             (uint)ComTypes.RegistrationClassContext.LocalServer,
             IntPtr.Zero,
-            _guidOfiClassFactory)
-            .Should().NotBeNull().And.BeAssignableTo<IClassFactory>();
+            _guidOfiClassFactory));
 
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);

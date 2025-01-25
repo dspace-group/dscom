@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace dSPACE.Runtime.InteropServices.Tests;
+using Xunit;
 
+namespace dSPACE.Runtime.InteropServices.Tests;
 /// <summary>
 /// The tests for embeds are performed as a separate class due to the additional setup
 /// required and the need for creating a TLB file as part of export prior to testing
@@ -36,27 +37,28 @@ public class CLITestEmbed : CLITestBase
         TlbFilePath = Path.Combine(outputDirectory.FullName, tlbFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TlbFilePath);
-        result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
+        Assert.Equal(0, result.ExitCode);
 
         result = Execute(DSComPath, "tlbexport", TestAssemblyDependencyPath);
-        result.ExitCode.Should().Be(0, $"because it should succeed. Error: ${result.StdErr}. Output: ${result.StdOut}");
+        Assert.Equal(0, result.ExitCode);
 
         DependentTlbPath = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
 
-        File.Exists(TlbFilePath).Should().BeTrue($"File {TlbFilePath} should be available.");
-        File.Exists(DependentTlbPath).Should().BeTrue($"File {DependentTlbPath} should be available.");
+        Assert.True(File.Exists(TlbFilePath));
+        Assert.True(File.Exists(DependentTlbPath));
 
         // This is necessary to ensure the process from previous Execute for the export command has completely disposed before running tests.
         GC.Collect();
         GC.WaitForPendingFinalizers();
     }
 
+    [Fact]
     public void TlbEmbedAssembly_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
 
         var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath);
-        result.ExitCode.Should().Be(0, $"because embedding should succeed. Output: {result.StdErr} ");
+        Assert.Equal(0, result.ExitCode);
 
         OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib);
         OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
@@ -67,11 +69,12 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
+    [Fact]
     public void TlbEmbedAssemblyWithArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
         var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath, "--index 2");
-        result.ExitCode.Should().Be(0);
+        Assert.Equal(0, result.ExitCode);
 
         OleAut32.LoadTypeLibEx(embedPath + "\\2", REGKIND.NONE, out var embeddedTypeLib);
         OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
@@ -82,11 +85,12 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
+    [Fact]
     public void TlbEmbedAssemblyWithArbitraryTlbAndArbitraryIndex_ExitCodeIs0AndTlbIsEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
         var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath, "--index 3");
-        result.ExitCode.Should().Be(0);
+        Assert.Equal(0, result.ExitCode);
 
         OleAut32.LoadTypeLibEx(embedPath + "\\3", REGKIND.NONE, out var embeddedTypeLib);
         OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib);
@@ -97,14 +101,15 @@ public class CLITestEmbed : CLITestBase
         Assert.Equal(sourceTypeLibName, embeddedTypeLibName);
     }
 
+    [Fact]
     public void TlbEmbedAssemblyWithMultipleTypeLibraries_ExitCodeAre0AndTlbsAreEmbeddedAndValid()
     {
         var embedPath = GetEmbeddedPath(TestAssemblyPath);
         var result = Execute(DSComPath, "tlbembed", TlbFilePath, embedPath);
-        result.ExitCode.Should().Be(0);
+        Assert.Equal(0, result.ExitCode);
 
         result = Execute(DSComPath, "tlbembed", DependentTlbPath, TestAssemblyPath, "--index 2");
-        result.ExitCode.Should().Be(0);
+        Assert.Equal(0, result.ExitCode);
 
         OleAut32.LoadTypeLibEx(embedPath, REGKIND.NONE, out var embeddedTypeLib1);
         OleAut32.LoadTypeLibEx(TlbFilePath, REGKIND.NONE, out var sourceTypeLib1);

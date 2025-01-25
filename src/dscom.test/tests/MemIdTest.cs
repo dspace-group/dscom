@@ -14,6 +14,7 @@
 
 using System.Collections;
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -38,13 +39,13 @@ public class MemIdTest : BaseTest
         using var property2 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Property2");
         using var property3 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Property3");
 
-        property1.Should().NotBeNull("Property1 property should be available");
-        property2.Should().NotBeNull("Property2 property should be available");
-        property3.Should().NotBeNull("Property3 property should be available");
+        Assert.NotNull(property1);
+        Assert.NotNull(property2);
+        Assert.NotNull(property3);
 
-        property1!.Value.memid.Should().Be(dispIdStart);
-        property2!.Value.memid.Should().Be(dispIdStart + 2);
-        property3!.Value.memid.Should().Be(dispIdStart + 4);
+        Assert.Equal(dispIdStart, property1!.Value.memid);
+        Assert.Equal(dispIdStart + 2, property2!.Value.memid);
+        Assert.Equal(dispIdStart + 4, property3!.Value.memid);
     }
 
     [Theory]
@@ -66,13 +67,13 @@ public class MemIdTest : BaseTest
         using var method2 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method2");
         using var method3 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method3");
 
-        method1.Should().NotBeNull("Method1 method should be available");
-        method2.Should().NotBeNull("Method2 method should be available");
-        method3.Should().NotBeNull("Method3 method should be available");
+        Assert.NotNull(method1);
+        Assert.NotNull(method2);
+        Assert.NotNull(method3);
 
-        method1!.Value.memid.Should().Be(dispIdStart);
-        method2!.Value.memid.Should().Be(dispIdStart + 1);
-        method3!.Value.memid.Should().Be(dispIdStart + 2);
+        Assert.Equal(dispIdStart, method1!.Value.memid);
+        Assert.Equal(dispIdStart + 1, method2!.Value.memid);
+        Assert.Equal(dispIdStart + 2, method3!.Value.memid);
     }
 
     [Theory]
@@ -94,11 +95,11 @@ public class MemIdTest : BaseTest
         using var method1 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method1");
         using var method2 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Method2");
 
-        method1.Should().NotBeNull("Method1 method should be available");
-        method2.Should().NotBeNull("Method2 method should be available");
+        Assert.NotNull(method1);
+        Assert.NotNull(method2);
 
-        method1!.Value.memid.Should().Be(dispIdStart + 1);
-        method2!.Value.memid.Should().Be(dispIdStart + 2);
+        Assert.Equal(dispIdStart + 1, method1!.Value.memid);
+        Assert.Equal(dispIdStart + 2, method2!.Value.memid);
     }
 
     [Fact]
@@ -112,9 +113,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("GetEnumerator");
-        func.Should().NotBeNull("GetEnumerator method should be available");
-
-        func!.Value.memid.Should().Be(-4);
+        Assert.NotNull(func);
+        Assert.Equal(-4, func!.Value.memid);
     }
 
     [Fact]
@@ -130,9 +130,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("GetEnumerator");
-        func.Should().NotBeNull("GetEnumerator method should be available");
-
-        func!.Value.memid.Should().Be(123);
+        Assert.NotNull(func);
+        Assert.Equal(123, func!.Value.memid);
     }
 
     [Fact]
@@ -147,9 +146,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("GetEnumerator2");
-        func.Should().NotBeNull("GetEnumerator2 method should be available");
-
-        func!.Value.memid.Should().NotBe(-4);
+        Assert.NotNull(func);
+        Assert.NotEqual(-4, func!.Value.memid);
     }
 
     [Fact]
@@ -164,9 +162,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("GetEnumerator");
-        func.Should().NotBeNull("GetEnumerator method should be available");
-
-        func!.Value.memid.Should().NotBe(-4);
+        Assert.NotNull(func);
+        Assert.NotEqual(-4, func!.Value.memid);
     }
 
     [Fact]
@@ -180,9 +177,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Value");
-        func.Should().NotBeNull("Value property should be available");
-
-        func!.Value.memid.Should().Be(0);
+        Assert.NotNull(func);
+        Assert.Equal(0, func!.Value.memid);
     }
 
     [Fact]
@@ -197,9 +193,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Value");
-        func.Should().NotBeNull("Value property should be available");
-
-        func!.Value.memid.Should().Be(123);
+        Assert.NotNull(func);
+        Assert.Equal(123, func!.Value.memid);
     }
 
     [Fact]
@@ -214,9 +209,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Value");
-        func.Should().NotBeNull("Value property should be available");
-
-        func!.Value.memid.Should().NotBe(0);
+        Assert.NotNull(func);
+        Assert.NotEqual(0, func!.Value.memid);
     }
 
     [Fact]
@@ -232,9 +226,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var func = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Item");
-        func.Should().NotBeNull("Item method should be available");
-
-        func!.Value.memid.Should().Be(123);
+        Assert.NotNull(func);
+        Assert.Equal(123, func!.Value.memid);
     }
 
     [Fact]
@@ -252,15 +245,15 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var property1 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Property1");
-        property1.Should().NotBeNull("Property1 property should be available");
+        Assert.NotNull(property1);
 
         using var property2 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Property2");
-        property2.Should().NotBeNull("Property2 property should be available");
+        Assert.NotNull(property2);
 
-        property1!.Value.memid.Should().NotBe(123);
-        property2!.Value.memid.Should().NotBe(123);
+        Assert.NotEqual(123, property1!.Value.memid);
+        Assert.NotEqual(123, property2!.Value.memid);
 
-        property1!.Value.memid.Should().NotBe(property2!.Value.memid);
+        Assert.NotEqual(property1!.Value.memid, property2!.Value.memid);
     }
 
     [Fact]
@@ -275,8 +268,8 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var valueProperty = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("DefaultProperty");
-        valueProperty.Should().NotBeNull("DefaultProperty property should be available");
-        valueProperty!.Value.memid.Should().Be(0);
+        Assert.NotNull(valueProperty);
+        Assert.Equal(0, valueProperty!.Value.memid);
     }
 
     [Fact]
@@ -296,9 +289,9 @@ public class MemIdTest : BaseTest
         new List<string> { "TestProperty1", "TestProperty2" }.ForEach(propertyName =>
         {
             using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName(propertyName);
-            releasableFuncDesc.Should().NotBeNull();
-            releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_PROPERTYGET);
-            releasableFuncDesc!.Value.memid.Should().NotBe(99);
+            Assert.NotNull(releasableFuncDesc);
+            Assert.Equal(INVOKEKIND.INVOKE_PROPERTYGET, releasableFuncDesc!.Value.invkind);
+            Assert.NotEqual(99, releasableFuncDesc!.Value.memid);
         });
     }
 
@@ -313,9 +306,9 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestProperty");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_PROPERTYGET);
-        releasableFuncDesc!.Value.memid.Should().NotBe(0);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_PROPERTYGET, releasableFuncDesc!.Value.invkind);
+        Assert.NotEqual(0, releasableFuncDesc!.Value.memid);
     }
 
     [Fact]
@@ -330,9 +323,9 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestProperty");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_PROPERTYGET);
-        releasableFuncDesc!.Value.memid.Should().Be(99);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_PROPERTYGET, releasableFuncDesc!.Value.invkind);
+        Assert.Equal(99, releasableFuncDesc!.Value.memid);
     }
 
     [Fact]
@@ -352,9 +345,9 @@ public class MemIdTest : BaseTest
         new List<string> { "TestMethod1", "TestMethod2" }.ForEach(propertyName =>
         {
             using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName(propertyName);
-            releasableFuncDesc.Should().NotBeNull();
-            releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_FUNC);
-            releasableFuncDesc!.Value.memid.Should().NotBe(99);
+            Assert.NotNull(releasableFuncDesc);
+            Assert.Equal(INVOKEKIND.INVOKE_FUNC, releasableFuncDesc!.Value.invkind);
+            Assert.NotEqual(99, releasableFuncDesc!.Value.memid);
         });
     }
 
@@ -370,9 +363,9 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_FUNC);
-        releasableFuncDesc!.Value.memid.Should().NotBe(0);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_FUNC, releasableFuncDesc!.Value.invkind);
+        Assert.NotEqual(0, releasableFuncDesc!.Value.memid);
     }
 
     [Fact]
@@ -388,9 +381,9 @@ public class MemIdTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("TestMethod");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_FUNC);
-        releasableFuncDesc!.Value.memid.Should().Be(99);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_FUNC, releasableFuncDesc!.Value.invkind);
+        Assert.Equal(99, releasableFuncDesc!.Value.memid);
     }
 
     [Fact]
@@ -406,22 +399,22 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(48);
+        Assert.NotNull(attributes);
+        Assert.Equal(48, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Method1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(24);
+        Assert.NotNull(method1);
+        Assert.Equal(24, method1!.Value.oVft);
 
         using var method2 = testInterface!.GetFuncDescByName("Method2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Method3");
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(40);
+        Assert.NotNull(method3);
+        Assert.Equal(40, method3!.Value.oVft);
     }
 
     [Fact]
@@ -437,22 +430,22 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(72);
+        Assert.NotNull(attributes);
+        Assert.Equal(72, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Property1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(24);
+        Assert.NotNull(method1);
+        Assert.Equal(24, method1!.Value.oVft);
 
         using var method2 = testInterface!.GetFuncDescByName("Property2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Property3", INVOKEKIND.INVOKE_PROPERTYGET);
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(56);
+        Assert.NotNull(method3);
+        Assert.Equal(56, method3!.Value.oVft);
     }
 
     [Fact]
@@ -468,24 +461,24 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(56);
+        Assert.NotNull(attributes);
+        Assert.Equal(56, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Method1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(0);
-        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
+        Assert.NotNull(method1);
+        Assert.Equal(0, method1!.Value.oVft);
+        Assert.Equal((int)Constants.BASE_OLEAUT_DISPID, method1!.Value.memid);
 
         using var method2 = testInterface!.GetFuncDescByName("Method2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Method3");
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(0);
-        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 2);
+        Assert.NotNull(method3);
+        Assert.Equal(0, method3!.Value.oVft);
+        Assert.Equal(((int)Constants.BASE_OLEAUT_DISPID) + 2, method3!.Value.memid);
     }
 
     [Fact]
@@ -501,24 +494,24 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(56);
+        Assert.NotNull(attributes);
+        Assert.Equal(56, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Property1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(0);
-        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
+        Assert.NotNull(method1);
+        Assert.Equal(0, method1!.Value.oVft);
+        Assert.Equal((int)Constants.BASE_OLEAUT_DISPID, method1!.Value.memid);
 
         using var method2 = testInterface!.GetFuncDescByName("Property2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Property3", INVOKEKIND.INVOKE_PROPERTYGET);
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(0);
-        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 4);
+        Assert.NotNull(method3);
+        Assert.Equal(0, method3!.Value.oVft);
+        Assert.Equal(((int)Constants.BASE_OLEAUT_DISPID) + 4, method3!.Value.memid);
     }
 
     [Fact]
@@ -534,24 +527,24 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(56);
+        Assert.NotNull(attributes);
+        Assert.Equal(56, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Method1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(56);
-        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
+        Assert.NotNull(method1);
+        Assert.Equal(56, method1!.Value.oVft);
+        Assert.Equal((int)Constants.BASE_OLEAUT_DISPID, method1!.Value.memid);
 
         using var method2 = testInterface!.GetFuncDescByName("Method2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Method3");
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(72);
-        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 2);
+        Assert.NotNull(method3);
+        Assert.Equal(72, method3!.Value.oVft);
+        Assert.Equal(((int)Constants.BASE_OLEAUT_DISPID) + 2, method3!.Value.memid);
     }
 
     [Fact]
@@ -567,24 +560,24 @@ public class MemIdTest : BaseTest
                     .Build();
 
         var testInterface = result!.TypeLib.GetTypeInfoByName("TestInterface");
-        testInterface.Should().NotBeNull();
+        Assert.NotNull(testInterface);
 
         using var attributes = testInterface!.GetTypeInfoAttributes();
-        attributes.Should().NotBeNull();
-        attributes!.Value.cbSizeVft.Should().Be(56);
+        Assert.NotNull(attributes);
+        Assert.Equal(56, attributes!.Value.cbSizeVft);
 
         using var method1 = testInterface!.GetFuncDescByName("Property1");
-        method1.Should().NotBeNull();
-        method1!.Value.oVft.Should().Be(56);
-        method1!.Value.memid.Should().Be((int)Constants.BASE_OLEAUT_DISPID);
+        Assert.NotNull(method1);
+        Assert.Equal(56, method1!.Value.oVft);
+        Assert.Equal((int)Constants.BASE_OLEAUT_DISPID, method1!.Value.memid);
 
         using var method2 = testInterface!.GetFuncDescByName("Property2");
-        method2.Should().BeNull();
+        Assert.Null(method2);
 
         using var method3 = testInterface!.GetFuncDescByName("Property3", INVOKEKIND.INVOKE_PROPERTYGET);
-        method3.Should().NotBeNull();
-        method3!.Value.oVft.Should().Be(88);
-        method3!.Value.memid.Should().Be(((int)Constants.BASE_OLEAUT_DISPID) + 4);
+        Assert.NotNull(method3);
+        Assert.Equal(88, method3!.Value.oVft);
+        Assert.Equal(((int)Constants.BASE_OLEAUT_DISPID) + 4, method3!.Value.memid);
     }
 
     [Theory]
@@ -607,8 +600,8 @@ public class MemIdTest : BaseTest
         for (var i = 0; i < 500; i++)
         {
             var testMethod = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName($"TestMethod{dispIdStart + i}");
-            testMethod.Should().NotBeNull();
-            testMethod!.Value.memid.Should().Be(dispIdStart + i);
+            Assert.NotNull(testMethod);
+            Assert.Equal(dispIdStart + i, testMethod!.Value.memid);
         }
 
         using var property1 = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName("Property1");
@@ -650,7 +643,7 @@ public class MemIdTest : BaseTest
         for (var i = 0; i < 100; i += 2)
         {
             var testMethod = result!.TypeLib.GetTypeInfoByName("TestInterface")!.GetFuncDescByName($"TestMethod{dispIdStart + i}");
-            testMethod.Should().NotBeNull();
+            Assert.NotNull(testMethod);
 
             // tlbexp.exe will ignore the MemId for the method with a wrong MarshalAsAttribute in case of a IUnkownInterface.
             // This behavior is a little bit strange. 
@@ -659,7 +652,7 @@ public class MemIdTest : BaseTest
             //  if (interfaceType == ComInterfaceType.InterfaceIsIUnknown)
             //              testMethod!.Value.memid.Should().Be(dispIdStart + (i / 2));
             //
-            testMethod!.Value.memid.Should().Be(dispIdStart + i);
+            Assert.Equal(dispIdStart + i, testMethod!.Value.memid);
         }
     }
 }

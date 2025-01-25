@@ -14,6 +14,7 @@
 
 using dSPACE.Runtime.InteropServices.Attributes;
 using FUNCFLAGS = System.Runtime.InteropServices.ComTypes.FUNCFLAGS;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -39,11 +40,11 @@ public class AttributeFlagTests : BaseTest
 
         if (interfaceIsHidden)
         {
-            flags.Should().HaveFlag(TYPEFLAGS.TYPEFLAG_FHIDDEN);
+            Assert.True(flags.HasValue && flags.Value.HasFlag(TYPEFLAGS.TYPEFLAG_FHIDDEN));
         }
         else
         {
-            flags.Should().NotHaveFlag(TYPEFLAGS.TYPEFLAG_FHIDDEN);
+            Assert.False(flags.HasValue && flags.Value.HasFlag(TYPEFLAGS.TYPEFLAG_FHIDDEN));
         }
     }
 
@@ -68,11 +69,11 @@ public class AttributeFlagTests : BaseTest
 
         if (memberIsHidden)
         {
-            flags.Should().HaveFlag(FUNCFLAGS.FUNCFLAG_FHIDDEN);
+            Assert.True(flags.HasFlag(FUNCFLAGS.FUNCFLAG_FHIDDEN));
         }
         else
         {
-            flags.Should().NotHaveFlag(FUNCFLAGS.FUNCFLAG_FHIDDEN);
+            Assert.False(flags.HasFlag(FUNCFLAGS.FUNCFLAG_FHIDDEN));
         }
     }
 
@@ -96,11 +97,11 @@ public class AttributeFlagTests : BaseTest
 
         if (interfaceIsRestricted)
         {
-            flags.Should().HaveFlag(TYPEFLAGS.TYPEFLAG_FRESTRICTED);
+            Assert.True(flags.HasValue && flags.Value.HasFlag(TYPEFLAGS.TYPEFLAG_FRESTRICTED));
         }
         else
         {
-            flags.Should().NotHaveFlag(TYPEFLAGS.TYPEFLAG_FRESTRICTED);
+            Assert.False(flags.HasValue && flags.Value.HasFlag(TYPEFLAGS.TYPEFLAG_FRESTRICTED));
         }
     }
 
@@ -125,11 +126,11 @@ public class AttributeFlagTests : BaseTest
 
         if (memberIsRestricted)
         {
-            flags.Should().HaveFlag(FUNCFLAGS.FUNCFLAG_FRESTRICTED);
+            Assert.True(flags.HasFlag(FUNCFLAGS.FUNCFLAG_FRESTRICTED));
         }
         else
         {
-            flags.Should().NotHaveFlag(FUNCFLAGS.FUNCFLAG_FRESTRICTED);
+            Assert.False(flags.HasFlag(FUNCFLAGS.FUNCFLAG_FRESTRICTED));
         }
     }
 }

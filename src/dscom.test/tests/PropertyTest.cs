@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
+using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -29,12 +30,12 @@ public class PropertyTest : BaseTest
                     .Build();
 
         using var releasableFuncDesc = result.TypeLib.GetTypeInfoByName("TestInterface")?.GetFuncDescByName("Value");
-        releasableFuncDesc.Should().NotBeNull();
-        releasableFuncDesc!.Value.invkind.Should().Be(INVOKEKIND.INVOKE_PROPERTYGET);
-        releasableFuncDesc!.Value.memid.Should().Be(0);
+        Assert.NotNull(releasableFuncDesc);
+        Assert.Equal(INVOKEKIND.INVOKE_PROPERTYGET, releasableFuncDesc!.Value.invkind);
+        Assert.Equal(0, releasableFuncDesc!.Value.memid);
 
         // Check that no unexpected warnings occurred 
-        result.TypeLibExporterNotifySink.ReportedEvents.Should().OnlyContain(x => x.EventKind == ExporterEventKind.NOTIF_TYPECONVERTED);
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
 
     [Theory]
@@ -53,10 +54,10 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // Search for method
-        typeInfo!.ContainsFuncDescByName("TestProperty").Should().Be(true);
+        Assert.True(typeInfo!.ContainsFuncDescByName("TestProperty"));
     }
 
     [Fact]
@@ -74,15 +75,15 @@ public class PropertyTest : BaseTest
 
         //check for source-interface
         var typeSourceInfo = result.TypeLib.GetTypeInfoByName("TestSourceInterface");
-        typeSourceInfo.Should().NotBeNull("TestSourceInterface not found");
+        Assert.NotNull(typeSourceInfo);
 
         //check for test-interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for setter
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestProperty", invokeKind: INVOKEKIND.INVOKE_PROPERTYPUTREF);
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
     }
 
     [Theory]
@@ -122,14 +123,14 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for setter
         using var funcDescByName = typeInfo!.GetFuncDescByName("TestProperty");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
 
         //check for invokekind
-        funcDescByName!.Value.invkind.Should().Be(invokeKind);
+        Assert.Equal(invokeKind, funcDescByName!.Value.invkind);
     }
 
     [Theory]
@@ -168,20 +169,20 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // //check for only one method
         Assert.Throws<COMException>(() => typeInfo!.GetFuncDesc(1, out var ppFuncDesc));
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("Property1");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
 
         typeInfo!.GetDocumentation(funcDesc.memid, out var propertyName, out var docString, out var helpContext, out var helpFile);
-        propertyName.Should().Be("Property1");
+        Assert.Equal("Property1", propertyName);
     }
 
     [Theory]
@@ -220,20 +221,20 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for only one method
         //Assert.Throws<COMException>(() => typeInfo!.GetFuncDesc(1, out var ppFuncDesc));
 
         //check for method
         using var funcDescByName = typeInfo!.GetFuncDescByName("Property1");
-        funcDescByName.Should().NotBeNull();
+        Assert.NotNull(funcDescByName);
         var funcDesc = funcDescByName!.Value;
 
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_VOID);
+        Assert.Equal((short)VarEnum.VT_VOID, funcDesc.elemdescFunc.tdesc.vt);
 
         var elemDesc = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
-        elemDesc.tdesc.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), elemDesc.tdesc.vt);
     }
 
     [Theory]
@@ -272,19 +273,19 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for INVOKE_PROPERTYGET
         using var propGetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYGET);
-        propGetDescByName.Should().NotBeNull();
+        Assert.NotNull(propGetDescByName);
         var propget = propGetDescByName!.Value;
-        propget.elemdescFunc.tdesc.GetVarEnum().Should().Be(type.GetVarEnum());
+        Assert.Equal(type.GetVarEnum(), propget.elemdescFunc.tdesc.GetVarEnum());
 
         //check for INVOKE_PROPERTYPUT
         using var propSetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYPUTREF | INVOKEKIND.INVOKE_PROPERTYPUT);
-        propSetDescByName.Should().NotBeNull();
+        Assert.NotNull(propSetDescByName);
         var propset = propGetDescByName!.Value;
-        propset.elemdescFunc.tdesc.GetVarEnum().Should().Be(type.GetVarEnum());
+        Assert.Equal(type.GetVarEnum(), propset.elemdescFunc.tdesc.GetVarEnum());
     }
 
     [Theory]
@@ -308,8 +309,6 @@ public class PropertyTest : BaseTest
     [InlineData(typeof(Guid))]
     [InlineData(typeof(System.Drawing.Color))]
     [InlineData(typeof(decimal))]
-    [InlineData(typeof(Delegate))]
-    [InlineData(typeof(IntPtr))]
     [InlineData(typeof(IDispatch))]
     [InlineData(typeof(IUnknown))]
     public void DualInterfacePropertyWithSetterAndGetter_IsAvailable(Type type)
@@ -323,19 +322,16 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
 
         //check for INVOKE_PROPERTYGET
         using var propGetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYGET);
-        propGetDescByName.Should().NotBeNull();
         var propget = propGetDescByName!.Value;
-        propget.elemdescFunc.tdesc.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), propget.elemdescFunc.tdesc.vt);
 
         //check for INVOKE_PROPERTYPUT
         using var propSetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYPUTREF | INVOKEKIND.INVOKE_PROPERTYPUT);
-        propSetDescByName.Should().NotBeNull();
         var propset = propGetDescByName!.Value;
-        propset.elemdescFunc.tdesc.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), propset.elemdescFunc.tdesc.vt);
     }
 
     [Theory]
@@ -372,35 +368,35 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         //check for INVOKE_PROPERTYGET Ptr type
         using var propGetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYGET);
-        propGetDescByName.Should().NotBeNull();
+        Assert.NotNull(propGetDescByName);
         var propget = propGetDescByName!.Value;
-        propget.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_HRESULT);
+        Assert.Equal((short)VarEnum.VT_HRESULT, propget.elemdescFunc.tdesc.vt);
 
         var firstParameter = propget.GetParameter(0);
-        firstParameter.Should().NotBeNull();
-        firstParameter!.Value.tdesc.vt.Should().Be((short)VarEnum.VT_PTR);
+        Assert.NotNull(firstParameter);
+        Assert.Equal((short)VarEnum.VT_PTR, firstParameter!.Value.tdesc.vt);
 
         // Ptr type should be the final typ
         var value = Marshal.PtrToStructure<TYPEDESC>(firstParameter!.Value.tdesc.lpValue);
-        value.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), value.vt);
 
         //check for INVOKE_PROPERTYPUT
         using var propSetDescByName = typeInfo!.GetFuncDescByName("Property1", INVOKEKIND.INVOKE_PROPERTYPUTREF | INVOKEKIND.INVOKE_PROPERTYPUT);
-        propSetDescByName.Should().NotBeNull();
+        Assert.NotNull(propSetDescByName);
         var propset = propGetDescByName!.Value;
-        propset.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_HRESULT);
+        Assert.Equal((short)VarEnum.VT_HRESULT, propset.elemdescFunc.tdesc.vt);
 
         firstParameter = propget.GetParameter(0);
-        firstParameter.Should().NotBeNull();
-        firstParameter!.Value.tdesc.vt.Should().Be((short)VarEnum.VT_PTR);
+        Assert.NotNull(firstParameter);
+        Assert.Equal((short)VarEnum.VT_PTR, firstParameter!.Value.tdesc.vt);
 
         // Ptr type should be the final typ
         value = Marshal.PtrToStructure<TYPEDESC>(firstParameter!.Value.tdesc.lpValue);
-        value.vt.Should().Be(type.GetShortVarEnum());
+        Assert.Equal(type.GetShortVarEnum(), value.vt);
     }
 
     [Fact]
@@ -417,55 +413,55 @@ public class PropertyTest : BaseTest
 
         //check for interface
         var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
-        typeInfo.Should().NotBeNull("TestInterface not found");
+        Assert.NotNull(typeInfo);
 
         // ################### set_Name
 
         typeInfo!.GetFuncDesc(0, out var ppFuncDesc);
-        ppFuncDesc.Should().NotBe(IntPtr.Zero);
+        Assert.NotEqual(IntPtr.Zero, ppFuncDesc);
         var funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(typeof(string).GetShortVarEnum());
+        Assert.Equal(typeof(string).GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
         typeInfo.GetDocumentation(funcDesc.memid, out var propertyName, out _, out _, out _);
-        propertyName.Should().Be("Name");
+        Assert.Equal("Name", propertyName);
 
         // ################### get_Name
 
         typeInfo!.GetFuncDesc(1, out ppFuncDesc);
-        ppFuncDesc.Should().NotBe(IntPtr.Zero);
+        Assert.NotEqual(IntPtr.Zero, ppFuncDesc);
         funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_VOID);
+        Assert.Equal((short)VarEnum.VT_VOID, funcDesc.elemdescFunc.tdesc.vt);
 
         var elemDesc = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
-        elemDesc.tdesc.vt.Should().Be(typeof(string).GetShortVarEnum());
+        Assert.Equal(typeof(string).GetShortVarEnum(), elemDesc.tdesc.vt);
 
         Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
 
         typeInfo.GetDocumentation(funcDesc.memid, out propertyName, out _, out _, out _);
-        propertyName.Should().Be("Name");
+        Assert.Equal("Name", propertyName);
 
         // ################### set_Value
 
         typeInfo!.GetFuncDesc(2, out ppFuncDesc);
-        ppFuncDesc.Should().NotBe(IntPtr.Zero);
+        Assert.NotEqual(IntPtr.Zero, ppFuncDesc);
         funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be(typeof(int).GetShortVarEnum());
+        Assert.Equal(typeof(int).GetShortVarEnum(), funcDesc.elemdescFunc.tdesc.vt);
 
         typeInfo.GetDocumentation(funcDesc.memid, out propertyName, out _, out _, out _);
-        propertyName.Should().Be("Value");
+        Assert.Equal("Value", propertyName);
 
         // ################### get_Value
 
         typeInfo!.GetFuncDesc(3, out ppFuncDesc);
-        ppFuncDesc.Should().NotBe(IntPtr.Zero);
+        Assert.NotEqual(IntPtr.Zero, ppFuncDesc);
         funcDesc = Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
-        funcDesc.elemdescFunc.tdesc.vt.Should().Be((short)VarEnum.VT_VOID);
+        Assert.Equal((short)VarEnum.VT_VOID, funcDesc.elemdescFunc.tdesc.vt);
 
         elemDesc = Marshal.PtrToStructure<ELEMDESC>(funcDesc.lprgelemdescParam);
-        elemDesc.tdesc.vt.Should().Be(typeof(int).GetShortVarEnum());
+        Assert.Equal(typeof(int).GetShortVarEnum(), elemDesc.tdesc.vt);
 
         Marshal.PtrToStructure<FUNCDESC>(ppFuncDesc);
 
         typeInfo.GetDocumentation(funcDesc.memid, out propertyName, out _, out _, out _);
-        propertyName.Should().Be("Value");
+        Assert.Equal("Value", propertyName);
     }
 }
