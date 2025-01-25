@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using dSPACE.Runtime.InteropServices.Attributes;
-using FUNCFLAGS = System.Runtime.InteropServices.ComTypes.FUNCFLAGS;
 using Xunit;
+using FUNCFLAGS = System.Runtime.InteropServices.ComTypes.FUNCFLAGS;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
