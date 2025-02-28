@@ -20,133 +20,144 @@ namespace dSPACE.Runtime.InteropServices.Test;
 [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
 public interface ITestInterfaceDispatch
 {
-    public byte MybyteProperty { get; set; }
-    public sbyte MysbyteProperty { get; set; }
-    public short MyshortProperty { get; set; }
-    public ushort MyushortProperty { get; set; }
-    public uint MyuintProperty { get; set; }
-    public int MyintProperty { get; set; }
-    public ulong MyulongProperty { get; set; }
-    public long MylongProperty { get; set; }
-    public float MySingleProperty { get; set; }
-    public double MydoubleProperty { get; set; }
-    public string MystringProperty { get; set; }
-    public bool MyboolProperty { get; set; }
-    public char MycharProperty { get; set; }
-    public object MyobjectProperty { get; set; }
-    public object[] MyobjectArrayProperty { get; set; }
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorProperty { get; set; }
-    public DateTime MySystemDateTimeProperty { get; set; }
-    public Guid MySystemGuidProperty { get; set; }
-    public System.Drawing.Color MySystemDrawingColorProperty { get; set; }
-    public decimal MySystemDecimalProperty { get; set; }
+    byte MybyteProperty { get; set; }
+    sbyte MysbyteProperty { get; set; }
+    short MyshortProperty { get; set; }
+    ushort MyushortProperty { get; set; }
+    uint MyuintProperty { get; set; }
+    int MyintProperty { get; set; }
+    ulong MyulongProperty { get; set; }
+    long MylongProperty { get; set; }
+    float MySingleProperty { get; set; }
+    double MydoubleProperty { get; set; }
+    string MystringProperty { get; set; }
+    bool MyboolProperty { get; set; }
+    char MycharProperty { get; set; }
+    object MyobjectProperty { get; set; }
+    object[] MyobjectArrayProperty { get; set; }
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorProperty { get; set; }
+    DateTime MySystemDateTimeProperty { get; set; }
+    Guid MySystemGuidProperty { get; set; }
+    System.Drawing.Color MySystemDrawingColorProperty { get; set; }
+    decimal MySystemDecimalProperty { get; set; }
 
-    public byte MybyteGetterProperty { get; }
-    public sbyte MysbyteGetterProperty { get; }
-    public short MyshortGetterProperty { get; }
-    public ushort MyushortGetterProperty { get; }
-    public uint MyuintGetterProperty { get; }
-    public int MyintGetterProperty { get; }
-    public ulong MyulongGetterProperty { get; }
-    public long MylongGetterProperty { get; }
-    public float MySingleGetterProperty { get; }
-    public double MydoubleGetterProperty { get; }
-    public string MystringGetterProperty { get; }
-    public bool MyboolGetterProperty { get; }
-    public char MycharGetterProperty { get; }
-    public object MyobjectGetterProperty { get; }
-    public object[] MyobjectArrayGetterProperty { get; }
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorGetterProperty { get; }
-    public DateTime MySystemDateTimeGetterProperty { get; }
-    public Guid MySystemGuidGetterProperty { get; }
-    public System.Drawing.Color MySystemDrawingColorGetterProperty { get; }
-    public decimal MySystemDecimalGetterProperty { get; }
+    byte MybyteGetterProperty { get; }
+    sbyte MysbyteGetterProperty { get; }
+    short MyshortGetterProperty { get; }
+    ushort MyushortGetterProperty { get; }
+    uint MyuintGetterProperty { get; }
+    int MyintGetterProperty { get; }
+    ulong MyulongGetterProperty { get; }
+    long MylongGetterProperty { get; }
+    float MySingleGetterProperty { get; }
+    double MydoubleGetterProperty { get; }
+    string MystringGetterProperty { get; }
+    bool MyboolGetterProperty { get; }
+    char MycharGetterProperty { get; }
+    object MyobjectGetterProperty { get; }
+    object[] MyobjectArrayGetterProperty { get; }
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorGetterProperty { get; }
+    DateTime MySystemDateTimeGetterProperty { get; }
+    Guid MySystemGuidGetterProperty { get; }
+    System.Drawing.Color MySystemDrawingColorGetterProperty { get; }
+    decimal MySystemDecimalGetterProperty { get; }
 
-    public byte MybyteSetterProperty { set; }
-    public sbyte MysbyteSetterProperty { set; }
-    public short MyshortSetterProperty { set; }
-    public ushort MyushortSetterProperty { set; }
-    public uint MyuintSetterProperty { set; }
-    public int MyintSetterProperty { set; }
-    public ulong MyulongSetterProperty { set; }
-    public long MylongSetterProperty { set; }
-    public float MySingleSetterProperty { set; }
-    public double MydoubleSetterProperty { set; }
-    public string MystringSetterProperty { set; }
-    public bool MyboolSetterProperty { set; }
-    public char MycharSetterProperty { set; }
-    public object MyobjectSetterProperty { set; }
-    public object[] MyobjectArraySetterProperty { set; }
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorSetterProperty { set; }
-    public DateTime MySystemDateTimeSetterProperty { set; }
-    public Guid MySystemGuidSetterProperty { set; }
-    public System.Drawing.Color MySystemDrawingColorSetterProperty { set; }
-    public decimal MySystemDecimalSetterProperty { set; }
+    byte MybyteSetterProperty { set; }
+    sbyte MysbyteSetterProperty { set; }
+    short MyshortSetterProperty { set; }
+    ushort MyushortSetterProperty { set; }
+    uint MyuintSetterProperty { set; }
+    int MyintSetterProperty { set; }
+    ulong MyulongSetterProperty { set; }
+    long MylongSetterProperty { set; }
+    float MySingleSetterProperty { set; }
+    double MydoubleSetterProperty { set; }
+    string MystringSetterProperty { set; }
+    bool MyboolSetterProperty { set; }
+    char MycharSetterProperty { set; }
+    object MyobjectSetterProperty { set; }
+    object[] MyobjectArraySetterProperty { set; }
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorSetterProperty { set; }
+    DateTime MySystemDateTimeSetterProperty { set; }
+    Guid MySystemGuidSetterProperty { set; }
+    System.Drawing.Color MySystemDrawingColorSetterProperty { set; }
+    decimal MySystemDecimalSetterProperty { set; }
 
-    public void MyvoidMethod();
-    public byte MybyteMethod();
-    public sbyte MysbyteMethod();
-    public short MyshortMethod();
-    public ushort MyushortMethod();
-    public uint MyuintMethod();
-    public int MyintMethod();
-    public ulong MyulongMethod();
-    public long MylongMethod();
-    public float MySingleMethod();
-    public double MydoubleMethod();
-    public string MystringMethod();
-    public bool MyboolMethod();
-    public char MycharMethod();
-    public object MyobjectMethod();
-    public object[] MyobjectArrayMethod();
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod();
-    public DateTime MySystemDateTimeMethod();
-    public Guid MySystemGuidMethod();
-    public System.Drawing.Color MySystemDrawingColorMethod();
-    public decimal MySystemDecimalMethod();
+    void MyvoidMethod();
+    byte MybyteMethod();
+    sbyte MysbyteMethod();
+    short MyshortMethod();
+    ushort MyushortMethod();
+    uint MyuintMethod();
+    int MyintMethod();
+    ulong MyulongMethod();
+    long MylongMethod();
+    float MySingleMethod();
+    double MydoubleMethod();
+    string MystringMethod();
+    bool MyboolMethod();
+    char MycharMethod();
+    object MyobjectMethod();
+    object[] MyobjectArrayMethod();
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod();
+    DateTime MySystemDateTimeMethod();
+    Guid MySystemGuidMethod();
+    System.Drawing.Color MySystemDrawingColorMethod();
+    decimal MySystemDecimalMethod();
 
-    public void MyvoidMethod1Param(int param1);
-    public byte MybyteMethod1Param(byte param1);
-    public sbyte MysbyteMethod1Param(sbyte param1);
-    public short MyshortMethod1Param(short param1);
-    public ushort MyushortMethod1Param(ushort param1);
-    public uint MyuintMethod1Param(uint param1);
-    public int MyintMethod1Param(int param1);
-    public ulong MyulongMethod1Param(ulong param1);
-    public long MylongMethod1Param(long param1);
-    public float MySingleMethod1Param(float param1);
-    public double MydoubleMethod1Param(double param1);
-    public string MystringMethod1Param(string param1);
-    public bool MyboolMethod1Param(bool param1);
-    public char MycharMethod1Param(char param1);
-    public object MyobjectMethod1Param(object param1);
-    public object[] MyobjectArrayMethod1Param(object[] param1);
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod1Param(System.Collections.IEnumerator param1);
-    public DateTime MySystemDateTimeMethod1Param(DateTime param1);
-    public Guid MySystemGuidMethod1Param(Guid param1);
-    public System.Drawing.Color MySystemDrawingColorMethod1Param(System.Drawing.Color param1);
-    public decimal MySystemDecimalMethod1Param(decimal param1);
+    void MyvoidMethod1Param(int param1);
+    byte MybyteMethod1Param(byte param1);
+    sbyte MysbyteMethod1Param(sbyte param1);
+    short MyshortMethod1Param(short param1);
+    ushort MyushortMethod1Param(ushort param1);
+    uint MyuintMethod1Param(uint param1);
+    int MyintMethod1Param(int param1);
+    ulong MyulongMethod1Param(ulong param1);
+    long MylongMethod1Param(long param1);
+    float MySingleMethod1Param(float param1);
+    double MydoubleMethod1Param(double param1);
+    string MystringMethod1Param(string param1);
+    bool MyboolMethod1Param(bool param1);
+    char MycharMethod1Param(char param1);
+    object MyobjectMethod1Param(object param1);
+    object[] MyobjectArrayMethod1Param(object[] param1);
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod1Param(System.Collections.IEnumerator param1);
+    DateTime MySystemDateTimeMethod1Param(DateTime param1);
+    Guid MySystemGuidMethod1Param(Guid param1);
+    System.Drawing.Color MySystemDrawingColorMethod1Param(System.Drawing.Color param1);
+    decimal MySystemDecimalMethod1Param(decimal param1);
 
-    public void MyvoidMethod2Param(int param1, int param2);
-    public byte MybyteMethod2Param(byte param1, byte param2);
-    public sbyte MysbyteMethod2Param(sbyte param1, sbyte param2);
-    public short MyshortMethod2Param(short param1, short param2);
-    public ushort MyushortMethod2Param(ushort param1, ushort param2);
-    public uint MyuintMethod2Param(uint param1, uint param2);
-    public int MyintMethod2Param(int param1, int param2);
-    public ulong MyulongMethod2Param(ulong param1, ulong param2);
-    public long MylongMethod2Param(long param1, long param2);
-    public float MySingleMethod2Param(float param1, float param2);
-    public double MydoubleMethod2Param(double param1, double param2);
-    public string MystringMethod2Param(string param1, string param2);
-    public bool MyboolMethod2Param(bool param1, bool param2);
-    public char MycharMethod2Param(char param1, char param2);
-    public object MyobjectMethod2Param(object param1, object param2);
-    public object[] MyobjectArrayMethod2Param(object[] param1, object[] param2);
-    public System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod2Param(System.Collections.IEnumerator param1, System.Collections.IEnumerator param2);
-    public DateTime MySystemDateTimeMethod2Param(DateTime param1, DateTime param2);
-    public Guid MySystemGuidMethod2Param(Guid param1, Guid param2);
-    public System.Drawing.Color MySystemDrawingColorMethod2Param(System.Drawing.Color param1, System.Drawing.Color param2);
-    public decimal MySystemDecimalMethod2Param(decimal param1, decimal param2);
-    public IDependentTestInterface MyIDependentTestInterfaceMethod();
+    void MyvoidMethod2Param(int param1, int param2);
+    byte MybyteMethod2Param(byte param1, byte param2);
+    sbyte MysbyteMethod2Param(sbyte param1, sbyte param2);
+    short MyshortMethod2Param(short param1, short param2);
+    ushort MyushortMethod2Param(ushort param1, ushort param2);
+    uint MyuintMethod2Param(uint param1, uint param2);
+    int MyintMethod2Param(int param1, int param2);
+    ulong MyulongMethod2Param(ulong param1, ulong param2);
+    long MylongMethod2Param(long param1, long param2);
+    float MySingleMethod2Param(float param1, float param2);
+    double MydoubleMethod2Param(double param1, double param2);
+    string MystringMethod2Param(string param1, string param2);
+    bool MyboolMethod2Param(bool param1, bool param2);
+    char MycharMethod2Param(char param1, char param2);
+    object MyobjectMethod2Param(object param1, object param2);
+    object[] MyobjectArrayMethod2Param(object[] param1, object[] param2);
+    System.Collections.IEnumerator MySystemCollectionsIEnumeratorMethod2Param(System.Collections.IEnumerator param1, System.Collections.IEnumerator param2);
+    DateTime MySystemDateTimeMethod2Param(DateTime param1, DateTime param2);
+    Guid MySystemGuidMethod2Param(Guid param1, Guid param2);
+    System.Drawing.Color MySystemDrawingColorMethod2Param(System.Drawing.Color param1, System.Drawing.Color param2);
+    decimal MySystemDecimalMethod2Param(decimal param1, decimal param2);
+    IDependentTestInterface MyIDependentTestInterfaceMethod();
+    unsafe void MyMethodWithUnsafeBytePointer(byte* pointer);
+    unsafe void MyMethodWithUnsafeCharPointer(char* pointer);
+    unsafe void MyMethodWithUnsafeSBytePointer(sbyte* pointer);
+    unsafe void MyMethodWithUnsafeShortPointer(short* pointer);
+    unsafe void MyMethodWithUnsafeIntPointer(int* pointer);
+    unsafe void MyMethodWithUnsafeUIntPointer(uint* pointer);
+    unsafe void MyMethodWithUnsafeUShortPointer(ushort* pointer);
+    unsafe void MyMethodWithUnsafeLongPointer(long* pointer);
+    unsafe void MyMethodWithUnsafeULongPointer(ulong* pointer);
+    unsafe void MyMethodWithUnsafeFloatPointer(float* pointer);
+    unsafe void MyMethodWithUnsafeDoublePointer(double* pointer);
 }

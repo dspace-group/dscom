@@ -90,13 +90,13 @@ internal sealed class ParameterWriter : ElemDescBasedWriter
     private void CalculateFlags()
     {
         var hasInAttribute = ParameterInfo.Member != null && ParameterInfo.GetCustomAttribute<InAttribute>() != null;
-        if (ParameterInfo.IsOut || (ParameterInfo.ParameterType.IsByRef && !hasInAttribute) || _isTransformedOutParameter)
+        if (ParameterInfo.ParameterType.IsPointer || ParameterInfo.IsOut || (ParameterInfo.ParameterType.IsByRef && !hasInAttribute) || _isTransformedOutParameter)
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FOUT;
             _paramFlags |= PARAMFLAG.PARAMFLAG_FOUT;
         }
 
-        if (ParameterInfo.IsIn || hasInAttribute || (!ParameterInfo.IsRetval && !ParameterInfo.IsOut && !_isTransformedOutParameter))
+        if (ParameterInfo.ParameterType.IsPointer || ParameterInfo.IsIn || hasInAttribute || (!ParameterInfo.IsRetval && !ParameterInfo.IsOut && !_isTransformedOutParameter))
         {
             IDLFlags |= IDLFLAG.IDLFLAG_FIN;
             _paramFlags |= PARAMFLAG.PARAMFLAG_FIN;

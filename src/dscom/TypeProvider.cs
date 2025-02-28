@@ -326,6 +326,35 @@ internal sealed class TypeProvider
                     // struct
                     return VarEnum.VT_USERDEFINED;
                 }
+                else if (type.IsPointer)
+                {
+                    parentLevel = VarEnum.VT_PTR;
+                    switch (type.FullName)
+                    {
+                        case "System.Byte*":
+                            return VarEnum.VT_UI1;
+                        case "System.Char*":
+                            return IsMethod ? VarEnum.VT_UI2 : VarEnum.VT_UI1;
+                        case "System.SByte*":
+                            return VarEnum.VT_I1;
+                        case "System.Int16*":
+                            return VarEnum.VT_I2;
+                        case "System.UInt16*":
+                            return VarEnum.VT_UI2;
+                        case "System.Int32*":
+                            return VarEnum.VT_I4;
+                        case "System.UInt32*":
+                            return VarEnum.VT_UI4;
+                        case "System.Int64*":
+                            return VarEnum.VT_I8;
+                        case "System.UInt64*":
+                            return VarEnum.VT_UI8;
+                        case "System.Single*":
+                            return VarEnum.VT_R4;
+                        case "System.Double*":
+                            return VarEnum.VT_R8;
+                    }
+                }
 
                 if (Context.TypeInfoResolver.ResolveDefaultCoClassInterface(type) != null)
                 {
