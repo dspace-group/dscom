@@ -1483,4 +1483,91 @@ public class MethodTest : BaseTest
         // Check that no unexpected warnings occurred 
         Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
     }
+
+    [Theory]
+    [InlineData(typeof(byte))]
+    [InlineData(typeof(sbyte))]
+    [InlineData(typeof(short))]
+    [InlineData(typeof(ushort))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(int))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(long))]
+    [InlineData(typeof(float))]
+    [InlineData(typeof(double))]
+    [InlineData(typeof(char))]
+    public void MethodWithUnsafePointer_ParameterIsPointer(Type parameterType)
+    {
+        var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
+                        .WithInterface("TestInterface")
+                            .WithMethod("TestMethod")
+                                .WithParameter(parameterType.MakePointerType())
+                            .Build()
+                        .Build()
+                    .Build();
+
+        //check for interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        Assert.NotNull(typeInfo);
+
+        //check for method
+        using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
+        Assert.NotNull(funcDescByName);
+        var funcDesc = funcDescByName!.Value;
+
+        // Check number of parameters
+        Assert.Equal(1, funcDesc.cParams);
+
+        // Get first parameter
+        var parameter = funcDesc.GetParameter(0);
+        Assert.NotNull(parameter);
+
+        Assert.Equal(VarEnum.VT_PTR, (VarEnum)parameter!.Value.tdesc.vt);
+    }
+
+    [Theory]
+    [InlineData(typeof(byte), VarEnum.VT_UI1)]
+    [InlineData(typeof(sbyte), VarEnum.VT_I1)]
+    [InlineData(typeof(short), VarEnum.VT_I2)]
+    [InlineData(typeof(ushort), VarEnum.VT_UI2)]
+    [InlineData(typeof(uint), VarEnum.VT_UI4)]
+    [InlineData(typeof(int), VarEnum.VT_I4)]
+    [InlineData(typeof(ulong), VarEnum.VT_UI8)]
+    [InlineData(typeof(long), VarEnum.VT_I8)]
+    [InlineData(typeof(float), VarEnum.VT_R4)]
+    [InlineData(typeof(double), VarEnum.VT_R8)]
+    [InlineData(typeof(char), VarEnum.VT_UI2)]
+    public void MethodWithUnsafePointer_ParameterIsPARAMFLAG_FIN_PARAMFLAG_FOUT(Type parameterType, VarEnum expectedVarEnum)
+    {
+        var result = CreateAssembly(new AssemblyName($"Dynamic{parameterType}"))
+                        .WithInterface("TestInterface")
+                            .WithMethod("TestMethod")
+                                .WithParameter(parameterType.MakePointerType())
+                            .Build()
+                        .Build()
+                    .Build();
+
+        //check for interface
+        var typeInfo = result.TypeLib.GetTypeInfoByName("TestInterface");
+        Assert.NotNull(typeInfo);
+
+        //check for method
+        using var funcDescByName = typeInfo!.GetFuncDescByName("TestMethod");
+        Assert.NotNull(funcDescByName);
+        var funcDesc = funcDescByName!.Value;
+
+        // Check number of parameters
+        Assert.Equal(1, funcDesc.cParams);
+
+        // Get first parameter
+        var parameter = funcDesc.GetParameter(0);
+        Assert.NotNull(parameter);
+
+        Assert.Equal(IDLFLAG.IDLFLAG_FIN | IDLFLAG.IDLFLAG_FOUT, parameter!.Value.desc.idldesc.wIDLFlags);
+        var parmType = Marshal.PtrToStructure<TYPEDESC>(parameter!.Value.tdesc.lpValue);
+        Assert.Equal(expectedVarEnum, (VarEnum)parmType.vt);
+
+        // Check that no unexpected warnings occurred 
+        Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
+    }
 }
