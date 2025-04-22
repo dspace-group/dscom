@@ -126,7 +126,7 @@ Example to create a TLB from an assembly:
 c:\> dscom tlbexport MyAssembly.dll --out C:\path\to\output\MyAssembly.tlb
 ```
 
-For mor information about the command line options to create a TLB, use `dscom tlbexport --help`.
+For more information about the command line options to create a TLB, use `dscom tlbexport --help`.
 
 
 ## Library
