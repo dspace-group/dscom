@@ -92,7 +92,7 @@ dotnet tool install --global dscom
 Here you can find all available versions:  
 <https://www.nuget.org/packages/dscom/>
 
-Alternatively you can download dscom.exe from the relase page.  
+Alternatively you can download dscom.exe from the release page.  
 <https://github.com/dspace-group/dscom/releases>
 
 ### Usage
