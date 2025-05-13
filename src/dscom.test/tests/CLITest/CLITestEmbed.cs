@@ -32,15 +32,13 @@ public class CLITestEmbed : CLITestBase
 
     public CLITestEmbed(CompileReleaseFixture compileFixture) : base(compileFixture)
     {
-        var outputDirectory = Directory.GetParent(TestAssemblyPath) ?? throw new DirectoryNotFoundException("Output directory not found.");
-        var tlbFileName = $"{Path.GetFileNameWithoutExtension(TestAssemblyPath)}.tlb";
-        TlbFilePath = Path.Combine(outputDirectory.FullName, tlbFileName);
+        TlbFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.tlb");
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TlbFilePath);
-        Assert.Equal(0, result.ExitCode);
+        Assert.True(0 == result.ExitCode, result.StdOut);
 
         result = Execute(DSComPath, "tlbexport", TestAssemblyDependencyPath);
-        Assert.Equal(0, result.ExitCode);
+        Assert.True(0 == result.ExitCode, result.StdOut);
 
         DependentTlbPath = $"{Path.GetFileNameWithoutExtension(TestAssemblyDependencyPath)}.tlb";
 
@@ -50,6 +48,19 @@ public class CLITestEmbed : CLITestBase
         // This is necessary to ensure the process from previous Execute for the export command has completely disposed before running tests.
         GC.Collect();
         GC.WaitForPendingFinalizers();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (disposing)
+        {
+            if (File.Exists(TlbFilePath))
+            {
+                File.Delete(TlbFilePath);
+            }
+        }
     }
 
     [Fact]
