@@ -59,7 +59,14 @@ public class CLITestEmbed : CLITestBase
         {
             if (File.Exists(TlbFilePath))
             {
-                File.Delete(TlbFilePath);
+                try
+                {
+                    File.Delete(TlbFilePath);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // In case of a file lock, we can not delete the file.
+                }
             }
         }
     }
