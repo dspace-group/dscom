@@ -33,18 +33,7 @@ public class CLITestEmbed : CLITestBase
     public CLITestEmbed(CompileReleaseFixture compileFixture) : base(compileFixture)
     {
         var tempTlbFileName = $"{Guid.NewGuid()}.tlb";
-        TlbFilePath = Path.Combine(Path.GetTempPath(), tempTlbFileName);
-
-        // In case to a GitHub runner, use the environment variable RUNNER_TEMP as the temp path,
-        // because the temp path is not always writable in the GitHub runner
-        if (string.IsNullOrEmpty(TlbFilePath))
-        {
-            var runnerTempPath = Environment.GetEnvironmentVariable("RUNNER_TEMP");
-            if (runnerTempPath is not null && Directory.Exists(runnerTempPath))
-            {
-                TlbFilePath = Path.Combine(runnerTempPath, tempTlbFileName);
-            }
-        }
+        TlbFilePath = Path.Combine(compileFixture.TestAssemblyPath, tempTlbFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TlbFilePath);
         Assert.True(0 == result.ExitCode, result.StdOut);
