@@ -33,7 +33,7 @@ public class CLITestEmbed : CLITestBase
     public CLITestEmbed(CompileReleaseFixture compileFixture) : base(compileFixture)
     {
         var tempTlbFileName = $"{Guid.NewGuid()}.tlb";
-        TlbFilePath = Path.Combine(compileFixture.TestAssemblyPath, tempTlbFileName);
+        TlbFilePath = Path.Combine(Path.GetDirectoryName(compileFixture.TestAssemblyPath)!, tempTlbFileName);
 
         var result = Execute(DSComPath, "tlbexport", TestAssemblyPath, "--out", TlbFilePath);
         Assert.True(0 == result.ExitCode, result.StdOut);
