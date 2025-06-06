@@ -12,17 +12,23 @@
 [![Example Tests](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/example-test.yaml)
 [![Code Style Check](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml/badge.svg)](https://github.com/dspace-group/dscom/actions/workflows/code-style.yaml)
 
-The command line client `dscom` is a replacement for `tlbexp.exe` and `RegAsm.exe`.  
-Among other things, you can create or register TLBs from .NET assemblies.  
+COM (Component Object Model) remains a critical part of the Windows ecosystem, enabling interoperability between software components. Despite its age, COM is still widely used in many applications and systems. However, with the advent of .NET 5 and later versions, Microsoft has discontinued several tools that were essential for working with COM, such as `tlbexp.exe` and `RegAsm.exe`. This has left developers without built-in support for generating or registering COM Type Libraries (TLBs) from .NET assemblies.
 
-The `dSPACE.Runtime.InteropServices` library contains various classes and methods for COM.  
-It can be used in `net5+` or in `net48` projects.  
-With the library you can register assemblies and classes for COM and programmatically generate TLBs at runtime.  
+There is no support in .NET Core or .NET 5+ for generating a COM Type Library (TLB) from a .NET assembly.  
+<https://docs.microsoft.com/en-us/dotnet/core/native-interop/expose-components-to-com>
+
+To address this gap, `dscom` provides a modern replacement for these tools. It offers a command-line interface (CLI) and libraries that allow developers to:
+
+- Generate and register TLBs from .NET assemblies.
+- Embed TLBs into assemblies.
+- Register and unregister assemblies for COM.
+- Convert TLBs to YAML files for inspection.
+
+`dscom` aims to replicate the functionality of the discontinued Microsoft tools while introducing additional features to simplify COM-related workflows in .NET 5+ and .NET Framework projects. Whether you are working with legacy systems or building new applications that require COM interoperability, `dscom` provides the tools you need to bridge the gap.
 
 The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks which can be used to automatically generate TLBs at compile time.
 
 - [dSPACE COM tools](#dspace-com-tools)
-  - [Introduction](#introduction)
   - [Command Line Client](#command-line-client)
     - [Installation](#installation)
     - [Usage](#usage)
@@ -45,34 +51,35 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
     - [RegAsm](#regasm)
   - [Contributing](#contributing)
 
-## Introduction
-
-Fortunately, .NET still supports COM, but there is no support for generating TLBs.  
-From the Microsoft documentation:
-
-> Unlike in .NET Framework, there is no support in .NET Core or .NET 5+ for generating a COM Type Library (TLB) from a .NET assembly.
-
-<https://docs.microsoft.com/en-us/dotnet/core/native-interop/expose-components-to-com>
-
-One main goal is to make `dscom` behave like `tlbexp.exe`.
-
-Also, some classes are missing in .NET 5+ that were available in the full framework.
-This is where `dSPACE.Runtime.InteropServices` may be able to help.
-
 ## Command Line Client
 
-The command-line interface (CLI) tool `dscom` is a replacement for `tlbexp.exe`, `OleView` (View TypeLib) and `RegAsm.exe`.
+The command-line interface (CLI) tool `dscom` serves as a modern replacement for several legacy tools, including `tlbexp.exe`, `OleView` (for viewing Type Libraries), and `RegAsm.exe`. It is designed to simplify and enhance workflows related to COM (Component Object Model) interoperability in .NET applications.
 
-It supports the following features:
+### Key Features of `dscom.exe`
 
-- Convert an assembly to a type library
-  - Optionally embed the generated type library into the converted assembly
-- Convert a type library to `YAML` file
-- Register a type library
-- Unregister a type library
-- Embeds a type library into an existing assembly
-- Register an assembly (regasm.exe)
-- Unregister an assembly (regasm.exe)
+1. **Convert an Assembly to a Type Library**  
+    `dscom` allows you to generate a COM Type Library (TLB) from a .NET assembly. This is particularly useful for enabling COM interoperability with .NET assemblies in environments where a TLB is required.  
+    - **Optional Embedding**: The generated Type Library can optionally be embedded directly into the converted assembly, ensuring that the TLB is always available alongside the assembly.
+
+2. **Convert a Type Library to a YAML File**  
+    With `dscom`, you can inspect the contents of a Type Library by converting it into a human-readable YAML file. This feature is helpful for debugging, documentation, or understanding the structure of a TLB.
+
+3. **Register a Type Library**  
+    The tool provides functionality to register a Type Library with the system, making it available for use by COM clients.
+
+4. **Unregister a Type Library**  
+    If a Type Library is no longer needed, `dscom` can unregister it, removing its association with the system.
+
+5. **Embed a Type Library into an Existing Assembly**  
+    `dscom` supports embedding an existing Type Library into a specified assembly. This feature is useful for scenarios where you want to bundle the TLB with the assembly for easier distribution and deployment.
+
+6. **Register an Assembly (Equivalent to `RegAsm.exe`)**  
+    The tool can register a .NET assembly for use with COM clients, similar to the functionality provided by `RegAsm.exe`. This includes creating the necessary registry entries to expose the assembly's classes to COM.
+
+7. **Unregister an Assembly (Equivalent to `RegAsm.exe`)**  
+    If an assembly is no longer required for COM interoperability, `dscom` can unregister it, cleaning up the associated registry entries.
+
+These features make `dscom` a versatile and powerful tool for developers working with COM in modern .NET environments, addressing the gaps left by the deprecation of older tools while introducing additional capabilities to streamline the development process.
 
 ### Installation
 
@@ -85,7 +92,7 @@ dotnet tool install --global dscom
 Here you can find all available versions:  
 <https://www.nuget.org/packages/dscom/>
 
-Alternatively you can download dscom.exe from the relase page.  
+Alternatively you can download dscom.exe from the release page.  
 <https://github.com/dspace-group/dscom/releases>
 
 ### Usage
@@ -112,6 +119,15 @@ Commands:
   tlbembed <SourceTypeLibrary> <TargetAssembly>  Embeds a source type library into a target file
   regasm <TargetAssembly>                        Register an assembly
 ```
+
+Example to create a TLB from an assembly:  
+
+```bash
+c:\> dscom tlbexport MyAssembly.dll --out C:\path\to\output\MyAssembly.tlb
+```
+
+For more information about the command line options to create a TLB, use `dscom tlbexport --help`.
+
 
 ## Library
 
