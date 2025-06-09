@@ -295,7 +295,7 @@ The result should be a line as follows in your `.csproj` file:
     </PackageReference>
 ```
 
-**Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 6.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
+**Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 8.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
 
 #### Enforcing to stop the build, if an error occurs
 

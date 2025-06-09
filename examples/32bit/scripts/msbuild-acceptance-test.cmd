@@ -84,11 +84,6 @@ IF NOT "%ERRUNTIMEX64_NET48%" == "0" (
   ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET FullFramework 4.8 failed."
 )
 
-IF NOT "%ERRUNTIMEX64_net80%" == "0" (
-  SET EXITCODE=1
-  ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 6.0 failed."
-)
-
 IF NOT "%ERRUNTIMEX64_NET80%" == "0" (
   SET EXITCODE=1
   ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 8.0 failed."
@@ -102,11 +97,6 @@ IF NOT "%ERRUNTIMEX86_NET48%" == "0" (
 IF NOT "%ERRUNTIMEX86_NET80%" == "0" (
   ::SET EXITCODE=1
   ECHO "::warning::Runtime specific acceptance test for platform x86 using .NET 8.0 failed."
-)
-
-IF NOT "%ERRUNTIMEX86_net80%" == "0" (
-  ::SET EXITCODE=1
-  ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 6.0 failed."
 )
 
 IF NOT EXIST %~dp0\..\comtestdotnet\bin\x64\Release\net48\comtestdotnet.tlb (
