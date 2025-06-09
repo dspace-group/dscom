@@ -42,8 +42,6 @@ public class CompileReleaseFixture
 
 #if NET8_0_OR_GREATER
         var frameworkVersion = "net8.0";
-#elif NET6_0_OR_GREATER
-        var frameworkVersion = "net6.0";
 #else
         var frameworkVersion = "net48";
 #endif

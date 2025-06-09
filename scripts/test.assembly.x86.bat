@@ -4,7 +4,7 @@ SET workspace=%~dp0..\
 @REM set filterregex=--filterregex \.file\= --filterregex \.attributes\.guid\= --filterregex numberOfImplementedInterfaces --filterregex implementedInterfaces
 set filterregex=
 
-SET net60dll=%workspace%src\dscom.test.assembly\bin\Release\net8.0\dSPACE.Runtime.InteropServices.Test.Assembly.dll
+SET net80dll=%workspace%src\dscom.test.assembly\bin\Release\net8.0\dSPACE.Runtime.InteropServices.Test.Assembly.dll
 SET net48dll=%workspace%src\dscom.test.assembly\bin\Release\net48\dSPACE.Runtime.InteropServices.Test.Assembly.dll
 
 del %workspace%src\dscom.test.assembly\bin\Release\net48\*.tlb 
@@ -17,12 +17,12 @@ IF ERRORLEVEL 1 goto error
 
 @REM dscom
 echo ############## dscom.exe tlbexport
-dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net8.0 --no-self-contained -- tlbexport --silent "%net60dll%" "--out" "%net60dll%.tlb"
+dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net8.0 --no-self-contained -- tlbexport --silent "%net80dll%" "--out" "%net80dll%.tlb"
 
 IF ERRORLEVEL 1 goto error
 
 echo ############## dscom.exe tlbdump
-dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net8.0 --no-self-contained -- tlbdump %filterregex% "/tlbrefpath:%net60dll%.tlb/.." "%net60dll%.tlb" "/out:%net60dll%.yaml"
+dotnet run --project %workspace%src\dscom.client\dscom.client.csproj -r win-x86 -f net8.0 --no-self-contained -- tlbdump %filterregex% "/tlbrefpath:%net80dll%.tlb/.." "%net80dll%.tlb" "/out:%net80dll%.yaml"
 IF ERRORLEVEL 1 goto error
 
 WHERE tlbexp
@@ -57,14 +57,14 @@ IF %ERRORLEVEL% NEQ 0 (
     ECHO.
     ECHO Please compare the following files:
     ECHO %net48dll%.yaml 
-    ECHO %net60dll%.yaml
+    ECHO %net80dll%.yaml
     ECHO.
     ECHO ######################################################
     ECHO.
     goto error
 )
 
-code -d "%net48dll%.yaml" "%net60dll%.yaml"
+code -d "%net48dll%.yaml" "%net80dll%.yaml"
 
 :error
     pause
