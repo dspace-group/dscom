@@ -12,8 +12,8 @@ jobs:
         test_suite:
           - name: OutProc
             path: outproc
-          # - name: 32 Bit
-          #   path: 32bit
+          - name: 32 Bit
+            path: 32bit
           - name: C++/CLI
             path: cppcli
 
