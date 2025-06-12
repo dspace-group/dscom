@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>dSPACE.Runtime.InteropServices</AssemblyName>
-    <TargetFrameworks>net8.0;net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>
     <RootNamespace>dSPACE.Runtime.InteropServices</RootNamespace>

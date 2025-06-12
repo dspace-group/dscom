@@ -16,9 +16,9 @@ if not exist %dscom32% (
 )
 
 dotnet build --framework net48 -c Release %~dp0\..\comtestdotnet\comtestdotnet.csproj
-dotnet build --framework net6.0 -c Release %~dp0\..\comtestdotnet\comtestdotnet.csproj
+dotnet build --framework net8.0 -c Release %~dp0\..\comtestdotnet\comtestdotnet.csproj
 
-SET dll60=%~dp0\..\comtestdotnet\bin\Release\net6.0\comtestdotnet.dll
+SET dll60=%~dp0\..\comtestdotnet\bin\Release\net8.0\comtestdotnet.dll
 SET dll48=%~dp0\..\comtestdotnet\bin\Release\net48\comtestdotnet.dll
 
 %dscom% tlbexport %dll60% --out %~dp0\tlb-comtestdotnet-dscom-64.tlb

@@ -30,6 +30,7 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
 
 - [dSPACE COM tools](#dspace-com-tools)
   - [Command Line Client](#command-line-client)
+    - [Key Features of `dscom.exe`](#key-features-of-dscomexe)
     - [Installation](#installation)
     - [Usage](#usage)
   - [Library](#library)
@@ -47,6 +48,7 @@ The `dSPACE.Runtime.InteropServices.BuildTasks` library provides build tasks whi
   - [Migration notes (mscorelib vs System.Private.CoreLib)](#migration-notes-mscorelib-vs-systemprivatecorelib)
     - [Why can I load a .NET Framework library into a .NET application?](#why-can-i-load-a-net-framework-library-into-a-net-application)
   - [Limitations](#limitations)
+    - [.NET 6 support](#net-6-support)
     - [RegisterAssembly](#registerassembly)
     - [RegAsm](#regasm)
   - [Contributing](#contributing)
@@ -293,7 +295,7 @@ The result should be a line as follows in your `.csproj` file:
     </PackageReference>
 ```
 
-**Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 6.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
+**Note**: The extra attribute `NoWarn="NU1701"` is only required, if neither `.NET 4.8` nor `.NET 8.0` are targeted, since dotnet pack will currently not create a .NETStandard 2.0 compliant NuGet Package.
 
 #### Enforcing to stop the build, if an error occurs
 
@@ -453,6 +455,15 @@ classextern forwarder System.Exception
 - No support for `UnmanagedType.CustomMarshaler`
 - No support for .NET Framework assemblies with `AssemblyMetadataAttribute` value ".NETFrameworkAssembly"
 - Using DsComTypeLibraryEmbedAfterBuild=true in combination with the Default ComHost due to a cyclic dependency in .NET SDK [#286](https://github.com/dspace-group/dscom/issues/286).
+
+### .NET 6 support
+
+.NET 6 is no longer supported by this project. Please use .NET 8 or later for full compatibility and support. If you require .NET 6 support, consider using an older release of dscom, but note that new features and bug fixes will not be backported.
+
+Latest .NET compatible version is `1.15.2`.
+
+- [https://github.com/dspace-group/dscom/releases/tag/v1.15.2](https://github.com/dspace-group/dscom/releases/tag/v1.15.2)
+- [https://www.nuget.org/packages/dscom/1.15.2](https://www.nuget.org/packages/dscom/1.15.2)
 
 ### RegisterAssembly
 

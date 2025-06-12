@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>dscom</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>
     <RuntimeIdentifiers Condition="'$(PackForBuildTaskTools)' == 'true'">win-x64;win-x86</RuntimeIdentifiers>

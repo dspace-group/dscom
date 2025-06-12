@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <DsComBuildTargetFrameWork>net6.0</DsComBuildTargetFrameWork>
+    <DsComBuildTargetFrameWork>net8.0</DsComBuildTargetFrameWork>
     <AssemblyName>dSPACE.Runtime.InteropServices.BuildTasks</AssemblyName>
     <TargetFrameworks>net8.0;$(DsComBuildTargetFrameWork);net48</TargetFrameworks>
     <PlatformTarget>x64</PlatformTarget>

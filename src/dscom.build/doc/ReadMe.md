@@ -200,7 +200,7 @@ Two targets must be executed before generating the NuSpec file:
     Hence the dependent assembly must be bundled with the NuGet package. Refer to a [blog article](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) for details.
 
 **DsComBuildPackTool**:
-    The MsBuild process is hosted using the target framework, i.e. .NET FullFramework 4.8 or .NET 6.0 using an x64 based process environment.
+    The MsBuild process is hosted using the target framework, i.e. .NET FullFramework 4.8 or .NET 8.0 using an x64 based process environment.
     In order to enable the build using the 32bit builder and other target frameworks, the executables will be added to the NuGet package.
     This approach has been inspired by [Grpc.Tools](https://github.com/grpc/grpc/blob/master/src/csharp/Grpc.Tools/build/native/Grpc.Tools.props) NuGet package which bundles the `protoc.exe` and `grpc_cpp_plugin.exe` executables.
     In order to get the matching binaries without interfering with the regular MsBuild and NuGet packaging, the task calls the [MsBuild](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-task) task for the [dscom.client.csproj](/src/dscom.client/dscom.client.csproj) using the targets `Restore`, `Build` and `Pack` targets for both platforms, x86 and x64 using a different output directory.

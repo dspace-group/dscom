@@ -13,7 +13,7 @@ This example shows how to build a 32bit application with a .NET COM server and a
     `.\bin\dscom32.exe tlbregister <YOUR-REPO-PATH>\comtestdotnet\comtestdotnet.tlb`
 
 5. Register the COM server as **Adminstrator**:  
- `regsvr32.exe <YOUR-REPO-PATH>\comtestdotnet\bin\Debug\net6.0\win-x86\comtestdotnet.comhost.dll
+ `regsvr32.exe <YOUR-REPO-PATH>\comtestdotnet\bin\Debug\net8.0\win-x86\comtestdotnet.comhost.dll
 `
 
 6. Open Visual Studio 2022. Compile and run the application as **x86**.
