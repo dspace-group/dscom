@@ -28,69 +28,69 @@ public static class ConsoleApp
     public static int Main(string[] args)
     {
         var tlbexportCommand = new Command("tlbexport", "Export the assembly to the specified type library") {
-            new Argument<string>("Assembly", "File name of assembly to parse"),
-            new Option<string>(new[] {"--out", "/out"}, description: "File name of type library to be produced"),
-            new Option<string[]>(new[] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string[]>(new[] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<bool>(new[] {"--silent", "/silent"}, description: "Suppresses all output except for errors"),
-            new Option<string[]>(new[] {"--silence", "/silence"}, description: "Suppresses output for the given warning (Can not be used with /silent)", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<bool>(new[] {"--verbose", "/verbose"}, description: "Detailed log output"),
-            new Option<string[]>(new[] {"--names", "/names"}, description: "A file in which each line specifies the capitalization of a name in the type library.", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string>(new[] { "--overridename", "/overridename"}, description: "Overwrites the library name"),
-            new Option<Guid>(new[] {"--overridetlbid", "/overridetlbid"}, description: "Overwrites the library id"),
-            new Option<bool?>(new[] {"--createmissingdependenttlbs", "/createmissingdependenttlbs"}, description: "Generate missing type libraries for referenced assemblies. (default true)"),
-            new Option<string?>(new[] { "--embed", "/embed"}, () => TypeLibConverterOptions.NotSpecifiedViaCommandLineArgumentsDefault, description: "Embeds type library into the assembly. (default: false)") { Arity = ArgumentArity.ZeroOrOne },
-            new Option<ushort>(new[] {"--index", "/index"}, () => 1, description: "If the switch --embed is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. Ignored if --embed not present. (default 1)")
+            new Argument<string>("Assembly"){ Description = "File name of assembly to parse"},
+            new Option<string>("--out", "/out") { Description = "File name of type library to be produced"},
+            new Option<string[]>("--tlbreference", "/tlbreference") { Description = "Type library used to resolve references", Arity = ArgumentArity.ZeroOrMore, DefaultValueFactory = _ => Array.Empty<string>() },
+            new Option<string[]>("--tlbrefpath", "/tlbrefpath") { Description = "Path used to resolve referenced type libraries", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<string[]>("--asmpath", "/asmpath") { Description = "Look for assembly references here", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<bool>("--silent", "/silent") { Description = "Suppresses all output except for errors" },
+            new Option<string[]>("--silence", "/silence") { Description = "Suppresses output for the given warning (Can not be used with /silent)", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<bool>("--verbose", "/verbose") { Description = "Detailed log output" },
+            new Option<string[]>("--names", "/names") { Description = "A file in which each line specifies the capitalization of a name in the type library.", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<string>("--overridename", "/overridename") { Description = "Overwrites the library name" },
+            new Option<Guid>("--overridetlbid", "/overridetlbid") { Description = "Overwrites the library id" },
+            new Option<bool?>("--createmissingdependenttlbs", "/createmissingdependenttlbs") { Description = "Generate missing type libraries for referenced assemblies. (default true)" },
+            new Option<string?>("--embed", "/embed") { DefaultValueFactory =_ =>  TypeLibConverterOptions.NotSpecifiedViaCommandLineArgumentsDefault, Description = "Embeds type library into the assembly. (default: false)", Arity = ArgumentArity.ZeroOrOne },
+            new Option<ushort>("--index", "/index") { DefaultValueFactory = _ => 1, Description = "If the switch --embed is specified, the index indicates the resource ID to be used for the embedded type library. Must be a number between 1 and 65535. Ignored if --embed not present. (default 1)" }
         };
 
         var tlbdumpCommand = new Command("tlbdump", "Dump a type library")
         {
-            new Argument<string>("TypeLibrary", "File name of type library"),
-            new Option<string>(new[] {"--out", "/out"}, description: "File name of the output"),
-            new Option<string[]>(new[] {"--tlbreference", "/tlbreference"}, description: "Type library used to resolve references", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string[]>(new[] {"--tlbrefpath", "/tlbrefpath"}, description: "Path used to resolve referenced type libraries", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-            new Option<string[]>(new[] {"--filterregex", "/filterregex"}, description: "Regex to filter the output", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
+            new Argument<string>("TypeLibrary") {Description = "File name of type library" },
+            new Option<string>("--out", "/out") { Description =  "File name of the output" },
+            new Option<string[]>("--tlbreference", "/tlbreference") { Description = "Type library used to resolve references", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<string[]>("--tlbrefpath", "/tlbrefpath") { Description = "Path used to resolve referenced type libraries", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
+            new Option<string[]>("--filterregex", "/filterregex") { Description = "Regex to filter the output", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore },
         };
 
         var tlbregisterCommand = new Command("tlbregister", "Register a type library")
         {
-            new Argument<string>("TypeLibrary", "File name of type library"),
-            new Option<bool>(new[] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
+            new Argument<string>("TypeLibrary") { Description = "File name of type library" },
+            new Option<bool>("--foruser", "/foruser") { Description = "Registered for use only by the calling user identity."}
         };
 
         var tlbunregisterCommand = new Command("tlbunregister", "Unregister a type library")
         {
-            new Argument<string>("TypeLibrary", "File name of type library"),
-            new Option<bool>(new[] {"--foruser", "/foruser"}, description: "Registered for use only by the calling user identity."),
+            new Argument<string>("TypeLibrary") {  Description = "File name of type library" },
+            new Option<bool> ("--foruser", "/foruser") { Description ="Registered for use only by the calling user identity." },
         };
 
         var tlbembedCommand = new Command("tlbembed", "Embeds a source type library into a target file")
         {
-            new Argument<string>("SourceTypeLibrary","File name of type library"),
-            new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
-            new Option<ushort>(new[] {"--index", "/index"}, () => 1, description:"Index to use for resource ID for the type library. If omitted, defaults to 1. Must be a positive integer from 1 to 65535.")
+            new Argument<string>("SourceTypeLibrary") { Description ="File name of type library" },
+            new Argument<string>("TargetAssembly") { Description = "File name of target assembly to receive the type library as a resource" },
+            new Option<ushort>("--index", "/index") { DefaultValueFactory = _ =>  1, Description = "Index to use for resource ID for the type library. If omitted, defaults to 1. Must be a positive integer from 1 to 65535." }
         };
 
         var registerAssemblyCommand = new Command("regasm", "Register an assembly")
-            {
-                new Argument<string>("TargetAssembly", "File name of target assembly to receive the type library as a resource"),
-                new Option<string[]>(new[] {"--asmpath", "/asmpath"}, description: "Look for assembly references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<string[]>(new[] { "--tlbrefpath", "/tblrefpath"}, description: "Look for type library references here", getDefaultValue: () =>  Array.Empty<string>()) { Arity =  ArgumentArity.ZeroOrMore},
-                new Option<bool>(new[] {"--tlb", "/tlb"}, description: "Will create and register a typelibrary for the given assembly"),
-                new Option<bool>(new[] {"--codebase", "/codebase"}, description: "Will register the assembly with codebase"),
-                new Option<bool>(new[] {"--unregister", "/unregister"}, description: "Will unregister the assembly"),
-            };
+        {
+            new Argument<string>("TargetAssembly") { Description = "File name of target assembly to receive the type library as a resource" },
+            new Option<string[]>("--asmpath", "/asmpath") { Description= "Look for assembly references here", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore},
+            new Option<string[]>("--tlbrefpath", "/tblrefpath") { Description= "Look for type library references here", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore } ,
+            new Option<bool>("--tlb", "/tlb"){ Description = "Will create and register a typelibrary for the given assembly" },
+            new Option<bool>("--codebase", "/codebase") { Description = "Will register the assembly with codebase" },
+            new Option<bool>("--unregister", "/unregister") { Description = "Will unregister the assembly" },
+        };
 
         var rootCommand = new RootCommand
-            {
-                tlbexportCommand,
-                tlbdumpCommand,
-                tlbregisterCommand,
-                tlbunregisterCommand,
-                tlbembedCommand,
-                registerAssemblyCommand
-            };
+        {
+            tlbexportCommand,
+            tlbdumpCommand,
+            tlbregisterCommand,
+            tlbunregisterCommand,
+            tlbembedCommand,
+            registerAssemblyCommand
+        };
 
         rootCommand.Description = $"dSPACE COM tools ({(Environment.Is64BitProcess ? "64Bit" : "32Bit")})";
 
@@ -101,12 +101,12 @@ public static class ConsoleApp
         ConfigureTLBEmbedHandler(tlbembedCommand);
         ConfigureRegisterAssemblyHandler(registerAssemblyCommand);
 
-        return rootCommand.Invoke(args);
+        return rootCommand.Parse(args).Invoke();
     }
 
     private static void ConfigureTLBUnRegisterHandler(Command tlbregisterCommand)
     {
-        tlbregisterCommand.Handler = CommandHandler.Create<TlbUnRegisterOptions>((options) =>
+        tlbregisterCommand.Action = CommandHandler.Create<TlbUnRegisterOptions>((options) =>
         {
             try
             {
@@ -123,7 +123,7 @@ public static class ConsoleApp
 
     private static void ConfigureTLBRegisterHandler(Command tlbregisterCommand)
     {
-        tlbregisterCommand.Handler = CommandHandler.Create<TlbRegisterOptions>((options) =>
+        tlbregisterCommand.Action = CommandHandler.Create<TlbRegisterOptions>((options) =>
         {
             try
             {
@@ -140,7 +140,7 @@ public static class ConsoleApp
 
     private static void ConfigureTLBDumpHandler(Command tlbdumpCommand)
     {
-        tlbdumpCommand.Handler = CommandHandler.Create<TypeLibTextConverterSettings>((options) =>
+        tlbdumpCommand.Action = CommandHandler.Create<TypeLibTextConverterSettings>((options) =>
         {
             try
             {
@@ -163,7 +163,7 @@ public static class ConsoleApp
 
     private static void ConfigureTLBEmbedHandler(Command tlbembedCommand)
     {
-        tlbembedCommand.Handler = CommandHandler.Create<TypeLibEmbedderSettings>((settings) => TypeLibEmbedder.EmbedTypeLib(settings));
+        tlbembedCommand.Action = CommandHandler.Create<TypeLibEmbedderSettings>((settings) => TypeLibEmbedder.EmbedTypeLib(settings));
     }
 
     /// <summary>
@@ -173,7 +173,7 @@ public static class ConsoleApp
     /// <exception cref="FileNotFoundException"></exception>
     private static void ConfigureRegisterAssemblyHandler(Command registerCommand)
     {
-        registerCommand.Handler = CommandHandler.Create<RegisterAssemblySettings>(
+        registerCommand.Action = CommandHandler.Create<RegisterAssemblySettings>(
             (options) =>
             {
                 try
@@ -240,7 +240,7 @@ public static class ConsoleApp
 
     private static void ConfigureTLBExportHandler(Command tlbexportCommand)
     {
-        tlbexportCommand.Handler = CommandHandler.Create<TypeLibConverterOptions>((options) =>
+        tlbexportCommand.Action = CommandHandler.Create<TypeLibConverterOptions>((options) =>
         {
             try
             {
