@@ -178,6 +178,13 @@ public static class ConsoleApp
             {
                 try
                 {
+                    foreach (var asmPath in options.ASMPath)
+                    {
+                        if (!Directory.Exists(asmPath))
+                        {
+                            throw new DirectoryNotFoundException($"Directory {asmPath} not found.");
+                        }
+                    }
                     var paths = options.ASMPath.Append(Path.GetDirectoryName(options.TargetAssembly)).ToArray();
 
                     using var assemblyResolver = new AssemblyResolver(paths!, false);
@@ -279,6 +286,14 @@ public static class ConsoleApp
         var dir = Path.GetDirectoryName(options.Assembly);
 
         var asmPaths = options.ASMPath;
+        foreach (var asmPath in asmPaths)
+        {
+            if (!Directory.Exists(asmPath))
+            {
+                throw new DirectoryNotFoundException($"Directory {asmPath} not found.");
+            }
+        }
+
         if (Directory.Exists(dir))
         {
             asmPaths = asmPaths.Prepend(dir).ToArray();
