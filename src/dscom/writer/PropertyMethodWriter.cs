@@ -1,11 +1,11 @@
 // Copyright 2022 dSPACE GmbH, Mark Lechtermann, Matthias Nissen and Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,9 @@ namespace dSPACE.Runtime.InteropServices.Writer;
 internal class PropertyMethodWriter : MethodWriter
 {
     private readonly PropertyInfo? _propertyInfo;
-    public PropertyMethodWriter(InterfaceWriter interfaceWriter, MethodInfo methodInfo, WriterContext context, string methodName) : base(interfaceWriter, methodInfo, context, methodName)
+
+    public PropertyMethodWriter(InterfaceWriter interfaceWriter, MethodInfo methodInfo, WriterContext context, string methodName)
+        : base(interfaceWriter, methodInfo, context, methodName)
     {
         _propertyInfo = methodInfo.DeclaringType!.GetProperties().First(p => p.GetGetMethod() == methodInfo || p.GetSetMethod() == methodInfo);
         MemberInfo = _propertyInfo!;
@@ -52,12 +54,19 @@ internal class PropertyMethodWriter : MethodWriter
 
         if (InvokeKind == INVOKEKIND.INVOKE_PROPERTYGET)
         {
-            MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
+            MethodInfo
+                .GetParameters()
+                .ToList()
+                .ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
 
-        if (InvokeKind == INVOKEKIND.INVOKE_PROPERTYPUTREF)
+        if (InvokeKind is INVOKEKIND.INVOKE_PROPERTYPUTREF or INVOKEKIND.INVOKE_PROPERTYPUT)
         {
-            MethodInfo.GetParameters().Where(p => !string.IsNullOrEmpty(p.Name)).ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
+            MethodInfo
+                .GetParameters()
+                .Where(p => !string.IsNullOrEmpty(p.Name))
+                .ToList()
+                .ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
 
         if (UseHResultAsReturnValue && InvokeKind == INVOKEKIND.INVOKE_PROPERTYGET)
