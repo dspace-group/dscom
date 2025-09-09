@@ -168,6 +168,53 @@ public class RegistrationServicesTest : BaseTest
         // Cleanup
         registrationServices.UnregisterTypeForComClients(cookie);
     }
+
+    [Fact]
+    public void RegistrationServices_Should_No_ThrowOn_ComRegister_Without_Method()
+    {
+        RegistrationServices.InvokeRegisterFunction(typeof(NoRegisterFunctionClass));
+        RegistrationServices.InvokeUnregisterFunction(typeof(NoRegisterFunctionClass));
+    }
+
+    [Fact]
+    public void RegistrationServices_Should_Invoke_ComRegisterMethod()
+    {
+        RegistrationServices.InvokeRegisterFunction(typeof(SingleRegisterFunctionClass));
+        RegistrationServices.InvokeUnregisterFunction(typeof(SingleRegisterFunctionClass));
+
+        Assert.Equal(typeof(SingleRegisterFunctionClass), SingleRegisterFunctionClass.RegisteredType);
+        Assert.Equal(typeof(SingleRegisterFunctionClass), SingleRegisterFunctionClass.UnregisteredType);
+    }
+
+    [Fact]
+    public void RegistrationServices_Should_Throw_On_Instance_ComRegisterMethod()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeRegisterFunction(typeof(SingleInstanceRegisterFunctionClass)));
+
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeUnregisterFunction(typeof(SingleInstanceRegisterFunctionClass)));
+    }
+
+    [Fact]
+    public void RegistrationServices_Should_Throw_On_Multiple_ComRegisterMethod()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeRegisterFunction(typeof(MultipleRegisterFunctionClass)));
+
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeUnregisterFunction(typeof(MultipleRegisterFunctionClass)));
+    }
+
+    [Fact]
+    public void RegistrationServices_Should_Throw_On_WrongSignature_ComRegisterMethod()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeRegisterFunction(typeof(WrongSignatureRegisterFunctionClass)));
+
+        Assert.Throws<InvalidOperationException>(
+            () => RegistrationServices.InvokeUnregisterFunction(typeof(WrongSignatureRegisterFunctionClass)));
+    }
 }
 
 [ComVisible(true)]
@@ -219,4 +266,89 @@ public class RegistrationServicesTestClass : IRegistrationServicesTestInterface
     {
         return "Success";
     }
+}
+
+public class NoRegisterFunctionClass
+{
+
+}
+
+public class SingleRegisterFunctionClass
+{
+    public static Type? RegisteredType { get; private set; }
+
+    public static Type? UnregisteredType { get; private set; }
+
+    [ComRegisterFunction]
+    public static void ComRegister(Type type)
+    {
+        RegisteredType = type;
+    }
+
+    [ComUnregisterFunction]
+    public static void ComUnregister(Type type)
+    {
+        UnregisteredType = type;
+    }
+}
+
+public class SingleInstanceRegisterFunctionClass
+{
+    public Type? RegisteredType { get; private set; }
+
+    public Type? UnregisteredType { get; private set; }
+
+    [ComRegisterFunction]
+    public void ComRegister(Type type)
+    {
+        RegisteredType = type;
+    }
+
+    [ComUnregisterFunction]
+    public void ComUnregister(Type type)
+    {
+        UnregisteredType = type;
+    }
+}
+
+public class MultipleRegisterFunctionClass
+{
+    public static Type? RegisteredType { get; private set; }
+
+    public static Type? UnregisteredType { get; private set; }
+
+    [ComRegisterFunction]
+    public static void ComRegisterA(Type type)
+    {
+        RegisteredType = type;
+    }
+
+    [ComRegisterFunction]
+    public static void ComRegisterB(Type type)
+    {
+        RegisteredType = type;
+    }
+
+    [ComUnregisterFunction]
+    public static void ComUnregisterA(Type type)
+    {
+        UnregisteredType = type;
+    }
+
+    [ComUnregisterFunction]
+    public static void ComUnregisterB(Type type)
+    {
+        UnregisteredType = type;
+    }
+}
+
+public class WrongSignatureRegisterFunctionClass
+{
+    [ComRegisterFunction]
+    public static void ComRegister()
+    { }
+
+    [ComUnregisterFunction]
+    public static void ComUnregister()
+    { }
 }
