@@ -623,6 +623,8 @@ public class RegistrationServices
 
     private static bool UnregisterManagedType(Type type, string assemblyVersion)
     {
+        InvokeUnregisterFunction(type);
+
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
         var progId = Marshal.GenerateProgIdForType(type);
 
@@ -721,8 +723,6 @@ public class RegistrationServices
                 Registry.ClassesRoot.DeleteSubKey(progId!, false);
             }
         }
-
-        InvokeUnregisterFunction(type);
 
         return allVersionsGone;
     }
