@@ -172,15 +172,15 @@ public class RegistrationServicesTest : BaseTest
     [Fact]
     public void RegistrationServices_Should_No_ThrowOn_ComRegister_Without_Method()
     {
-        RegistrationServices.InvokeRegisterFunction(typeof(NoRegisterFunctionClass));
-        RegistrationServices.InvokeUnregisterFunction(typeof(NoRegisterFunctionClass));
+        RegistrationServices.CustomRegistrationFunction(typeof(NoRegisterFunctionClass));
+        RegistrationServices.CustomUnregistrationFunction(typeof(NoRegisterFunctionClass));
     }
 
     [Fact]
     public void RegistrationServices_Should_Invoke_ComRegisterMethod()
     {
-        RegistrationServices.InvokeRegisterFunction(typeof(SingleRegisterFunctionClass));
-        RegistrationServices.InvokeUnregisterFunction(typeof(SingleRegisterFunctionClass));
+        RegistrationServices.CustomRegistrationFunction(typeof(SingleRegisterFunctionClass));
+        RegistrationServices.CustomUnregistrationFunction(typeof(SingleRegisterFunctionClass));
 
         Assert.Equal(typeof(SingleRegisterFunctionClass), SingleRegisterFunctionClass.RegisteredType);
         Assert.Equal(typeof(SingleRegisterFunctionClass), SingleRegisterFunctionClass.UnregisteredType);
@@ -190,30 +190,30 @@ public class RegistrationServicesTest : BaseTest
     public void RegistrationServices_Should_Throw_On_Instance_ComRegisterMethod()
     {
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeRegisterFunction(typeof(SingleInstanceRegisterFunctionClass)));
+            () => RegistrationServices.CustomRegistrationFunction(typeof(SingleInstanceRegisterFunctionClass)));
 
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeUnregisterFunction(typeof(SingleInstanceRegisterFunctionClass)));
+            () => RegistrationServices.CustomUnregistrationFunction(typeof(SingleInstanceRegisterFunctionClass)));
     }
 
     [Fact]
     public void RegistrationServices_Should_Throw_On_Multiple_ComRegisterMethod()
     {
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeRegisterFunction(typeof(MultipleRegisterFunctionClass)));
+            () => RegistrationServices.CustomRegistrationFunction(typeof(MultipleRegisterFunctionClass)));
 
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeUnregisterFunction(typeof(MultipleRegisterFunctionClass)));
+            () => RegistrationServices.CustomUnregistrationFunction(typeof(MultipleRegisterFunctionClass)));
     }
 
     [Fact]
     public void RegistrationServices_Should_Throw_On_WrongSignature_ComRegisterMethod()
     {
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeRegisterFunction(typeof(WrongSignatureRegisterFunctionClass)));
+            () => RegistrationServices.CustomRegistrationFunction(typeof(WrongSignatureRegisterFunctionClass)));
 
         Assert.Throws<InvalidOperationException>(
-            () => RegistrationServices.InvokeUnregisterFunction(typeof(WrongSignatureRegisterFunctionClass)));
+            () => RegistrationServices.CustomUnregistrationFunction(typeof(WrongSignatureRegisterFunctionClass)));
     }
 }
 

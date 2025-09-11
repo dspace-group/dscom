@@ -227,7 +227,7 @@ public class RegistrationServices
                 RegisterManagedType(type, fullName, assemblyVersion, codeBase, runtimeVersion, preferredAction);
             }
 
-            // Skip: CustomRegistrationFunction
+            CustomRegistrationFunction(type);
         }
 
         // Skip: PIA Regitration
@@ -263,7 +263,8 @@ public class RegistrationServices
 
         foreach (var type in typesToUnregister)
         {
-            // Skip: Custom unregister function
+            CustomUnregistrationFunction(type);
+
             if (IsComRegistratableValueType(type) && !UnregisterValueType(type, assemblyVersion))
             {
                 typesNotRemoved.Add(type);
@@ -484,8 +485,6 @@ public class RegistrationServices
         using var managedCategoryKeyForImplemented = implementedCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
 
         SetupGlobalManagedCategoryAction(preferredAction);
-
-        InvokeRegisterFunction(type);
     }
 
     private static void SetupGlobalManagedCategoryAction(ManagedCategoryAction preferredAction)
@@ -623,8 +622,6 @@ public class RegistrationServices
 
     private static bool UnregisterManagedType(Type type, string assemblyVersion)
     {
-        InvokeUnregisterFunction(type);
-
         var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
         var progId = Marshal.GenerateProgIdForType(type);
 
@@ -852,14 +849,14 @@ public class RegistrationServices
         }
     }
 
-    public static void InvokeRegisterFunction(Type type)
+    public static void CustomRegistrationFunction(Type type)
     {
         var provider = TryGetComRegisterFunction<ComRegisterFunctionAttribute>(type);
 
         provider?.Invoke(null, new object[] { type });
     }
 
-    public static void InvokeUnregisterFunction(Type type)
+    public static void CustomUnregistrationFunction(Type type)
     {
         var provider = TryGetComRegisterFunction<ComUnregisterFunctionAttribute>(type);
 
