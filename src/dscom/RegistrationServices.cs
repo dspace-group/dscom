@@ -227,7 +227,7 @@ public class RegistrationServices
                 RegisterManagedType(type, fullName, assemblyVersion, codeBase, runtimeVersion, preferredAction);
             }
 
-            // Skip: CustomRegistrationFunction
+            CustomRegistrationFunction(type);
         }
 
         // Skip: PIA Regitration
@@ -263,7 +263,8 @@ public class RegistrationServices
 
         foreach (var type in typesToUnregister)
         {
-            // Skip: Custom unregister function
+            CustomUnregistrationFunction(type);
+
             if (IsComRegistratableValueType(type) && !UnregisterValueType(type, assemblyVersion))
             {
                 typesNotRemoved.Add(type);
@@ -846,6 +847,58 @@ public class RegistrationServices
         {
             return false;
         }
+    }
+
+    public static void CustomRegistrationFunction(Type type)
+    {
+        var provider = TryGetComRegisterFunction<ComRegisterFunctionAttribute>(type);
+
+        provider?.Invoke(null, new object[] { type });
+    }
+
+    public static void CustomUnregistrationFunction(Type type)
+    {
+        var provider = TryGetComRegisterFunction<ComUnregisterFunctionAttribute>(type);
+
+        provider?.Invoke(null, new object[] { type });
+    }
+
+    private static MethodInfo? TryGetComRegisterFunction<T>(Type type)
+        where T : Attribute
+    {
+        var registerMethod = type
+            .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+            .Where(m => m.GetCustomAttribute<T>() is not null)
+            .ToList();
+
+        // No method
+        if (registerMethod.Count == 0)
+        {
+            return null;
+        }
+
+        // multipe methods -> error
+        if (registerMethod.Count > 1)
+        {
+            throw new InvalidOperationException($"The type '{type.Name}' contains more than on COM-Function for registration.");
+        }
+
+        var provider = registerMethod[0];
+
+        // method should be static
+        if (!provider.IsStatic)
+        {
+            throw new InvalidOperationException($"The COM-Function for registration of type '{type.Name}' should be static.");
+        }
+
+        // method should have exactly one parameter of type
+        var paramters = provider.GetParameters();
+        if (paramters.Length != 1 || paramters[0].ParameterType != typeof(Type))
+        {
+            throw new InvalidOperationException($"The COM-Function for registration of type '{type.Name}' should have exactly one parameter of '{nameof(Type)}.");
+        }
+
+        return provider;
     }
 
 }
