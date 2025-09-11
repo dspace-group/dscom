@@ -37,6 +37,8 @@
     <DsComOverideLibraryName></DsComOverideLibraryName>
     <!-- Do not embed type library after build -->
     <DsComTypeLibraryEmbedAfterBuild>false</DsComTypeLibraryEmbedAfterBuild>
+    <!-- If the file shall be exported, do it for all users only if requested  -->
+    <DsComRegisterTypeLibrariesAfterBuildGlobally>false</DsComRegisterTypeLibrariesAfterBuildGlobally>
   </PropertyGroup>
 
   <!-- Clear properties -->

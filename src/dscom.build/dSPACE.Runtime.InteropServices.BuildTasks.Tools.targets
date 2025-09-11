@@ -116,4 +116,63 @@
           IgnoreExitCode="false"
           WorkingDirectory="$(_DsComWorkingDir)" />
   </Target>
+  
+  <!-- Target to optionally register type library -->
+  <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
+          DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
+          AfterTargets="AfterBuild"
+          Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'">
+    <PropertyGroup>
+      <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
+      <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
+    </PropertyGroup>
+    
+    <Warning Code="DSCOM004" 
+             Text="It is not recommended to perform a system-wide type library registration after the build."
+             Condition="!$(NoWarn.Contains('DSCOM004')) AND '$(DsComRegisterTypeLibrariesAfterBuildGlobally)' == 'true'" />
+    
+    <PropertyGroup>
+      <_DsComArguments />
+      <_DsComArguments>$(_DsComArguments) tlbregister</_DsComArguments>
+      <_DsComArguments>$(_DsComArguments) "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComRegisterTypeLibrariesAfterBuildGlobally)' != 'true'">$(_DsComArguments) --foruser</_DsComArguments>
+    </PropertyGroup>
+    
+    <Exec Command='"$(_DsComToolsFileDir)dscom.exe" $(_DsComArguments)'
+          ConsoleToMsBuild="true" 
+          StdErrEncoding="UTF-8"
+          StdOutEncoding="UTF-8"
+          IgnoreExitCode="false"
+          WorkingDirectory="$(_DsComWorkingDir)" />
+    
+    <Message Importance="High"
+             Text="Type library file at '$(_DsComExportTypeLibraryTargetFile)' has been registered successfully." />
+  </Target>
+  
+  <!-- Target to optionally unregister type library. Should be called before removing. -->
+  <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
+          Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true' AND Exists('$(_DsComExportTypeLibraryTargetFile)')"
+          BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
+    <PropertyGroup>
+      <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
+      <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <_DsComArguments />
+      <_DsComArguments>$(_DsComArguments) tlbunregister</_DsComArguments>
+      <_DsComArguments>$(_DsComArguments) "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
+      <_DsComArguments Condition="'$(DsComRegisterTypeLibrariesAfterBuildGlobally)' != 'true'">$(_DsComArguments) --foruser</_DsComArguments>
+    </PropertyGroup>
+    
+    <Message Importance="High"
+             Text="Deregistering '$(_DsComExportTypeLibraryTargetFile)' before cleaning up old builds." />
+    
+    <Exec Command='"$(_DsComToolsFileDir)dscom.exe" $(_DsComArguments)'
+          ConsoleToMsBuild="true" 
+          StdErrEncoding="UTF-8"
+          StdOutEncoding="UTF-8"
+          IgnoreExitCode="false"
+          WorkingDirectory="$(_DsComWorkingDir)" />
+  </Target>
 </Project>
