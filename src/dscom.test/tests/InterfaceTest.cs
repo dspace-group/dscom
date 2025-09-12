@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Runtime.InteropServices;
-using Xunit;
 
 namespace dSPACE.Runtime.InteropServices.Tests;
 
@@ -199,15 +198,15 @@ public class InterfaceTest : BaseTest
     public void InterfaceWithoutNamespace_GenerateTypes()
     {
         var result = CreateAssembly()
-            .WithInterface("FirstInterface")
-                .WithNamespace(null)
-                .Build()
-            .WithInterface("SecondInterface")
-                .WithNamespace(null)
-                .Build()
-            .Build();
+                        .WithInterface("FirstInterface")
+                            .WithNamespace(null)
+                            .Build()
+                        .WithInterface("SecondInterface")
+                            .WithNamespace(null)
+                            .Build()
+                        .Build();
 
-        Assert.NotNull(result.TypeLib.GetTypeInfoByName("FirstInterface")); 
-        Assert.NotNull(result.TypeLib.GetTypeInfoByName("SecondInterface")); 
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("FirstInterface"));
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("SecondInterface"));
     }
 }

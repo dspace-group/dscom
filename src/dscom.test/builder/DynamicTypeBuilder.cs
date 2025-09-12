@@ -120,7 +120,7 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
         {
             foreach (var interfaceName in AddInterfaceImplementation)
             {
-                var interfaceAndNameSpace = string.IsNullOrEmpty(Namespace) ? interfaceName: $"{Namespace}.{interfaceName}";
+                var interfaceAndNameSpace = string.IsNullOrEmpty(Namespace) ? interfaceName : $"{Namespace}.{interfaceName}";
                 TypeBuilder.AddInterfaceImplementation(DynamicTypeLibBuilder.ModuleBuilder.GetType(interfaceAndNameSpace)!);
             }
         }

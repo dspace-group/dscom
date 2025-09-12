@@ -108,12 +108,11 @@ internal sealed class LibraryWriter : BaseWriter
                 continue;
             }
 
-
             if (!type.IsPublic && !type.IsNestedPublic)
             {
                 continue;
             }
-            
+
             if (type.IsGenericType)
             {
                 continue;
