@@ -113,12 +113,7 @@ internal sealed class LibraryWriter : BaseWriter
             {
                 continue;
             }
-
-            if (type.Namespace is null)
-            {
-                continue;
-            }
-
+            
             if (type.IsGenericType)
             {
                 continue;

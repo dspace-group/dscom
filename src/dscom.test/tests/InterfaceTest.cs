@@ -148,6 +148,7 @@ public class InterfaceTest : BaseTest
                         .Build());
     }
 
+
     [Theory]
     [InlineData(ComInterfaceType.InterfaceIsIDispatch, "IDispatch")]
     [InlineData(ComInterfaceType.InterfaceIsDual, "IDispatch")]
@@ -192,5 +193,21 @@ public class InterfaceTest : BaseTest
 
         // Check that no unexpected warnings occurred 
         Assert.All(result.TypeLibExporterNotifySink.ReportedEvents, x => Assert.Equal(ExporterEventKind.NOTIF_TYPECONVERTED, x.EventKind));
+    }
+
+    [Fact]
+    public void InterfaceWithoutNamespace_GenerateTypes()
+    {
+        var result = CreateAssembly()
+            .WithInterface("FirstInterface")
+                .WithNamespace(null)
+                .Build()
+            .WithInterface("SecondInterface")
+                .WithNamespace(null)
+                .Build()
+            .Build();
+
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("FirstInterface")); 
+        Assert.NotNull(result.TypeLib.GetTypeInfoByName("SecondInterface")); 
     }
 }
