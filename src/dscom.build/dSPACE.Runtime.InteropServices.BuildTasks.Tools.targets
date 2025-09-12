@@ -117,6 +117,10 @@
           WorkingDirectory="$(_DsComWorkingDir)" />
   </Target>
   
+  <PropertyGroup>
+    <_DsComRegistrationTouchFile>$(IntermediateOutputPath)DsComTlbRegister.touch</_DsComRegistrationTouchFile>
+  </PropertyGroup>
+  
   <!-- Target to optionally register type library -->
   <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
           DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
@@ -147,6 +151,12 @@
     
     <Message Importance="High"
              Text="Type library file at '$(_DsComExportTypeLibraryTargetFile)' has been registered successfully." />
+    <!-- Workaround: Instead of asking whether the TLB is registered using the registry, we rely on a touch file. -->
+    <Touch AlwaysCreate="true"
+           Files="$(_DsComRegistrationTouchFile)"
+           ForceTouch="false" />
+    
+    <Message Text="Touch file at '$(_DsComRegistrationTouchFile)' marks the successful registration of '$(_DsComExportTypeLibraryTargetFile)'. Do not delete this file as it will prevent the de-registration of the TLB before re-building." />
   </Target>
   
   <!-- Target to optionally unregister type library. Should be called before removing. -->
@@ -173,6 +183,10 @@
           StdErrEncoding="UTF-8"
           StdOutEncoding="UTF-8"
           IgnoreExitCode="false"
-          WorkingDirectory="$(_DsComWorkingDir)" />
+          WorkingDirectory="$(_DsComWorkingDir)" 
+          Condition="Exists('$(_DsComRegistrationTouchFile)')" />
+    <!-- Workaround: Instead of asking whether the TLB is registered using the registry, we rely on a touch file. -->
+    <Delete Files="'$(_DsComRegistrationTouchFile)'"
+            Condition="Exists('$(_DsComRegistrationTouchFile)')" />
   </Target>
 </Project>
