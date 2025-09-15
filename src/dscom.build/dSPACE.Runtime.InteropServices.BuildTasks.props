@@ -43,6 +43,10 @@
     <DsComRunAfterBuild>true</DsComRunAfterBuild>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DsComRunAfterBuild Condition="'$(ProduceOnlyReferenceAssembly)' == 'true'">false</DsComRunAfterBuild>
+  </PropertyGroup>
+
   <!-- Clear properties -->
   <ItemGroup>
     <DsComTlbExportTlbReferences Remove="*" />
