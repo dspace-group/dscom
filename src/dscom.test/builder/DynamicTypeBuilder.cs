@@ -36,7 +36,7 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
 
     public TypeBuilder? TypeBuilder { get; set; }
 
-    public string Namespace { get; set; } = "dSPACE.Test";
+    public string? Namespace { get; set; } = "dSPACE.Test";
 
     private readonly AttributeTargets _attributeTargets;
 
@@ -58,7 +58,7 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
         return this;
     }
 
-    public DynamicTypeBuilder WithNamespace(string name)
+    public DynamicTypeBuilder WithNamespace(string? name)
     {
         Namespace = name;
         return this;
@@ -108,7 +108,8 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
 
     public Type? CreateType()
     {
-        TypeBuilder = DynamicTypeLibBuilder.ModuleBuilder.DefineType($"{Namespace}.{Name}", TypeAttributes, ParentType);
+        var typeName = string.IsNullOrEmpty(Namespace) ? Name : $"{Namespace}.{Name}";
+        TypeBuilder = DynamicTypeLibBuilder.ModuleBuilder.DefineType(typeName, TypeAttributes, ParentType);
 
         if (GenericTypeParameters.Count != 0)
         {
@@ -119,7 +120,8 @@ internal sealed class DynamicTypeBuilder : DynamicBuilder<DynamicTypeBuilder>
         {
             foreach (var interfaceName in AddInterfaceImplementation)
             {
-                TypeBuilder.AddInterfaceImplementation(DynamicTypeLibBuilder.ModuleBuilder.GetType($"{Namespace}.{interfaceName}")!);
+                var interfaceAndNameSpace = string.IsNullOrEmpty(Namespace) ? interfaceName : $"{Namespace}.{interfaceName}";
+                TypeBuilder.AddInterfaceImplementation(DynamicTypeLibBuilder.ModuleBuilder.GetType(interfaceAndNameSpace)!);
             }
         }
 
