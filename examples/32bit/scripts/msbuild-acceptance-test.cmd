@@ -39,7 +39,13 @@ dotnet build-server shutdown
 
 dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net48 -p:PerformAcceptanceTest=Runtime -bl:%~dp0\net48x64.binlog
 
-SET ERRUNTIMEX64_net80=%ERRORLEVEL%
+SET ERRUNTIMEX64_NET48=%ERRORLEVEL%
+
+dotnet build-server shutdown
+
+dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net48 -p:PerformAcceptanceTest=Runtime -p:DsComRegisterTypeLibrariesAfterBuild=true -bl:%~dp0\net48x64_reg.binlog
+
+SET ERRUNTIMEX64_NET48_REG=%ERRORLEVEL%
 
 dotnet build-server shutdown
 
@@ -53,6 +59,12 @@ SET ERRUNTIMEX64_NET80=%ERRORLEVEL%
 
 dotnet build-server shutdown
 
+dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -p:DsComRegisterTypeLibrariesAfterBuild=true -bl:%~dp0\net80x64_reg.binlog
+
+SET ERRUNTIMEX64_NET80_REG=%ERRORLEVEL%
+
+dotnet build-server shutdown
+
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net48 -p:PerformAcceptanceTest=Runtime
 
 dotnet build-server shutdown
@@ -62,12 +74,22 @@ SET ERRUNTIMEX86_NET48=%ERRORLEVEL%
 
 dotnet build-server shutdown
 
+dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net48 -p:PerformAcceptanceTest=Runtime -p:DsComRegisterTypeLibrariesAfterBuild=true -bl:%~dp0\net48x86_reg.binlog
+SET ERRUNTIMEX86_NET48_REG=%ERRORLEVEL%
+
+dotnet build-server shutdown
+
 dotnet msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime
 
 dotnet build-server shutdown
 
 dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -bl:%~dp0\net80x86.binlog
 SET ERRUNTIMEX86_NET80=%ERRORLEVEL%
+
+dotnet build-server shutdown
+
+dotnet msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x86 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -p:DsComRegisterTypeLibrariesAfterBuild=true -bl:%~dp0\net80x86reg.binlog
+SET ERRUNTIMEX86_NET80_REG=%ERRORLEVEL%
 
 dotnet build-server shutdown
 
@@ -97,6 +119,26 @@ IF NOT "%ERRUNTIMEX86_NET48%" == "0" (
 IF NOT "%ERRUNTIMEX86_NET80%" == "0" (
   ::SET EXITCODE=1
   ECHO "::warning::Runtime specific acceptance test for platform x86 using .NET 8.0 failed."
+)
+
+IF NOT "%ERRUNTIMEX64_NET48_REG%" == "0" (
+  SET EXITCODE=1
+  ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET FullFramework 4.8 and automatic TLB Registration failed."
+)
+
+IF NOT "%ERRUNTIMEX64_NET80_REG%" == "0" (
+  SET EXITCODE=1
+  ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 8.0 and automatic TLB Registration failed."
+)
+
+IF NOT "%ERRUNTIMEX86_NET48_REG%" == "0" (
+  ::SET EXITCODE=1
+  ECHO "::warning::Runtime specific acceptance test for platform x86 using .NET FullFramework 4.8 and automatic TLB Registration failed."
+)
+
+IF NOT "%ERRUNTIMEX86_NET80_REG%" == "0" (
+  ::SET EXITCODE=1
+  ECHO "::warning::Runtime specific acceptance test for platform x86 using .NET 8.0 and automatic TLB Registration failed."
 )
 
 IF NOT EXIST %~dp0\..\comtestdotnet\bin\x64\Release\net48\comtestdotnet.tlb (
