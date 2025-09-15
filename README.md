@@ -325,6 +325,7 @@ The build task can be parameterized with the following [properties](https://lear
 | DsComExportTypeLibraryTargetFile               | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
 | DsComExportTypeLibraryAssemblyFile             | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                       |
 | DsComTypeLibraryEmbedAfterBuild                | Embeds the generated type library into the source assembly file. <br /> Default value: `false` |
+| DsComRunAfterBuild                             | If set to `true`, run dscom after build; so builds can be conducted without dscom. <br /> Default value: `true` |
 
 The build task consumes the following [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):
 
