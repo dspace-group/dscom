@@ -33,7 +33,7 @@
           AfterTargets="AfterBuild" 
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
-          Condition="'$(_DsComToolsFileDir)' != ''">
+          Condition="'$(_DsComToolsFileDir)' != ''  AND '$(DsComRunAfterBuild)' == 'true'">
     <ItemGroup>
       <_DsComTlbExportAssemblyPathsWithHintPath Include="@(DsComTlbExportAssemblyPaths->HasMetadata('HintPath'))" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Include="@(DsComTlbExportAssemblyPaths)" />
@@ -89,7 +89,7 @@
           AfterTargets="DsComExportTypeLibraryAfterBuild" 
           Inputs="$(_DsComExportTypeLibraryTargetFile)"
           Outputs="$(_DsComExportTypeLibraryAssemblyFile)"
-          Condition="$(DsComTypeLibraryEmbedAfterBuild) AND '$(_DsComToolsFileDir)' != ''">
+          Condition="$(DsComTypeLibraryEmbedAfterBuild) AND '$(_DsComToolsFileDir)' != '' AND '$(DsComRunAfterBuild)' == 'true'">
     <PropertyGroup>
       <_DsComArguments>tlbembed</_DsComArguments>
       <_DsComArguments> $(_DsComArguments) "$(_DsComExportTypeLibraryTargetFile)"</_DsComArguments>
@@ -125,7 +125,7 @@
   <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
           DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
           AfterTargets="AfterBuild"
-          Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'">
+          Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true' AND '$(DsComRunAfterBuild)' == 'true'">
     <PropertyGroup>
       <_DsComWorkingDir>$(OutDir)</_DsComWorkingDir> 
       <_DsComWorkingDir Condition="$(_DsComWorkingDir) == ''">$(OutputPath)</_DsComWorkingDir> 
@@ -190,3 +190,4 @@
             Condition="Exists('$(_DsComRegistrationTouchFile)')" />
   </Target>
 </Project>
+
