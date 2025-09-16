@@ -95,7 +95,6 @@ internal sealed class DynamicPropertyBuilder : DynamicBuilder<DynamicPropertyBui
                 parameterTypes);
 
             _indexParameterBuilder.AddParameters(setterMethodBuilder, 1);
-            _indexParameterBuilder.AddParameters(setterMethodBuilder, 2);
 
             if (_parameterCustomAttributes != null)
             {
