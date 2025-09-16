@@ -33,6 +33,11 @@
     <_DsComExportTypeLibraryAssemblyFile Condition="$(DsComExportTypeLibraryAssemblyFile) != ''">$(DsComExportTypeLibraryAssemblyFile)</_DsComExportTypeLibraryAssemblyFile>
   </PropertyGroup>
 
+  <!-- Post build settings -->
+  <PropertyGroup>
+    <DsComRunAfterBuild Condition="'$(ProduceOnlyReferenceAssembly)' == 'true'">false</DsComRunAfterBuild>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Add all items with hintpath -->
     <_DsComFromReferencesWithoutHintPath Include="@(References)" Exclude="@(References->HasMetadata('HintPath'))"/>
