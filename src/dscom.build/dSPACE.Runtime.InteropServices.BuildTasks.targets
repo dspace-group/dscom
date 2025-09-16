@@ -33,6 +33,11 @@
     <_DsComExportTypeLibraryAssemblyFile Condition="$(DsComExportTypeLibraryAssemblyFile) != ''">$(DsComExportTypeLibraryAssemblyFile)</_DsComExportTypeLibraryAssemblyFile>
   </PropertyGroup>
 
+  <!-- Post build settings -->
+  <PropertyGroup>
+    <DsComRunAfterBuild Condition="'$(ProduceOnlyReferenceAssembly)' == 'true'">false</DsComRunAfterBuild>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Add all items with hintpath -->
     <_DsComFromReferencesWithoutHintPath Include="@(References)" Exclude="@(References->HasMetadata('HintPath'))"/>
@@ -54,23 +59,6 @@
   </ItemGroup>
 
   <Import Project="$(_DsComExporterTargetsFile)" />
-
-  <!-- Target to optionally register type library -->
-  <Target Name="DsComExportTypeLibraryAndRegisterAssembly" 
-      DependsOnTargets="DsComExportTypeLibraryAfterBuild" 
-      AfterTargets="AfterBuild"
-      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'" >
-      <!-- Call task wrapping regasm -->
-      <RegisterAssembly Assemblies="$(TargetPath)" />
-  </Target>
-
-  <!-- Target to optionally unregister type library. Should be called before removing. -->
-  <Target Name="DsComExportTypeLibraryUnregisterAssembly" 
-      Condition="'$(DsComRegisterTypeLibrariesAfterBuild)' == 'true'"
-      BeforeTargets="BeforeBuild;BeforeRebuild;BeforeClean">
-      <!-- Call task wrapping regasm -->
-      <UnregisterAssembly Assemblies="$(TargetPath)" />
-  </Target>
 
   <!-- Remove type library on clean -->
   <Target Name="DsComExportTypeLibraryBeforeClean" BeforeTargets="BeforeClean" DependsOnTargets="DsComExportTypeLibraryUnregisterAssembly">

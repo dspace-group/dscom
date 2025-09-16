@@ -318,12 +318,14 @@ The build task can be parameterized with the following [properties](https://lear
 | _DsComTlbExt                                   | Extension of the resulting type library. <br/> Default Value: `.tlb`                           |
 | DsComTypeLibraryUniqueId                       | Overwrite the library UUID <br/> Default Value: Empty Guid                                     |
 | DsComOverideLibraryName                        | Overwrite the IDL name of the library. <br/> Default Value: Empty string                       |
-| DsComRegisterTypeLibrariesAfterBuild           | Use regasm call after the build to register type library after the build <br/> Default value: `false` |
+| DsComRegisterTypeLibrariesAfterBuild           | Use dscom call after the build to register type library after the build <br/> Default value: `false` |
+| DsComRegisterTypeLibrariesAfterBuildGlobally   | Use dscom call and register the type library on global system level. <br/> Default value: `false` |
 | DsComTlbExportAutoAddReferences                | Add referenced assemblies automatically to type libraries <br/> Default value: `true`          |
 | DsComTlbExportIncludeReferencesWithoutHintPath | If a `Reference` assembly does not provide a `HintPath` Metadata, the item spec shall be task. <br/> Default value: `false` |
 | DsComExportTypeLibraryTargetFile               | Path to the resulting file. <br/> Default value: `$(TargetDir)\$(TargetName)$(_DsComTlbExt)` * |
 | DsComExportTypeLibraryAssemblyFile             | Path to the source assembly file. <br/> Default value: `$(TargetPath)` *                       |
 | DsComTypeLibraryEmbedAfterBuild                | Embeds the generated type library into the source assembly file. <br /> Default value: `false` |
+| DsComRunAfterBuild                             | If set to `true`, run dscom after build; so builds can be conducted without dscom. <br /> Default value: `true` |
 
 The build task consumes the following [items](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-items?view=vs-2022):
 

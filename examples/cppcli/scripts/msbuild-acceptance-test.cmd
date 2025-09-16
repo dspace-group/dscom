@@ -43,8 +43,11 @@ msbuild -nodeReuse:False -t:Restore -p:Configuration=Release -p:Platform=x64 -p:
 
 dotnet build-server shutdown
 
-msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -bl:%~dp0\net80x86.binlog
+msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -bl:%~dp0\net80x64.binlog
 SET ERRUNTIMEX64_NET80=%ERRORLEVEL%
+
+msbuild -nodeReuse:False -t:Build -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime -p:DsComRegisterTypeLibrariesAfterBuild=true -bl:%~dp0\net80x64_reg.binlog
+SET ERRUNTIMEX64_NET80_REG=%ERRORLEVEL%
 
 msbuild -nodeReuse:False -t:Clean -p:Configuration=Release -p:Platform=x64 -p:TargetPlatform=net8.0-windows -p:PerformAcceptanceTest=Runtime ..\CppLibrary\CppLibrary.vcxproj
 
@@ -61,6 +64,11 @@ SET EXITCODE=0
 IF NOT "%ERRUNTIMEX64_NET80%" == "0" (
   SET EXITCODE=1
   ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 8.0 failed."
+)
+
+IF NOT "%ERRUNTIMEX64_NET80_REG%" == "0" (
+  SET EXITCODE=1
+  ECHO "::warning::Runtime specific acceptance test for platform x64 using .NET 8.0 failed while registering TLBs."
 )
 
 IF NOT EXIST %~dp0\..\CsLibrary\bin\x64\Release\net8.0-windows\CsLibrary.tlb (
