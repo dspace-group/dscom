@@ -55,7 +55,7 @@ internal class PropertyMethodWriter : MethodWriter
             MethodInfo.GetParameters().ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
 
-        if (InvokeKind == INVOKEKIND.INVOKE_PROPERTYPUTREF)
+        if (InvokeKind is INVOKEKIND.INVOKE_PROPERTYPUTREF or INVOKEKIND.INVOKE_PROPERTYPUT)
         {
             MethodInfo.GetParameters().Where(p => !string.IsNullOrEmpty(p.Name)).ToList().ForEach(p => names.Add(Context.NameResolver.GetMappedName(p, p.Name ?? string.Empty) ?? string.Empty));
         }
