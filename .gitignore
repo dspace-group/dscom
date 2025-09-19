@@ -14,3 +14,5 @@ _temporary.cs
 .publish/
 _packages
 *.binlog
+dscom.test.assembly.local/
+test.assembly.local.bat
