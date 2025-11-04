@@ -54,7 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.28" />
     <ProjectReference Include="..\dscom\dscom.csproj" PrivateAssets="all" IncludeAssets="compile; build" />
   </ItemGroup>
 
