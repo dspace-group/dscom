@@ -33,7 +33,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="microsoft.build.tasks.core" Version="[17.14.28]" PrivateAssets="all" IncludeAssets="compile; build" />
     <PackageReference Include="Microsoft.SourceLink.Github" Version="8.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
