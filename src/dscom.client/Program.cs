@@ -79,6 +79,8 @@ public static class ConsoleApp
             new Option<string[]>("--tlbrefpath", "/tblrefpath") { Description= "Look for type library references here", DefaultValueFactory = _ => Array.Empty<string>(), Arity = ArgumentArity.ZeroOrMore } ,
             new Option<bool>("--tlb", "/tlb"){ Description = "Will create and register a typelibrary for the given assembly" },
             new Option<bool>("--codebase", "/codebase") { Description = "Will register the assembly with codebase" },
+            new Option<string?>("--regfile", "/regfile") { Description = "Will generate a registry entry text file (.reg) for the assembly instead of editing the registry directly", Arity = ArgumentArity.ExactlyOne },
+            new Option<string?>("--codebaseroot", "/codebaseroot") { Description = "Specify a relative path on a target machine that will contain both the COM host and target assembly. Only affects behavior of --regfile.", Arity = ArgumentArity.ExactlyOne },
             new Option<bool>("--unregister", "/unregister") { Description = "Will unregister the assembly" },
         };
 
@@ -230,7 +232,7 @@ public static class ConsoleApp
                             RegisterTypeLib(lypeLibConvertOptions.Out);
                         }
 
-                        if (!registrationService.RegisterAssembly(assembly, options.Codebase))
+                        if (!registrationService.RegisterAssembly(assembly, options.Codebase, options.RegFile, options.CodebaseRoot))
                         {
                             return -1;
                         }

@@ -45,6 +45,16 @@ public class RegisterAssemblySettings
     public bool Codebase { get; set; }
 
     /// <summary>
+    /// Gets or sets the flag for generating a registry text file.
+    /// </summary>
+    public string? RegFile { get; set; }
+    
+    /// <summary>
+    /// Relative path to the COM host and target assembly.
+    /// </summary>
+    public string? CodebaseRoot { get; set; }
+
+    /// <summary>
     /// Gets or sets the flag for deregistration of the assembly
     /// </summary>
     public bool Unregister { get; set; }
