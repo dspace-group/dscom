@@ -84,7 +84,14 @@ internal sealed class TypeInfoResolver : ITypeLibCache
 
         // check if the type library is already present
         var identifier = GetTypeLibFromIdentifier(assembly.GetLibIdentifier(WriterContext.Options.OverrideTlbId));
-        if (identifier is null)
+        if (identifier is not null)
+        {
+            typeInfo = ResolveTypeInfo(type.GUID);
+        }
+
+        // Even if the owning assembly has a known type library, embedded interop types
+        // can still point to external COM GUIDs that must be resolved via additional refs.
+        if (typeInfo == null)
         {
             var name = assembly.GetName().Name ?? string.Empty;
 
@@ -180,7 +187,11 @@ internal sealed class TypeInfoResolver : ITypeLibCache
         }
         else if (type.IsClass)
         {
-            retval = ResolveTypeInfo(type, MarshalExtension.GetClassInterfaceGuidForType(type));
+            // Imported COM classes (e.g. from Interop assemblies) must be resolved via
+            // their COM type GUID, not via generated class-interface GUIDs.
+            retval = type.IsImport
+                ? ResolveTypeInfo(type, type.GUID)
+                : ResolveTypeInfo(type, MarshalExtension.GetClassInterfaceGuidForType(type));
         }
         else
         {
