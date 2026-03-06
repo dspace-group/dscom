@@ -48,7 +48,7 @@ public class RegisterAssemblySettings
     /// Gets or sets the flag for generating a registry text file.
     /// </summary>
     public string? RegFile { get; set; }
-    
+
     /// <summary>
     /// Relative path to the COM host and target assembly.
     /// </summary>

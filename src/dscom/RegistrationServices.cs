@@ -114,7 +114,7 @@ public class RegistrationServices
         public const string ManagedCategoryDescription = ".NET Category";
     }
 
-    private static StreamWriter _regFileWriter = null;
+    private static StreamWriter? _regFileWriter;
 
     /// <summary>Registers the specified type with COM using the specified GUID.</summary>
     /// <param name="type">The <see cref="T:System.Type" /> to be registered for use from COM.</param>
@@ -217,14 +217,7 @@ public class RegistrationServices
         // Open stream for .reg file
         if (outputRegFile is not null)
         {
-            if (outputRegFile.Length > 0)
-            {
-                _regFileWriter = new StreamWriter(outputRegFile);
-            }
-            else
-            {
-                _regFileWriter = new StreamWriter(assembly.GetName().Name + ".reg");
-            }
+            _regFileWriter = outputRegFile.Length > 0 ? new StreamWriter(outputRegFile) : new StreamWriter(assembly.GetName().Name + ".reg");
             _regFileWriter?.WriteLine("REGEDIT4" + Environment.NewLine);
         }
 
@@ -390,16 +383,7 @@ public class RegistrationServices
 
             if (codeBase is not null)
             {
-                string updatedCodeBase;
-                if (codebaseRoot is not null)
-                {
-                    updatedCodeBase = codebaseRoot + "\\" + Path.GetFileName(codeBase);
-                }
-                else
-                {
-                    updatedCodeBase = codeBase;
-                }
-
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
                 updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
 
                 _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
@@ -517,15 +501,7 @@ public class RegistrationServices
             var comHostFile = GetComHost(codeBase);
             if (null != comHostFile)
             {
-                string updatedComHost;
-                if (codebaseRoot is not null)
-                {
-                    updatedComHost = codebaseRoot + "\\" + Path.GetFileName(comHostFile);
-                }
-                else
-                {
-                    updatedComHost = comHostFile;
-                }
+                var updatedComHost = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(comHostFile) : comHostFile;
                 updatedComHost = updatedComHost.Replace("\\", "\\\\");
 
                 // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32]
@@ -538,15 +514,7 @@ public class RegistrationServices
                 _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
                 if (codeBase is not null)
                 {
-                    string updatedCodeBase;
-                    if (codebaseRoot is not null)
-                    {
-                        updatedCodeBase = codebaseRoot + "\\" + Path.GetFileName(codeBase);
-                    }
-                    else
-                    {
-                        updatedCodeBase = codeBase;
-                    }
+                    var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
                     updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
                     _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
                 }
@@ -565,15 +533,7 @@ public class RegistrationServices
                 _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
                 if (codeBase is not null)
                 {
-                    string updatedCodeBase;
-                    if (codebaseRoot is not null)
-                    {
-                        updatedCodeBase = codebaseRoot + "\\" + Path.GetFileName(codeBase);
-                    }
-                    else
-                    {
-                        updatedCodeBase = codeBase;
-                    }
+                    var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
                     updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
                     _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
                 }
@@ -935,15 +895,7 @@ public class RegistrationServices
             _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
             if (codeBase is not null)
             {
-                string updatedCodeBase;
-                if (codebaseRoot is not null)
-                {
-                    updatedCodeBase = codebaseRoot + "\\" + Path.GetFileName(codeBase);
-                }
-                else
-                {
-                    updatedCodeBase = codeBase;
-                }
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
                 updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
                 _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
             }
@@ -961,15 +913,7 @@ public class RegistrationServices
             _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
             if (codeBase is not null)
             {
-                string updatedCodeBase;
-                if (codebaseRoot is not null)
-                {
-                    updatedCodeBase = codebaseRoot + "\\" + Path.GetFileName(codeBase);
-                }
-                else
-                {
-                    updatedCodeBase = codeBase;
-                }
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
                 updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
                 _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
             }
