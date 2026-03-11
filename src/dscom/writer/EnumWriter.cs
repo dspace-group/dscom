@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System.ComponentModel;
-using System.Globalization;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace dSPACE.Runtime.InteropServices.Writer;
 
@@ -31,25 +29,22 @@ internal sealed class EnumWriter : TypeWriter
         ((ITypeInfo)TypeInfo).GetDocumentation(-1, out var name, out var docString, out var helpContext, out var helpFile);
 
         uint index = 0;
+        var enumUnderlyingType = SourceType.GetEnumUnderlyingType();
+        var enumVariantType = new TypeProvider(Context, SourceType, isMethod: false).GetVariantType(enumUnderlyingType, out _);
         var fields =
             SourceType.GetFields(BindingFlags.Public | BindingFlags.Static)
             .OrderBy(field => field.MetadataToken);
         foreach (var field in fields)
         {
             var varDesc = new VARDESC();
-            var varDescSymbConst = new VARIANT();
+            var enumValue = field.GetRawConstantValue();
 
-            var enumValue = Enum.Parse(SourceType, field.Name.ToString());
-            var enumLongValue = (long)Convert.ChangeType(enumValue, typeof(long), CultureInfo.InvariantCulture);
-            varDescSymbConst.byref = new IntPtr(enumLongValue);
-            varDescSymbConst.vt = VarEnum.VT_I4;
-
-            varDesc.desc.lpvarValue = StructureToPtr(varDescSymbConst);
+            varDesc.desc.lpvarValue = ObjectToVariantPtr(enumValue);
             varDesc.elemdescVar.desc.idldesc.dwReserved = IntPtr.Zero;
             varDesc.elemdescVar.desc.idldesc.wIDLFlags = IDLFLAG.IDLFLAG_NONE;
             varDesc.elemdescVar.desc.paramdesc.lpVarValue = IntPtr.Zero;
             varDesc.elemdescVar.desc.paramdesc.wParamFlags = PARAMFLAG.PARAMFLAG_NONE;
-            varDesc.elemdescVar.tdesc.vt = (short)VarEnum.VT_I4;
+            varDesc.elemdescVar.tdesc.vt = (short)enumVariantType;
             varDesc.lpstrSchema = null!;
             varDesc.memid = -1;
             varDesc.varkind = VARKIND.VAR_CONST;
