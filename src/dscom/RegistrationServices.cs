@@ -114,6 +114,8 @@ public class RegistrationServices
         public const string ManagedCategoryDescription = ".NET Category";
     }
 
+    private static StreamWriter? _regFileWriter;
+
     /// <summary>Registers the specified type with COM using the specified GUID.</summary>
     /// <param name="type">The <see cref="T:System.Type" /> to be registered for use from COM.</param>
     /// <param name="g">The <see cref="T:System.Guid" /> used to register the specified type.</param>
@@ -179,7 +181,7 @@ public class RegistrationServices
     /// <param name="registerCodeBase">If set to <c>true</c>, the code base will be added to the registry; otherwise not.</param>
     /// <param name="preferredAction">The managed category action for a global registration of HKEY_CLASSES_ROOT\Component Categories\62C8FE65-4EBB-45e7-B440-6E39B2CDBF29</param>
     /// <returns><c>true</c>, if at least one type from the registry has been registered.</returns>
-    public bool RegisterAssembly(Assembly assembly, bool registerCodeBase, ManagedCategoryAction preferredAction = ManagedCategoryAction.None)
+    public bool RegisterAssembly(Assembly assembly, bool registerCodeBase, string? outputRegFile, string? codebaseRoot, ManagedCategoryAction preferredAction = ManagedCategoryAction.None)
     {
         if (assembly is null)
         {
@@ -212,23 +214,32 @@ public class RegistrationServices
         // Should be the same as RuntimeAssembly.GetVersion()
         var runtimeVersion = assembly.ImageRuntimeVersion;
 
+        // Open stream for .reg file
+        if (outputRegFile is not null)
+        {
+            _regFileWriter = outputRegFile.Length > 0 ? new StreamWriter(outputRegFile) : new StreamWriter(assembly.GetName().Name + ".reg");
+            _regFileWriter?.WriteLine("REGEDIT4" + Environment.NewLine);
+        }
+
         foreach (var type in typesToRegister)
         {
             if (IsComRegistratableValueType(type))
             {
-                RegisterValueType(type, fullName, assemblyVersion, codeBase, runtimeVersion);
+                RegisterValueType(type, fullName, assemblyVersion, codeBase, outputRegFile, codebaseRoot, runtimeVersion);
             }
             else if (IsComType(type))
             {
-                RegisterImportedComType(type, fullName, assemblyVersion, codeBase, runtimeVersion);
+                RegisterImportedComType(type, fullName, assemblyVersion, codeBase, outputRegFile, codebaseRoot, runtimeVersion);
             }
             else
             {
-                RegisterManagedType(type, fullName, assemblyVersion, codeBase, runtimeVersion, preferredAction);
+                RegisterManagedType(type, fullName, assemblyVersion, codeBase, outputRegFile, codebaseRoot, runtimeVersion, preferredAction);
             }
 
             CustomRegistrationFunction(type);
         }
+
+        _regFileWriter?.Close();
 
         // Skip: PIA Regitration
 
@@ -346,29 +357,60 @@ public class RegistrationServices
         return parentComType != null && MarshalExtension.GetClassInterfaceGuidForType(parentComType!) == MarshalExtension.GetClassInterfaceGuidForType(type);
     }
 
-    private static void RegisterValueType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion)
+    private static void RegisterValueType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string? outputRegFile, string? codebaseRoot, string runtimeVersion)
     {
         if (type.FullName is null)
         {
             throw new ArgumentException("Cannot register a type without a full name");
         }
 
-        var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
-
-        using var rootKey = GetTargetRootKey();
-        using var recordRootKey = rootKey.CreateSubKey(RegistryKeys.Record);
-        using var recordKey = recordRootKey.CreateSubKey(recordId);
-        using var recordVersionKey = recordKey.CreateSubKey(assemblyVersion);
-
-        recordVersionKey.SetValue(RegistryKeys.Class, type.FullName);
-
-        recordVersionKey.SetValue(RegistryKeys.Assembly, assemblyName);
-
-        recordVersionKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-
-        if (codeBase is not null)
+        if (outputRegFile is not null)
         {
-            recordVersionKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
+
+            var rootKey = GetTargetRootKey();
+            var recordRootKey = rootKey + "\\" + RegistryKeys.Record;
+            var recordKey = recordRootKey + "\\" + recordId;
+            var recordVersionKey = recordKey + "\\" + assemblyVersion;
+
+            // Write the recordVersionKey [HKEY_CLASSES_ROOT\Record\<GUID>\<VERSION>]
+            _regFileWriter?.WriteLine($"[" + recordVersionKey + "]");
+
+            // Write the Class, Assembly, and RuntimeVersion values
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Class + "\"=\"" + type.FullName + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Assembly + "\"=\"" + assemblyName + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
+
+            if (codeBase is not null)
+            {
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
+                updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
+
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
+            }
+
+            // End the registry entry with a blank line
+            _regFileWriter?.WriteLine();
+        }
+        else
+        {
+            var recordId = $"{{{MarshalExtension.GetClassInterfaceGuidForType(type).ToString().ToUpperInvariant()}}}";
+
+            using var rootKey = GetTargetRootKey();
+            using var recordRootKey = rootKey.CreateSubKey(RegistryKeys.Record);
+            using var recordKey = recordRootKey.CreateSubKey(recordId);
+            using var recordVersionKey = recordKey.CreateSubKey(assemblyVersion);
+
+            recordVersionKey.SetValue(RegistryKeys.Class, type.FullName);
+
+            recordVersionKey.SetValue(RegistryKeys.Assembly, assemblyName);
+
+            recordVersionKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+
+            if (codeBase is not null)
+            {
+                recordVersionKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            }
         }
     }
 
@@ -409,82 +451,189 @@ public class RegistrationServices
         return allVersionsGone;
     }
 
-    private static void RegisterManagedType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion, ManagedCategoryAction preferredAction)
+    private static void RegisterManagedType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string? outputRegFile, string? codebaseRoot, string runtimeVersion, ManagedCategoryAction preferredAction)
     {
         if (type.FullName is null)
         {
             throw new ArgumentException("Cannot register a type without a full name");
         }
 
-        var docString = type.FullName!;
-        var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
-        var progId = Marshal.GenerateProgIdForType(type);
-
-        using var rootKey = GetTargetRootKey();
-        if (!string.IsNullOrWhiteSpace(progId))
+        if (outputRegFile is not null)
         {
-            using var typeNameKey = rootKey.CreateSubKey(progId!);
+            var docString = type.FullName!;
+            var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+            var progId = Marshal.GenerateProgIdForType(type);
 
-            typeNameKey.SetValue(string.Empty, docString);
-
-            using var progIdClsIdKey = typeNameKey.CreateSubKey(RegistryKeys.CLSID);
-
-            progIdClsIdKey.SetValue(string.Empty, clsId);
-        }
-
-        using var clsIdRootKey = rootKey.CreateSubKey(RegistryKeys.CLSID);
-
-        using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
-
-        clsIdKey.SetValue(string.Empty, docString);
-
-        using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
-
-        // This should be the entry point for COM CoCreateInstance()
-        // Currently, there is no entry point for modern .NET 6 assemblies.
-        // This must be implemented in .NET 6 afterwards, if required.
-        // For .NET FX this would be mscoree.dll.
-        // According to https://learn.microsoft.com/en-us/dotnet/core/native-interop/expose-components-to-com,
-        // this might be the XYZ.comhost.dll
-        var comHostFile = GetComHost(codeBase);
-        if (null != comHostFile)
-        {
-            // regsvr32.exe sets the path to the comhost assembly here
-            inProcServerKey.SetValue(string.Empty, comHostFile);
-            inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
-
-            // these key-value-pairs are the same like the registration by regasm
-            inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
-            inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
-            inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-            if (codeBase is not null)
+            var rootKey = GetTargetRootKey();
+            if (!string.IsNullOrWhiteSpace(progId))
             {
-                inProcServerKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+                // [HKEY_CLASSES_ROOT\<TYPE_NAME>]
+                var typeNameKey = rootKey + "\\" + progId!;
+                // [HKEY_CLASSES_ROOT\<TYPE_NAME>\CLSID]
+                var progIdClsIdKey = typeNameKey + "\\" + RegistryKeys.CLSID;
+
+                // Write the type name key entries
+                _regFileWriter?.WriteLine("[" + typeNameKey + "]");
+                _regFileWriter?.WriteLine("@=\"" + docString + "\"");
+                _regFileWriter?.WriteLine();
+
+                // Write the class name / CLSID key entries
+                _regFileWriter?.WriteLine("[" + progIdClsIdKey + "]");
+                _regFileWriter?.WriteLine("@=\"" + clsId + "\"");
+                _regFileWriter?.WriteLine();
             }
 
-            using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
-            versionSubKey.SetValue(string.Empty, string.Empty);
-            versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
-            versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
-            versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-            if (codeBase is not null)
+            // // //
+
+            // [HKEY_CLASSES_ROOT\CLSID\<GUID>]
+            var clsIdRootKey = rootKey + "\\" + RegistryKeys.CLSID;
+            var clsIdKey = clsIdRootKey + "\\" + clsId;
+            // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32]
+            var inProcServerKey = clsIdKey + "\\" + RegistryKeys.InprocServer32;
+
+            // Write the CLSID key entries
+            _regFileWriter?.WriteLine("[" + clsIdKey + "]");
+            _regFileWriter?.WriteLine("@=\"" + docString + "\"");
+            _regFileWriter?.WriteLine();
+
+            // // //
+
+            var comHostFile = GetComHost(codeBase);
+            if (null != comHostFile)
             {
-                versionSubKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+                var updatedComHost = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(comHostFile) : comHostFile;
+                updatedComHost = updatedComHost.Replace("\\", "\\\\");
+
+                // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32]
+                // Write the InprocServer32 key entries
+                _regFileWriter?.WriteLine("[" + inProcServerKey + "]");
+                _regFileWriter?.WriteLine("@=\"" + updatedComHost + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.ThreadingModel + "\"=\"" + RegistryValues.ThreadingModel + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.Class + "\"=\"" + type.FullName! + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.Assembly + "\"=\"" + assemblyName + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
+                if (codeBase is not null)
+                {
+                    var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
+                    updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
+                    _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
+                }
+                _regFileWriter?.WriteLine();
+
+                // // //
+
+                // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32\<ASSEMBLY_VERSION>]
+                var versionSubKey = inProcServerKey + "\\" + assemblyVersion;
+
+                // Write the version InprocServer32 subkey entries
+                _regFileWriter?.WriteLine("[" + versionSubKey + "]");
+                _regFileWriter?.WriteLine("@=\"" + string.Empty + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.Class + "\"=\"" + type.FullName! + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.Assembly + "\"=\"" + assemblyName + "\"");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
+                if (codeBase is not null)
+                {
+                    var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
+                    updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
+                    _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
+                }
+                _regFileWriter?.WriteLine();
             }
-        }
 
-        if (!string.IsNullOrWhiteSpace(progId))
+            // // //
+
+            if (!string.IsNullOrWhiteSpace(progId))
+            {
+                // [HKEY_CLASSES_ROOT\CLSID\<GUID>\ProgId]
+                var progIdKey = clsIdKey + "\\" + RegistryKeys.ProgId;
+
+                // Write the ProgId key entries
+                _regFileWriter?.WriteLine("[" + progIdKey + "]");
+                _regFileWriter?.WriteLine("@=\"" + progId! + "\"");
+                _regFileWriter?.WriteLine();
+            }
+
+            // // //
+
+            // [HKEY_CLASSES_ROOT\CLSID\<GUID>\Implemented Categories\<ManagedCategoryGuid>]
+            var implementedCategoryKey = clsIdKey + "\\" + RegistryKeys.ImplementedCategories;
+            var managedCategoryKeyForImplemented = implementedCategoryKey + "\\" + RegistryKeys.ManagedCategoryGuid;
+
+            _regFileWriter?.WriteLine("[" + managedCategoryKeyForImplemented + "]");
+            _regFileWriter?.WriteLine();
+        }
+        else
         {
-            using var progIdKey = clsIdKey.CreateSubKey(RegistryKeys.ProgId);
+            var docString = type.FullName!;
+            var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+            var progId = Marshal.GenerateProgIdForType(type);
 
-            progIdKey.SetValue(string.Empty, progId!);
+            using var rootKey = GetTargetRootKey();
+            if (!string.IsNullOrWhiteSpace(progId))
+            {
+                using var typeNameKey = rootKey.CreateSubKey(progId!);
+
+                typeNameKey.SetValue(string.Empty, docString);
+
+                using var progIdClsIdKey = typeNameKey.CreateSubKey(RegistryKeys.CLSID);
+
+                progIdClsIdKey.SetValue(string.Empty, clsId);
+            }
+
+            using var clsIdRootKey = rootKey.CreateSubKey(RegistryKeys.CLSID);
+
+            using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
+
+            clsIdKey.SetValue(string.Empty, docString);
+
+            using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
+
+            // This should be the entry point for COM CoCreateInstance()
+            // Currently, there is no entry point for modern .NET 6 assemblies.
+            // This must be implemented in .NET 6 afterwards, if required.
+            // For .NET FX this would be mscoree.dll.
+            // According to https://learn.microsoft.com/en-us/dotnet/core/native-interop/expose-components-to-com,
+            // this might be the XYZ.comhost.dll
+            var comHostFile = GetComHost(codeBase);
+            if (null != comHostFile)
+            {
+                // regsvr32.exe sets the path to the comhost assembly here
+                inProcServerKey.SetValue(string.Empty, comHostFile);
+                inProcServerKey.SetValue(RegistryKeys.ThreadingModel, RegistryValues.ThreadingModel);
+
+                // these key-value-pairs are the same like the registration by regasm
+                inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
+                inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
+                inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+                if (codeBase is not null)
+                {
+                    inProcServerKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+                }
+
+                using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
+                versionSubKey.SetValue(string.Empty, string.Empty);
+                versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
+                versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
+                versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+                if (codeBase is not null)
+                {
+                    versionSubKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(progId))
+            {
+                using var progIdKey = clsIdKey.CreateSubKey(RegistryKeys.ProgId);
+
+                progIdKey.SetValue(string.Empty, progId!);
+            }
+
+            using var implementedCategoryKey = clsIdKey.CreateSubKey(RegistryKeys.ImplementedCategories);
+
+            using var managedCategoryKeyForImplemented = implementedCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
+
+            SetupGlobalManagedCategoryAction(preferredAction);
         }
-
-        using var implementedCategoryKey = clsIdKey.CreateSubKey(RegistryKeys.ImplementedCategories);
-
-        using var managedCategoryKeyForImplemented = implementedCategoryKey.CreateSubKey(RegistryKeys.ManagedCategoryGuid);
-
-        SetupGlobalManagedCategoryAction(preferredAction);
     }
 
     private static void SetupGlobalManagedCategoryAction(ManagedCategoryAction preferredAction)
@@ -724,40 +873,83 @@ public class RegistrationServices
         return allVersionsGone;
     }
 
-    private static void RegisterImportedComType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string runtimeVersion)
+    private static void RegisterImportedComType(Type type, string assemblyName, string assemblyVersion, string? codeBase, string? outputRegFile, string? codebaseRoot, string runtimeVersion)
     {
         if (type.FullName is null)
         {
             throw new ArgumentException("Cannot register a type without a full name");
         }
 
-        var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
-
-        using var clsIdRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.CLSID);
-
-        using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
-
-        using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
-
-        inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
-
-        inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
-
-        inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-
-        if (codeBase is not null)
+        if (outputRegFile is not null)
         {
-            inProcServerKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32]
+            var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+            var clsIdRootKey = Registry.ClassesRoot + "\\" + RegistryKeys.CLSID;
+            var clsIdKey = clsIdRootKey + "\\" + clsId;
+            var inProcServerKey = clsIdKey + "\\" + RegistryKeys.InprocServer32;
+
+            // Write the InprocServer32 key entries
+            _regFileWriter?.WriteLine($"[" + inProcServerKey + "]");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Class + "\"=\"" + type.FullName! + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Assembly + "\"=\"" + assemblyName + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
+            if (codeBase is not null)
+            {
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
+                updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
+            }
+            _regFileWriter?.WriteLine();
+
+            // // //
+
+            // [HKEY_CLASSES_ROOT\CLSID\<GUID>\InprocServer32\<ASSEMBLY_VERSION>]
+            var versionSubKey = inProcServerKey + "\\" + assemblyVersion;
+
+            // Write the InprocServer32 subkey entries
+            _regFileWriter?.WriteLine($"[" + versionSubKey + "]");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Class + "\"=\"" + type.FullName! + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.Assembly + "\"=\"" + assemblyName + "\"");
+            _regFileWriter?.WriteLine("\"" + RegistryKeys.RuntimeVersion + "\"=\"" + runtimeVersion + "\"");
+            if (codeBase is not null)
+            {
+                var updatedCodeBase = codebaseRoot is not null ? codebaseRoot + "\\" + Path.GetFileName(codeBase) : codeBase;
+                updatedCodeBase = updatedCodeBase.Replace("\\", "\\\\");
+                _regFileWriter?.WriteLine("\"" + RegistryKeys.CodeBase + "\"=\"file:///" + updatedCodeBase + "\"");
+            }
+            _regFileWriter?.WriteLine();
         }
-
-        using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
-
-        versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
-        versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
-        versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
-        if (codeBase is not null)
+        else
         {
-            versionSubKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            var clsId = $"{{{Marshal.GenerateGuidForType(type).ToString().ToUpperInvariant()}}}";
+
+            using var clsIdRootKey = Registry.ClassesRoot.CreateSubKey(RegistryKeys.CLSID);
+
+            using var clsIdKey = clsIdRootKey.CreateSubKey(clsId);
+
+            using var inProcServerKey = clsIdKey.CreateSubKey(RegistryKeys.InprocServer32);
+
+            inProcServerKey.SetValue(RegistryKeys.Class, type.FullName!);
+
+            inProcServerKey.SetValue(RegistryKeys.Assembly, assemblyName);
+
+            inProcServerKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+
+            if (codeBase is not null)
+            {
+                inProcServerKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            }
+
+            using var versionSubKey = inProcServerKey.CreateSubKey(assemblyVersion);
+
+            versionSubKey.SetValue(RegistryKeys.Class, type.FullName!);
+            versionSubKey.SetValue(RegistryKeys.Assembly, assemblyName);
+            versionSubKey.SetValue(RegistryKeys.RuntimeVersion, runtimeVersion);
+
+            if (codeBase is not null)
+            {
+                versionSubKey.SetValue(RegistryKeys.CodeBase, $"file:///{codeBase}");
+            }
         }
     }
 
