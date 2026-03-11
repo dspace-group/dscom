@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using Xunit;
 
@@ -44,9 +45,44 @@ public class EnumTest : BaseTest
 
         var kv = typeLibInfo!.GetAllEnumValues();
 
-        Assert.Contains(new KeyValuePair<string, object>("TestEnum_A", 1), kv);
-        Assert.Contains(new KeyValuePair<string, object>("TestEnum_B", 20), kv);
-        Assert.Contains(new KeyValuePair<string, object>("TestEnum_C", 50), kv);
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_A", Convert.ChangeType(1, type, CultureInfo.InvariantCulture)!), kv);
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_B", Convert.ChangeType(20, type, CultureInfo.InvariantCulture)!), kv);
+        Assert.Contains(new KeyValuePair<string, object>("TestEnum_C", Convert.ChangeType(50, type, CultureInfo.InvariantCulture)!), kv);
+    }
+
+    [Theory]
+    [InlineData(typeof(byte))]
+    [InlineData(typeof(sbyte))]
+    [InlineData(typeof(short))]
+    [InlineData(typeof(ushort))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(int))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(long))]
+    public void EnumWithNumericValues_UsesUnderlyingTypeForExportedMetadata(Type type)
+    {
+        var result = CreateAssembly(CreateAssemblyName(assemblyNameSuffix: $"{type}"))
+            .WithEnum("TestEnum", type)
+                .WithLiteral("A", 1)
+                .Build()
+            .Build();
+
+        var typeLibInfo = result.TypeLib.GetTypeInfoByName("TestEnum");
+        Assert.NotNull(typeLibInfo);
+
+        typeLibInfo!.GetVarDesc(0, out var ppVarDesc);
+        try
+        {
+            var varDesc = Marshal.PtrToStructure<VARDESC>(ppVarDesc);
+            var enumValue = typeLibInfo.GetAllEnumValues().Single(kv => kv.Key == "TestEnum_A").Value;
+
+            Assert.Equal(type.GetShortVarEnum(), varDesc.elemdescVar.tdesc.vt);
+            Assert.Equal(type, enumValue.GetType());
+        }
+        finally
+        {
+            typeLibInfo.ReleaseVarDesc(ppVarDesc);
+        }
     }
 
     [Fact]
