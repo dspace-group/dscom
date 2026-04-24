@@ -181,6 +181,20 @@ public class RegistrationServices
     /// <param name="registerCodeBase">If set to <c>true</c>, the code base will be added to the registry; otherwise not.</param>
     /// <param name="preferredAction">The managed category action for a global registration of HKEY_CLASSES_ROOT\Component Categories\62C8FE65-4EBB-45e7-B440-6E39B2CDBF29</param>
     /// <returns><c>true</c>, if at least one type from the registry has been registered.</returns>
+    public bool RegisterAssembly(Assembly assembly, bool registerCodeBase, ManagedCategoryAction preferredAction = ManagedCategoryAction.None)
+    {
+        return RegisterAssembly(assembly, registerCodeBase, null, null, preferredAction);
+    }
+
+    /// <summary>
+    /// Registers the classes in a managed assembly to enable creation from COM.
+    /// </summary>
+    /// <param name="assembly">The assembly to register.</param>
+    /// <param name="registerCodeBase">If set to <c>true</c>, the code base will be added to the registry; otherwise not.</param>
+    /// <param name="outputRegFile">Optional path to a .reg file to write the registration entries to.</param>
+    /// <param name="codebaseRoot">Optional root path for the code base.</param>
+    /// <param name="preferredAction">The managed category action for a global registration of HKEY_CLASSES_ROOT\Component Categories\62C8FE65-4EBB-45e7-B440-6E39B2CDBF29</param>
+    /// <returns><c>true</c>, if at least one type from the registry has been registered.</returns>
     public bool RegisterAssembly(Assembly assembly, bool registerCodeBase, string? outputRegFile, string? codebaseRoot, ManagedCategoryAction preferredAction = ManagedCategoryAction.None)
     {
         if (assembly is null)
