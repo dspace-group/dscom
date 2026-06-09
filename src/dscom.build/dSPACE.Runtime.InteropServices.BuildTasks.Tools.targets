@@ -186,8 +186,7 @@
           WorkingDirectory="$(_DsComWorkingDir)" 
           Condition="Exists('$(_DsComRegistrationTouchFile)')" />
     <!-- Workaround: Instead of asking whether the TLB is registered using the registry, we rely on a touch file. -->
-    <Delete Files="'$(_DsComRegistrationTouchFile)'"
+    <Delete Files="$(_DsComRegistrationTouchFile)"
             Condition="Exists('$(_DsComRegistrationTouchFile)')" />
   </Target>
 </Project>
-
