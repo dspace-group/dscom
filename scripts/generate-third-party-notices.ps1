@@ -32,21 +32,85 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $solutionPath = Join-Path $repoRoot "dscom.sln"
-$tempTablePath = [System.IO.Path]::GetTempFileName()
+$tempJsonPath = [System.IO.Path]::GetTempFileName()
+
+function Format-NoticesTable {
+    <#
+    .SYNOPSIS
+        Renders a fixed-width ASCII table (matching the style produced by the
+        nuget-license tool's own "Table" output) from a list of PSCustomObjects.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Columns,
+
+        [Parameter(Mandatory = $true)]
+        [object[]]$Rows
+    )
+
+    $widths = @{}
+    foreach ($column in $Columns) {
+        $widths[$column] = $column.Length
+        foreach ($row in $Rows) {
+            $value = [string]$row.$column
+            if ($value.Length -gt $widths[$column]) {
+                $widths[$column] = $value.Length
+            }
+        }
+    }
+
+    $separator = "+" + (($Columns | ForEach-Object { "-" * ($widths[$_] + 2) }) -join "+") + "+"
+    $headerLine = "|" + (($Columns | ForEach-Object { " " + $_.PadRight($widths[$_]) + " " }) -join "|") + "|"
+
+    $lines = [System.Collections.Generic.List[string]]::new()
+    $lines.Add($separator)
+    $lines.Add($headerLine)
+    $lines.Add($separator)
+    foreach ($row in $Rows) {
+        $line = "|" + (($Columns | ForEach-Object { " " + ([string]$row.$_).PadRight($widths[$_]) + " " }) -join "|") + "|"
+        $lines.Add($line)
+    }
+    $lines.Add($separator)
+
+    return ($lines -join [System.Environment]::NewLine) + [System.Environment]::NewLine
+}
 
 try {
     & nuget-license `
         -i $solutionPath `
         -t `
         -exclude-projects "dscom.test*" `
-        -o Table `
-        -fo $tempTablePath
+        -o Json `
+        -fo $tempJsonPath
 
     if ($LASTEXITCODE -ne 0) {
         throw "nuget-license failed with exit code $LASTEXITCODE"
     }
 
-    $table = Get-Content -Path $tempTablePath -Raw -Encoding UTF8
+    $originNames = @("Expression", "Url", "Unknown", "Ignored", "Overwrite", "File")
+
+    $packages = Get-Content -Path $tempJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
+
+    # The package version is intentionally omitted: it is not required for MIT/Apache-2.0
+    # attribution (only the copyright notice and license text are) and including it would
+    # force this file to change on every dependency bump. Entries that only differ by
+    # version across target frameworks (net8.0/net48) are de-duplicated below.
+    $rows = $packages |
+        ForEach-Object {
+            [PSCustomObject]@{
+                Package                    = $_.PackageId
+                "License Information Origin" = $originNames[[int]$_.LicenseInformationOrigin]
+                "License Expression"       = $_.License
+                "License Url"              = $_.LicenseUrl
+                Copyright                  = $_.Copyright
+                Authors                    = $_.Authors
+                "Package Project Url"      = $_.PackageProjectUrl
+            }
+        } |
+        Sort-Object Package, "License Expression", Copyright, Authors, "Package Project Url" -Unique
+
+    $columns = @("Package", "License Information Origin", "License Expression", "License Url", "Copyright", "Authors", "Package Project Url")
+    $table = Format-NoticesTable -Columns $columns -Rows $rows
 
     $header = @"
 THIRD-PARTY NOTICES
@@ -62,6 +126,8 @@ published NuGet packages.
 The full text of each license referenced below (by "License Expression") is
 reproduced verbatim in the "FULL LICENSE TEXTS" section at the end of this file.
 Per-package copyright notices are listed in the "Copyright" column of the table.
+Package versions are intentionally not listed, as they are not required for
+attribution and would otherwise change on every dependency update.
 
 This file is auto-generated. Do not edit it manually.
 
@@ -284,5 +350,5 @@ $apache2LicenseText
     Write-Host "Wrote $OutputPath"
 }
 finally {
-    Remove-Item -Path $tempTablePath -ErrorAction SilentlyContinue
+    Remove-Item -Path $tempJsonPath -ErrorAction SilentlyContinue
 }

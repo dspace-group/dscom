@@ -11,6 +11,8 @@ published NuGet packages.
 The full text of each license referenced below (by "License Expression") is
 reproduced verbatim in the "FULL LICENSE TEXTS" section at the end of this file.
 Per-package copyright notices are listed in the "Copyright" column of the table.
+Package versions are intentionally not listed, as they are not required for
+attribution and would otherwise change on every dependency update.
 
 This file is auto-generated. Do not edit it manually.
 
@@ -20,21 +22,21 @@ Generation:
   .\scripts\generate-third-party-notices.ps1
 
 Tool: https://github.com/sensslen/nuget-license
-+-------------------------------------------+---------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
-| Package                                   | Version             | License Information Origin | License Expression | License Url                           | Copyright                                     | Authors   | Package Project Url                            |
-+-------------------------------------------+---------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
-| Microsoft.Build.Tasks.Git                 | 10.0.300            | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| Microsoft.SourceLink.Common               | 10.0.300            | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| Microsoft.SourceLink.GitHub               | 10.0.300            | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| MinVer                                    | 6.1.0               | Expression                 | Apache-2.0         | https://licenses.nuget.org/Apache-2.0 |                                               | MinVer    | https://github.com/adamralph/minver            |
-| System.Buffers                            | 4.6.1               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.CommandLine                        | 2.0.9               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
-| System.CommandLine.NamingConventionBinder | 2.0.0-beta5.25306.1 | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
-| System.IO.Hashing                         | 10.0.8              | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://dot.net/                               |
-| System.Memory                             | 4.6.3               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.Numerics.Vectors                   | 4.6.1               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.Runtime.CompilerServices.Unsafe    | 6.1.2               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-+-------------------------------------------+---------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
++-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| Package                                   | License Information Origin | License Expression | License Url                           | Copyright                                     | Authors   | Package Project Url                            |
++-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| Microsoft.Build.Tasks.Git                 | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
+| Microsoft.SourceLink.Common               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
+| Microsoft.SourceLink.GitHub               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
+| MinVer                                    | Expression                 | Apache-2.0         | https://licenses.nuget.org/Apache-2.0 |                                               | MinVer    | https://github.com/adamralph/minver            |
+| System.Buffers                            | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.CommandLine                        | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.CommandLine.NamingConventionBinder | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.IO.Hashing                         | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://dot.net/                               |
+| System.Memory                             | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Numerics.Vectors                   | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Runtime.CompilerServices.Unsafe    | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
++-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
 
 
 FULL LICENSE TEXTS
