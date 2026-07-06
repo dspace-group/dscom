@@ -1,0 +1,63 @@
+THIRD-PARTY NOTICES
+===================
+
+dscom (dSPACE.Runtime.InteropServices, dscom, dSPACE.Runtime.InteropServices.BuildTasks)
+uses third-party NuGet packages that are subject to the following license terms.
+The list below covers all direct and transitive package dependencies of the published
+projects (src/dscom, src/dscom.client, src/dscom.build) across all target frameworks
+(net8.0, net48). Test-only projects are not included, as they are not part of the
+published NuGet packages. Build-time-only tooling (e.g. MinVer, Microsoft.SourceLink.*,
+Microsoft.Build.Tasks.Git) is also excluded, since those packages never ship a runtime
+asset and are therefore never part of the published output.
+
+The full text of each license referenced below (by "License Expression") is
+reproduced verbatim in the "FULL LICENSE TEXTS" section at the end of this file.
+Per-package copyright notices are listed in the "Copyright" column of the table.
+Package versions are intentionally not listed, as they are not required for
+attribution and would otherwise change on every dependency update.
+
+This file is auto-generated. Do not edit it manually.
+
+Generation:
+  dotnet tool install --global nuget-license
+  dotnet restore dscom.sln
+  .\scripts\generate-third-party-notices.ps1
+
+Tool: https://github.com/sensslen/nuget-license
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| Package                                   | License Information Origin | License Expression | License Url                    | Copyright                                     | Authors   | Package Project Url                            |
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| System.Buffers                            | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.CommandLine                        | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.CommandLine.NamingConventionBinder | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.IO.Hashing                         | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://dot.net/                               |
+| System.Memory                             | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Numerics.Vectors                   | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Runtime.CompilerServices.Unsafe    | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+
+
+FULL LICENSE TEXTS
+===================
+
+--- MIT ---
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -1,0 +1,41 @@
+name: Third-Party Notices Check
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  check-third-party-notices:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+        env:
+          # https://github.com/dotnet/sdk/issues/44957
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/.dotnet
+
+      - name: Restore dependencies
+        run: dotnet restore dscom.sln
+
+      - name: Install nuget-license
+        run: dotnet tool install --global nuget-license
+
+      - name: Generate THIRD-PARTY-NOTICES.txt
+        shell: pwsh
+        run: ./scripts/generate-third-party-notices.ps1
+
+      - name: Verify THIRD-PARTY-NOTICES.txt is up to date
+        shell: pwsh
+        run: |
+          git diff --exit-code -- THIRD-PARTY-NOTICES.txt
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "THIRD-PARTY-NOTICES.txt is out of date. Run '.\scripts\generate-third-party-notices.ps1' locally and commit the result."
+            exit 1
+          }
