@@ -134,7 +134,7 @@ function Format-NoticesTable {
     }
     $lines.Add($separator)
 
-    return ($lines -join [System.Environment]::NewLine) + [System.Environment]::NewLine
+    return ($lines -join "`n") + "`n"
 }
 
 try {
@@ -423,6 +423,14 @@ END OF TERMS AND CONDITIONS
     $licenseTextsSection = $licenseTextsSectionBuilder.ToString()
 
     $content = $header + $table + $licenseTextsSection
+
+    # Normalize to LF line endings regardless of the OS/runner this script executes on,
+    # or the line endings embedded in this script's own here-strings. This keeps the
+    # generated file byte-for-byte reproducible so the CI "is it up to date" diff check
+    # (which does a plain git diff, unaffected by core.autocrlf since .gitattributes pins
+    # this file to LF) never fails due to line-ending differences alone.
+    $content = $content -replace "`r`n", "`n" -replace "`r", "`n"
+
     [System.IO.File]::WriteAllText($OutputPath, $content, (New-Object System.Text.UTF8Encoding($false)))
 
     Write-Host "Wrote $OutputPath"
