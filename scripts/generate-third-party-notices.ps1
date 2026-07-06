@@ -34,6 +34,68 @@ $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $solutionPath = Join-Path $repoRoot "dscom.sln"
 $tempJsonPath = [System.IO.Path]::GetTempFileName()
 
+# Published projects whose restore graph (project.assets.json) is inspected to determine
+# which packages actually ship a runtime asset (as opposed to build-time-only tooling
+# like MinVer or SourceLink, which only contribute MSBuild targets/props).
+$publishedProjectAssetsFiles = @(
+    "src/dscom/obj/project.assets.json",
+    "src/dscom.client/obj/project.assets.json",
+    "src/dscom.build/obj/project.assets.json"
+) | ForEach-Object { Join-Path $repoRoot $_ }
+
+function Get-ShippedPackageIds {
+    <#
+    .SYNOPSIS
+        Determines the set of NuGet package IDs that actually ship a runtime/native asset
+        in at least one target framework of at least one of the given project.assets.json
+        restore lock files.
+
+    .DESCRIPTION
+        Packages that are development/build-time-only dependencies (e.g. MinVer,
+        Microsoft.SourceLink.*, Microsoft.Build.Tasks.Git) only contribute "build",
+        "buildTransitive", "buildMultiTargeting" or "analyzers" assets in the restore
+        graph - never "runtime" or "native" assets - so they are never copied to the
+        build/publish output and don't need to be included in third-party notices.
+        This is determined dynamically from the actual restore graph so it stays correct
+        even as dependencies change, without needing a manually maintained ignore list.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$AssetsFilePaths
+    )
+
+    $shippedPackageIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
+    foreach ($assetsFilePath in $AssetsFilePaths) {
+        if (-not (Test-Path $assetsFilePath)) {
+            throw "Project assets file not found: $assetsFilePath. Run 'dotnet restore dscom.sln' first."
+        }
+
+        $assets = Get-Content -Path $assetsFilePath -Raw -Encoding UTF8 | ConvertFrom-Json
+
+        foreach ($targetProperty in $assets.targets.PSObject.Properties) {
+            foreach ($packageProperty in $targetProperty.Value.PSObject.Properties) {
+                $packageInfo = $packageProperty.Value
+                if ($packageInfo.type -ne "package") {
+                    continue
+                }
+
+                $shipsRuntimeAsset = @("runtime", "native") | Where-Object {
+                    $assetGroup = $packageInfo.$_
+                    $null -ne $assetGroup -and @($assetGroup.PSObject.Properties).Count -gt 0
+                }
+
+                if ($shipsRuntimeAsset) {
+                    $packageId = $packageProperty.Name.Split('/')[0]
+                    [void]$shippedPackageIds.Add($packageId)
+                }
+            }
+        }
+    }
+
+    return $shippedPackageIds
+}
+
 function Format-NoticesTable {
     <#
     .SYNOPSIS
@@ -91,6 +153,12 @@ try {
 
     $packages = Get-Content -Path $tempJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
 
+    # Exclude build-time-only packages (e.g. MinVer, Microsoft.SourceLink.*,
+    # Microsoft.Build.Tasks.Git) that never ship a runtime asset and therefore never
+    # end up in the published output - see Get-ShippedPackageIds for details.
+    $shippedPackageIds = Get-ShippedPackageIds -AssetsFilePaths $publishedProjectAssetsFiles
+    $packages = $packages | Where-Object { $shippedPackageIds.Contains($_.PackageId) }
+
     # The package version is intentionally omitted: it is not required for MIT/Apache-2.0
     # attribution (only the copyright notice and license text are) and including it would
     # force this file to change on every dependency bump. Entries that only differ by
@@ -121,7 +189,9 @@ uses third-party NuGet packages that are subject to the following license terms.
 The list below covers all direct and transitive package dependencies of the published
 projects (src/dscom, src/dscom.client, src/dscom.build) across all target frameworks
 (net8.0, net48). Test-only projects are not included, as they are not part of the
-published NuGet packages.
+published NuGet packages. Build-time-only tooling (e.g. MinVer, Microsoft.SourceLink.*,
+Microsoft.Build.Tasks.Git) is also excluded, since those packages never ship a runtime
+asset and are therefore never part of the published output.
 
 The full text of each license referenced below (by "License Expression") is
 reproduced verbatim in the "FULL LICENSE TEXTS" section at the end of this file.
@@ -329,20 +399,28 @@ reason of your accepting any such warranty or additional liability.
 END OF TERMS AND CONDITIONS
 "@
 
-    $licenseTextsSection = @"
+    # Only the license texts actually referenced by a package that ships in the published
+    # output are included below, so this section shrinks/grows automatically as the
+    # licenses in use change (e.g. removing the last Apache-2.0-licensed dependency drops
+    # the Apache-2.0 text too).
+    $licenseTextsByExpression = [ordered]@{
+        "MIT"         = $mitLicenseText
+        "Apache-2.0"  = $apache2LicenseText
+    }
 
+    $usedLicenseExpressions = $rows | ForEach-Object { $_."License Expression" } | Where-Object { $_ } | Sort-Object -Unique
 
-FULL LICENSE TEXTS
-===================
-
---- MIT ---
-
-$mitLicenseText
-
---- Apache-2.0 ---
-
-$apache2LicenseText
-"@
+    $licenseTextsSectionBuilder = [System.Text.StringBuilder]::new()
+    [void]$licenseTextsSectionBuilder.Append("`n`nFULL LICENSE TEXTS`n===================`n")
+    foreach ($licenseKey in $licenseTextsByExpression.Keys) {
+        $isReferenced = $usedLicenseExpressions | Where-Object { $_ -match [regex]::Escape($licenseKey) }
+        if ($isReferenced) {
+            [void]$licenseTextsSectionBuilder.Append("`n--- $licenseKey ---`n`n")
+            [void]$licenseTextsSectionBuilder.Append($licenseTextsByExpression[$licenseKey])
+            [void]$licenseTextsSectionBuilder.Append("`n")
+        }
+    }
+    $licenseTextsSection = $licenseTextsSectionBuilder.ToString()
 
     $content = $header + $table + $licenseTextsSection
     [System.IO.File]::WriteAllText($OutputPath, $content, (New-Object System.Text.UTF8Encoding($false)))

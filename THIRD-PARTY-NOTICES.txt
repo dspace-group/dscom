@@ -6,7 +6,9 @@ uses third-party NuGet packages that are subject to the following license terms.
 The list below covers all direct and transitive package dependencies of the published
 projects (src/dscom, src/dscom.client, src/dscom.build) across all target frameworks
 (net8.0, net48). Test-only projects are not included, as they are not part of the
-published NuGet packages.
+published NuGet packages. Build-time-only tooling (e.g. MinVer, Microsoft.SourceLink.*,
+Microsoft.Build.Tasks.Git) is also excluded, since those packages never ship a runtime
+asset and are therefore never part of the published output.
 
 The full text of each license referenced below (by "License Expression") is
 reproduced verbatim in the "FULL LICENSE TEXTS" section at the end of this file.
@@ -22,21 +24,17 @@ Generation:
   .\scripts\generate-third-party-notices.ps1
 
 Tool: https://github.com/sensslen/nuget-license
-+-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
-| Package                                   | License Information Origin | License Expression | License Url                           | Copyright                                     | Authors   | Package Project Url                            |
-+-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
-| Microsoft.Build.Tasks.Git                 | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| Microsoft.SourceLink.Common               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| Microsoft.SourceLink.GitHub               | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/dotnet               |
-| MinVer                                    | Expression                 | Apache-2.0         | https://licenses.nuget.org/Apache-2.0 |                                               | MinVer    | https://github.com/adamralph/minver            |
-| System.Buffers                            | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.CommandLine                        | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
-| System.CommandLine.NamingConventionBinder | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
-| System.IO.Hashing                         | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://dot.net/                               |
-| System.Memory                             | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.Numerics.Vectors                   | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-| System.Runtime.CompilerServices.Unsafe    | Expression                 | MIT                | https://licenses.nuget.org/MIT        | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
-+-------------------------------------------+----------------------------+--------------------+---------------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| Package                                   | License Information Origin | License Expression | License Url                    | Copyright                                     | Authors   | Package Project Url                            |
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
+| System.Buffers                            | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.CommandLine                        | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.CommandLine.NamingConventionBinder | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/command-line-api     |
+| System.IO.Hashing                         | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://dot.net/                               |
+| System.Memory                             | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Numerics.Vectors                   | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
+| System.Runtime.CompilerServices.Unsafe    | Expression                 | MIT                | https://licenses.nuget.org/MIT | © Microsoft Corporation. All rights reserved. | Microsoft | https://github.com/dotnet/maintenance-packages |
++-------------------------------------------+----------------------------+--------------------+--------------------------------+-----------------------------------------------+-----------+------------------------------------------------+
 
 
 FULL LICENSE TEXTS
