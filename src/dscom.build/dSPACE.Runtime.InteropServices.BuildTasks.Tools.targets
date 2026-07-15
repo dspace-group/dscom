@@ -31,6 +31,7 @@
   -->
   <Target Name="DsComExportTypeLibraryAfterBuild" 
           AfterTargets="AfterBuild" 
+          DependsOnTargets="$(DsComExportTypeLibraryDependsOn)"
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
           Condition="'$(_DsComToolsFileDir)' != ''  AND '$(DsComRunAfterBuild)' == 'true'">
