@@ -88,8 +88,14 @@
           ConsoleToMsBuild="true" 
           StdErrEncoding="UTF-8"
           StdOutEncoding="UTF-8"
-          IgnoreExitCode="false"
-          WorkingDirectory="$(_DsComWorkingDir)" />
+          IgnoreExitCode="true"
+          WorkingDirectory="$(_DsComWorkingDir)">
+      <Output TaskParameter="ExitCode" PropertyName="_DsComExportExitCode" />
+    </Exec>
+
+    <Warning Code="DSCOM005"
+             Text="dscom.exe returned exit code '$(_DsComExportExitCode)' while exporting type library '$(_DsComExportTypeLibraryTargetFile)'."
+             Condition="'$(_DsComExportExitCode)' != '' AND '$(_DsComExportExitCode)' != '0' AND Exists('$(_DsComExportTypeLibraryTargetFile)')" />
 
     <Warning Code="DSCOM001" Text="Could not find the type library at the following location: '$(_DsComExportTypeLibraryTargetFile)'" Condition="!Exists('$(_DsComExportTypeLibraryTargetFile)')" />
   </Target>
