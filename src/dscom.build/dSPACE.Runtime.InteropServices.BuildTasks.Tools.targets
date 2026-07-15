@@ -39,6 +39,12 @@
       <_DsComTlbExportAssemblyPathsWithHintPath Include="@(DsComTlbExportAssemblyPaths->HasMetadata('HintPath'))" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Include="@(DsComTlbExportAssemblyPaths)" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Remove="@(_DsComTlbExportAssemblyPathsWithHintPath)" />
+      <_DsComTlbExportAssemblyPathsWithHintPath Update="@(_DsComTlbExportAssemblyPathsWithHintPath)">
+        <DsComAsmPath>$([System.Text.RegularExpressions.Regex]::Replace('$([System.IO.Path]::GetDirectoryName(%(HintPath)))', '[\\/]+$', ''))</DsComAsmPath>
+      </_DsComTlbExportAssemblyPathsWithHintPath>
+      <_DsComTlbExportAssemblyPathsWithoutHintPath Update="@(_DsComTlbExportAssemblyPathsWithoutHintPath)">
+        <DsComAsmPath>$([System.Text.RegularExpressions.Regex]::Replace('$([System.IO.Path]::GetDirectoryName(%(Identity)))', '[\\/]+$', ''))</DsComAsmPath>
+      </_DsComTlbExportAssemblyPathsWithoutHintPath>
     </ItemGroup>
 
     <PropertyGroup>
