@@ -31,6 +31,7 @@
   -->
   <Target Name="DsComExportTypeLibraryAfterBuild" 
           AfterTargets="AfterBuild" 
+          DependsOnTargets="$(DsComExportTypeLibraryDependsOn)"
           Inputs="$(_DsComExportTypeLibraryAssemblyFile)"
           Outputs="$(_DsComExportTypeLibraryTargetFile)"
           Condition="'$(_DsComToolsFileDir)' != ''  AND '$(DsComRunAfterBuild)' == 'true'">
@@ -38,13 +39,21 @@
       <_DsComTlbExportAssemblyPathsWithHintPath Include="@(DsComTlbExportAssemblyPaths->HasMetadata('HintPath'))" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Include="@(DsComTlbExportAssemblyPaths)" />
       <_DsComTlbExportAssemblyPathsWithoutHintPath Remove="@(_DsComTlbExportAssemblyPathsWithHintPath)" />
+      <_DsComTlbExportAssemblyPathsWithHintPath Update="@(_DsComTlbExportAssemblyPathsWithHintPath)">
+        <DsComAsmPath>$([System.Text.RegularExpressions.Regex]::Replace('$([System.IO.Path]::GetDirectoryName(%(HintPath)))', '[\\/]+$', ''))</DsComAsmPath>
+      </_DsComTlbExportAssemblyPathsWithHintPath>
+      <_DsComTlbExportAssemblyPathsWithoutHintPath Update="@(_DsComTlbExportAssemblyPathsWithoutHintPath)">
+        <DsComAsmPath>$([System.Text.RegularExpressions.Regex]::Replace('$([System.IO.Path]::GetDirectoryName(%(Identity)))', '[\\/]+$', ''))</DsComAsmPath>
+      </_DsComTlbExportAssemblyPathsWithoutHintPath>
+      <_DsComAsmPath Include="@(_DsComTlbExportAssemblyPathsWithHintPath->'%(DsComAsmPath)')" />
+      <_DsComAsmPath Include="@(_DsComTlbExportAssemblyPathsWithoutHintPath->'%(DsComAsmPath)')" />
+      <_DsComAsmPath Remove="''" />
     </ItemGroup>
 
     <PropertyGroup>
       <_DsComTypeLibraryReferences Condition="@(DsComTlbExportTlbReferences->Count()) &gt; 0">--tlbreference "@(DsComTlbExportTlbReferences, '" --tlbreference "')"</_DsComTypeLibraryReferences>
       <_DsComTypeLibraryReferencePaths Condition="@(DsComTlbExportReferencePaths->Count()) &gt; 0">--tlbrefpath "@(DsComTlbExportReferencePaths, '" --tlbrefpath "')"</_DsComTypeLibraryReferencePaths>
-      <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithoutHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithoutHintPath, '" --asmpath "')"</_DsComAssemblyReferences>
-      <_DsComAssemblyReferences Condition="@(_DsComTlbExportAssemblyPathsWithHintPath->Count()) &gt; 0">--asmpath "@(_DsComTlbExportAssemblyPathsWithHintPath->GetMetadata('HintPath'), '" --asmpath "')"</_DsComAssemblyReferences>
+      <_DsComAssemblyReferences Condition="@(_DsComAsmPath->Count()) &gt; 0">--asmpath "@(_DsComAsmPath, '" --asmpath "')"</_DsComAssemblyReferences>
       <!--
         Workaround for a Windows command-line parsing quirk: a path ending with a backslash
         immediately followed by the closing double quote (\") is not recognized as the end
@@ -54,7 +63,6 @@
       -->
       <_DsComTypeLibraryReferences Condition="'$(_DsComTypeLibraryReferences)' != ''">$(_DsComTypeLibraryReferences.Replace('\"', '\\"'))</_DsComTypeLibraryReferences>
       <_DsComTypeLibraryReferencePaths Condition="'$(_DsComTypeLibraryReferencePaths)' != ''">$(_DsComTypeLibraryReferencePaths.Replace('\"', '\\"'))</_DsComTypeLibraryReferencePaths>
-      <_DsComAssemblyReferences Condition="'$(_DsComAssemblyReferences)' != ''">$(_DsComAssemblyReferences.Replace('\"', '\\"'))</_DsComAssemblyReferences>
       <_DsComAliasNames Condition="@(DsComTlbAliasNames->Count()) &gt; 0">--names @(DsComTlbAliasNames, --names)</_DsComAliasNames>
       <_DsComToolSilence Condition="@(DsComToolSilence->Count()) &gt; 0">--silence "@(DsComToolSilence, '" --silence "')"</_DsComToolSilence>
       <_DsComArguments>tlbexport</_DsComArguments>
