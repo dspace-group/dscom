@@ -48,21 +48,29 @@
       <_DsComAsmPath Include="@(_DsComTlbExportAssemblyPathsWithHintPath->'%(DsComAsmPath)')" />
       <_DsComAsmPath Include="@(_DsComTlbExportAssemblyPathsWithoutHintPath->'%(DsComAsmPath)')" />
       <_DsComAsmPath Remove="''" />
+
+      <!--
+        Root-cause fix for a Windows command-line parsing quirk: a path ending with a backslash
+        immediately followed by the closing double quote (\") is not recognized as the end of
+        the quoted argument (the backslash escapes the quote instead), which corrupts the argument
+        list passed to dscom.exe. Trailing directory separators are therefore stripped up front,
+        the same way it is already done for the asmpath argument above.
+      -->
+      <_DsComTlbRefPath Include="@(DsComTlbExportReferencePaths)" />
+      <_DsComTlbRefPath Update="@(_DsComTlbRefPath)">
+        <DsComPath>$([System.Text.RegularExpressions.Regex]::Replace('%(Identity)', '[\\/]+$', ''))</DsComPath>
+      </_DsComTlbRefPath>
+
+      <_DsComTlbRefFile Include="@(DsComTlbExportTlbReferences)" />
+      <_DsComTlbRefFile Update="@(_DsComTlbRefFile)">
+        <DsComPath>$([System.Text.RegularExpressions.Regex]::Replace('%(Identity)', '[\\/]+$', ''))</DsComPath>
+      </_DsComTlbRefFile>
     </ItemGroup>
 
     <PropertyGroup>
-      <_DsComTypeLibraryReferences Condition="@(DsComTlbExportTlbReferences->Count()) &gt; 0">--tlbreference "@(DsComTlbExportTlbReferences, '" --tlbreference "')"</_DsComTypeLibraryReferences>
-      <_DsComTypeLibraryReferencePaths Condition="@(DsComTlbExportReferencePaths->Count()) &gt; 0">--tlbrefpath "@(DsComTlbExportReferencePaths, '" --tlbrefpath "')"</_DsComTypeLibraryReferencePaths>
+      <_DsComTypeLibraryReferences Condition="@(_DsComTlbRefFile->Count()) &gt; 0">--tlbreference "@(_DsComTlbRefFile->'%(DsComPath)', '" --tlbreference "')"</_DsComTypeLibraryReferences>
+      <_DsComTypeLibraryReferencePaths Condition="@(_DsComTlbRefPath->Count()) &gt; 0">--tlbrefpath "@(_DsComTlbRefPath->'%(DsComPath)', '" --tlbrefpath "')"</_DsComTypeLibraryReferencePaths>
       <_DsComAssemblyReferences Condition="@(_DsComAsmPath->Count()) &gt; 0">--asmpath "@(_DsComAsmPath, '" --asmpath "')"</_DsComAssemblyReferences>
-      <!--
-        Workaround for a Windows command-line parsing quirk: a path ending with a backslash
-        immediately followed by the closing double quote (\") is not recognized as the end
-        of the quoted argument (the backslash escapes the quote instead), which corrupts the
-        argument list passed to dscom.exe. Doubling such a trailing backslash (\\") makes the
-        parser emit a single literal backslash and correctly close the quoted argument.
-      -->
-      <_DsComTypeLibraryReferences Condition="'$(_DsComTypeLibraryReferences)' != ''">$(_DsComTypeLibraryReferences.Replace('\"', '\\"'))</_DsComTypeLibraryReferences>
-      <_DsComTypeLibraryReferencePaths Condition="'$(_DsComTypeLibraryReferencePaths)' != ''">$(_DsComTypeLibraryReferencePaths.Replace('\"', '\\"'))</_DsComTypeLibraryReferencePaths>
       <_DsComAliasNames Condition="@(DsComTlbAliasNames->Count()) &gt; 0">--names @(DsComTlbAliasNames, --names)</_DsComAliasNames>
       <_DsComToolSilence Condition="@(DsComToolSilence->Count()) &gt; 0">--silence "@(DsComToolSilence, '" --silence "')"</_DsComToolSilence>
       <_DsComArguments>tlbexport</_DsComArguments>
