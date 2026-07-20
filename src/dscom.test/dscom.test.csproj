@@ -24,7 +24,7 @@
     </PackageReference>
     <PackageReference Include="coverlet.collector" Version="10.0.1" />
     <PackageReference Include="YamlDotNet" Version="18.1.0" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.7.1" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.8.2" />
   </ItemGroup>
 
   <ItemGroup>
