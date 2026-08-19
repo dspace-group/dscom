@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Company>dSPACE GmbH</Company>
+    <Company>dSPACE SE &amp; Co. KG</Company>
     <Product>dscom</Product>
     <Description>dSPACE COM tools</Description>
     <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>

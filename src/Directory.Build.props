@@ -9,6 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AnalysisMode>Recommended</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <!-- Microsoft.Build dependencies warn that they are untested on the supported net8.0 target. -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 

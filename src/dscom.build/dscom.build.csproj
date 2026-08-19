@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Company>dSPACE GmbH</Company>
+    <Company>dSPACE SE &amp; Co. KG</Company>
     <Product>dSPACE.Runtime.InteropServices.BuildTasks</Product>
     <Description>dSPACE COM tools - MsBuild Tasks</Description>
     <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>
