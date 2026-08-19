@@ -12,7 +12,7 @@
 
   <PropertyGroup>
     <Authors>Mathias Nissen;Mark Lechtermann</Authors>
-    <Company>dSPACE GmbH</Company>
+    <Company>dSPACE SE &amp; Co. KG</Company>
     <Product>dSPACE.Runtime.InteropServices</Product>
     <Description>dSPACE COM tools</Description>
     <Summary>dSPACE COM tools - A replacement for tlbexp.exe and TypeLibConverter.ConvertAssemblyToTypeLib</Summary>
